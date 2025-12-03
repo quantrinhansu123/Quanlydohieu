@@ -4,17 +4,21 @@ import type { PropRowDetails } from "@/components/CommonTable";
 import CommonTable from "@/components/CommonTable";
 import WrapperContent from "@/components/WrapperContent";
 import {
+  CheckCircleOutlined,
+  EyeOutlined,
   FacebookOutlined,
   MailOutlined,
   MessageOutlined,
   PhoneOutlined,
   PlusOutlined,
+  QuestionCircleOutlined,
+  ShoppingCartOutlined,
   TagOutlined,
   TeamOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import type { TableColumnsType } from "antd";
-import { Avatar, Badge, Button, Select, Space, Tag } from "antd";
+import type { MenuProps, TableColumnsType } from "antd";
+import { Avatar, Badge, Button, Dropdown, Modal, Select, Space, Tag, message } from "antd";
 import { useState } from "react";
 import LeadDetailDrawer from "./LeadDetailDrawer";
 
@@ -547,6 +551,94 @@ export default function LeadManagementCRM() {
     undefined
   );
 
+  const handleLeadAction = (leadId: string, action: string) => {
+    const lead = filteredLeads.find((l) => l.id === leadId);
+    if (!lead) return;
+
+    switch (action) {
+      case "view":
+        message.info(`Xem chi tiết lead: ${lead.customer.name}`);
+        break;
+      case "interested":
+        Modal.confirm({
+          title: "Đánh dấu Lead quan tâm",
+          content: `Bạn muốn đánh dấu lead "${lead.customer.name}" là Quan tâm?`,
+          onOk: () => {
+            message.success("Đã cập nhật trạng thái: Quan tâm");
+            // Update lead status to qualified
+          },
+        });
+        break;
+      case "thinking":
+        Modal.confirm({
+          title: "Đánh dấu Lead đang suy nghĩ",
+          content: `Bạn muốn đánh dấu lead "${lead.customer.name}" là Đang suy nghĩ?`,
+          onOk: () => {
+            message.success("Đã cập nhật trạng thái: Suy nghĩ");
+            // Update lead status to negotiation
+          },
+        });
+        break;
+      case "close":
+        Modal.confirm({
+          title: "Chốt đơn hàng",
+          content: `Xác nhận chốt đơn hàng cho lead "${lead.customer.name}"?`,
+          okText: "Chốt & Tạo đơn",
+          onOk: () => {
+            message.success("Đã chốt! Chuyển sang tạo đơn hàng...");
+            // Redirect to order creation page with lead data
+            setTimeout(() => {
+              window.location.href = `/order-create?leadId=${leadId}`;
+            }, 1000);
+          },
+        });
+        break;
+      default:
+        break;
+    }
+  };
+
+  const getLeadActionMenu = (lead: Lead): MenuProps["items"] => [
+    {
+      key: "view",
+      label: "Xem chi tiết",
+      icon: <EyeOutlined />,
+      onClick: () => handleLeadAction(lead.id, "view"),
+    },
+    {
+      type: "divider",
+    },
+    {
+      key: "interested",
+      label: "Quan tâm",
+      icon: <CheckCircleOutlined className="text-green-600" />,
+      onClick: () => handleLeadAction(lead.id, "interested"),
+    },
+    {
+      key: "thinking",
+      label: "Suy nghĩ",
+      icon: <QuestionCircleOutlined className="text-orange-600" />,
+      onClick: () => handleLeadAction(lead.id, "thinking"),
+    },
+    {
+      key: "close",
+      label: "Chốt",
+      icon: <CheckCircleOutlined className="text-blue-600" />,
+      onClick: () => handleLeadAction(lead.id, "close"),
+    },
+    {
+      type: "divider",
+    },
+    {
+      key: "create-order",
+      label: "Tạo đơn hàng",
+      icon: <ShoppingCartOutlined className="text-purple-600" />,
+      onClick: () => {
+        window.location.href = `/order-create?leadId=${lead.id}`;
+      },
+    },
+  ];
+
   const handleSourceFilter = (value: string) => {
     setSourceFilter(value);
     applyFilters(value, statusFilter);
@@ -599,14 +691,19 @@ export default function LeadManagementCRM() {
       dataIndex: "customer",
       key: "customer",
       width: 220,
-      render: (customer: Lead["customer"]) => (
-        <div className="flex items-center gap-3">
-          <Avatar src={customer.avatar} size={40} className="rounded-full" />
-          <div className="flex flex-col">
-            <span className="font-semibold text-sm">{customer.name}</span>
-            <span className="text-gray-500 text-xs">{customer.phone}</span>
+      render: (customer: Lead["customer"], record: Lead) => (
+        <Dropdown
+          menu={{ items: getLeadActionMenu(record) }}
+          trigger={["click"]}
+        >
+          <div className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+            <Avatar src={customer.avatar} size={40} className="rounded-full" />
+            <div className="flex flex-col">
+              <span className="font-semibold text-sm">{customer.name}</span>
+              <span className="text-gray-500 text-xs">{customer.phone}</span>
+            </div>
           </div>
-        </div>
+        </Dropdown>
       ),
     },
     {

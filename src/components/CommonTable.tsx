@@ -69,13 +69,36 @@ const CommonTable = <T extends object>({
           "INPUT",
           "SELECT",
           "TEXTAREA",
+          "svg",
+          "path",
         ];
 
-        if (
-          interactiveElements.includes(target.tagName) ||
-          target.closest("button, a, input, select, textarea")
-        ) {
+        // Check if clicked element is interactive
+        if (interactiveElements.includes(target.tagName.toUpperCase())) {
           return;
+        }
+
+        // Check if clicked element is inside an interactive element
+        const closestInteractive = target.closest(
+          "button, a, input, select, textarea, [role='button'], .ant-btn, .ant-dropdown-trigger, [onclick]"
+        );
+        if (closestInteractive) {
+          return;
+        }
+
+        // Check if any parent has onClick handler or is clickable
+        let currentElement: HTMLElement | null = target;
+        while (currentElement && currentElement !== event.currentTarget) {
+          // Check for inline onclick or React onClick
+          if (
+            currentElement.onclick ||
+            currentElement.getAttribute("onclick") ||
+            currentElement.classList.contains("cursor-pointer") ||
+            currentElement.classList.contains("ant-dropdown-trigger")
+          ) {
+            return;
+          }
+          currentElement = currentElement.parentElement;
         }
 
         if (onRowClick) {
