@@ -497,9 +497,15 @@ export default function DashboardLayout({
             <Breadcrumb
               items={[
                 ...getBreadcrumbItems(),
-                {
-                  title: <span>{pageTitle}</span>,
-                },
+                ...(pageTitle
+                  ? [
+                      {
+                        title: (
+                          <span className="text-gray-500">{pageTitle}</span>
+                        ),
+                      },
+                    ]
+                  : []),
               ]}
             />
           </div>

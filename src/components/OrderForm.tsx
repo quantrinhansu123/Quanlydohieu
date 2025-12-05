@@ -775,19 +775,11 @@ const OrderForm: React.FC<OrderFormProps> = ({
     }
   }, [user, form, mode]);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          <p className="mt-2 text-gray-600">Đang tải dữ liệu...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <Form form={form} layout="vertical" onFinish={onFinish}>
+      <Form.Item name="status">
+        <Input hidden />
+      </Form.Item>
       <div className="gap-6 flex flex-col">
         {/* Order Basic Information */}
         <Card
