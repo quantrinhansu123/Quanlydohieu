@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/firebase/provider";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Alert, Button, Divider, Form, Input } from "antd";
+import { Alert, Button, Form, Input } from "antd";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -57,7 +57,7 @@ export function LoginForm({ setView }: LoginFormProps) {
     <div className="w-full bg-card rounded-lg shadow-lg p-8 border">
       {error && (
         <Alert
-          message={error}
+          title={error}
           type="error"
           showIcon
           className="mb-4"
@@ -114,7 +114,7 @@ export function LoginForm({ setView }: LoginFormProps) {
           </Button>
         </Form.Item>
       </Form>
-
+      {/*
       <Divider>hoặc</Divider>
 
       <div className="text-center space-y-2">
@@ -135,7 +135,7 @@ export function LoginForm({ setView }: LoginFormProps) {
             Quên mật khẩu?
           </button>
         </p>
-      </div>
+      </div> */}
     </div>
   );
 }
