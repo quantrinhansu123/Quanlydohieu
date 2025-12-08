@@ -187,6 +187,17 @@ const StatusStepper = ({ form, products, message, modal }: any) => {
           }
         }
 
+        // Validation before moving to ON_HOLD
+        if (nextStatus === OrderStatus.ON_HOLD) {
+          const allWorkflowsDone = products.every(product =>
+              Object.values(product.workflows || {}).every(workflow => workflow.isDone)
+          );
+          if (!allWorkflowsDone) {
+              message.error("Đội kỹ thuật chưa làm xong!");
+              return;
+          }
+        }
+
         form.setFieldsValue({ status: nextStatus }); // Update form state
         form.submit(); // Trigger onFinish of the parent form
       },
