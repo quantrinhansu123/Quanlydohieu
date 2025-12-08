@@ -55,5 +55,6 @@ export * from './provider';
 export { useAuth, type AuthUser, type UseAuthResult } from './hooks/useAuth';
 
 // Export database instance
-export const { database } = getSdks(getApps()[0] || initializeApp(firebaseConfig));
+export const { database, auth } = getSdks(getApps()[0] || initializeApp(firebaseConfig));
+
 

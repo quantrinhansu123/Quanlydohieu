@@ -19,10 +19,10 @@ export default function WorkflowManagementPage() {
     error: errorWorkflows,
   } = useRealtimeList<any>("xoxo/workflows");
   const {
-    data: employees,
-    isLoading: loadingEmployees,
-    error: errorEmployees,
-  } = useRealtimeList<any>("xoxo/employees");
+    data: members,
+    isLoading: loadingMembers,
+    error: errorMembers,
+  } = useRealtimeList<any>("xoxo/members");
   const {
     data: orders,
     isLoading: loadingOrders,
@@ -35,7 +35,7 @@ export default function WorkflowManagementPage() {
   // ========== STATISTICS ==========
   const stats = {
     totalOrders: orders?.length || 0,
-    totalEmployees: employees?.length || 0,
+    totalMembers: members?.length || 0,
     totalWorkflows: workflows?.length || 0,
     activeOrders: orders?.filter((o) => o.status === "active").length || 0,
   };
@@ -43,17 +43,17 @@ export default function WorkflowManagementPage() {
   // ========== DEBUG LOGS ==========
   console.log("🔥 Firebase Loading States:", {
     loadingWorkflows,
-    loadingEmployees,
+    loadingMembers,
     loadingOrders,
   });
   console.log("🔥 Firebase Errors:", {
     errorWorkflows,
-    errorEmployees,
+    errorMembers,
     errorOrders,
   });
   console.log("🔥 Firebase Data:", {
     workflows: workflows?.length ? workflows.slice(0, 2) : workflows,
-    employees: employees?.length ? employees.slice(0, 2) : employees,
+    members: members?.length ? members.slice(0, 2) : members,
     orders: orders?.length ? orders.slice(0, 2) : orders,
   });
   console.log("🔥 Firebase Config:", {
@@ -62,7 +62,7 @@ export default function WorkflowManagementPage() {
   });
 
   // ========== ERROR HANDLING ==========
-  const hasErrors = errorWorkflows || errorEmployees || errorOrders;
+  const hasErrors = errorWorkflows || errorMembers || errorOrders;
 
   if (hasErrors) {
     return (
@@ -78,9 +78,9 @@ export default function WorkflowManagementPage() {
                   ❌ Workflows: {errorWorkflows.message}
                 </p>
               )}
-              {errorEmployees && (
+              {errorMembers && (
                 <p className="text-red-500">
-                  ❌ Employees: {errorEmployees.message}
+                  ❌ Members: {errorMembers.message}
                 </p>
               )}
               {errorOrders && (
@@ -104,7 +104,7 @@ export default function WorkflowManagementPage() {
   }
 
   // ========== LOADING STATE ==========
-  if (loadingWorkflows || loadingEmployees || loadingOrders) {
+  if (loadingWorkflows || loadingMembers || loadingOrders) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Spin size="large" tip="Đang tải dữ liệu..." />
@@ -155,7 +155,7 @@ export default function WorkflowManagementPage() {
               <Card size="small">
                 <Statistic
                   title="Nhân viên"
-                  value={stats.totalEmployees}
+                  value={stats.totalMembers}
                   prefix={<UserOutlined />}
                   styles={{ content: { color: "#cf1322" } }}
                 />
@@ -207,10 +207,10 @@ export default function WorkflowManagementPage() {
                         </h3>
                         <div className="mt-2">
                           <p className="text-sm text-gray-600">
-                            Default Employees:
+                            Default Members:
                           </p>
                           <div className="flex flex-wrap gap-1 mt-1">
-                            {workflow.defaultEmployees?.map((empId: string) => (
+                            {workflow.defaultMembers?.map((empId: string) => (
                               <span
                                 key={empId}
                                 className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded"
@@ -233,7 +233,7 @@ export default function WorkflowManagementPage() {
               ),
             },
             {
-              key: "employees",
+              key: "members",
               label: (
                 <Space>
                   <UserOutlined />
@@ -246,30 +246,26 @@ export default function WorkflowManagementPage() {
                     Danh sách nhân viên
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {employees?.map((employee: any) => (
+                    {members?.map((member: any) => (
                       <Card
-                        key={employee.id}
+                        key={member.id}
                         size="small"
                         className="border-l-4 border-l-green-500"
                       >
-                        <h3 className="font-semibold text-lg">
-                          {employee.name}
-                        </h3>
-                        <p className="text-sm text-gray-600">
-                          ID: {employee.id}
-                        </p>
+                        <h3 className="font-semibold text-lg">{member.name}</h3>
+                        <p className="text-sm text-gray-600">ID: {member.id}</p>
                         <span
                           className={`px-2 py-1 text-xs rounded ${
-                            employee.role === "manager"
+                            member.role === "manager"
                               ? "bg-red-100 text-red-800"
-                              : employee.role === "qc"
+                              : member.role === "qc"
                               ? "bg-yellow-100 text-yellow-800"
-                              : employee.role === "sale"
+                              : member.role === "sale"
                               ? "bg-purple-100 text-purple-800"
                               : "bg-gray-100 text-gray-800"
                           }`}
                         >
-                          {employee.role}
+                          {member.role}
                         </span>
                       </Card>
                     ))}
@@ -349,17 +345,17 @@ export default function WorkflowManagementPage() {
                       <pre className="text-xs bg-white p-3 rounded mt-2">
                         {`xoxo/
 ├── workflows/
-│   └── {workflowId}: {name, defaultEmployees[], createdAt}
-├── employees/
-│   └── {employeeId}: {name, role}
+│   └── {workflowCode}: {name, defaultMembers[], createdAt}
+├── members/
+│   └── {memberId}: {name, role}
 └── orders/
-    └── {orderId}/
+    └── {orderCode}/
         ├── code, customerName, createdBy, createdAt
         └── products/
             └── {productId}/
                 ├── name, quantity
                 └── steps/
-                    └── {stepId}: {workflowId, name, employees{}, status, completedQuantity, updatedAt}`}
+                    └── {stepId}: {workflowCode, name, members{}, status, completedQuantity, updatedAt}`}
                       </pre>
                     </div>
 
@@ -371,10 +367,10 @@ export default function WorkflowManagementPage() {
                         <li>Realtime sync với Firebase Realtime Database</li>
                         <li>Multi-product per order</li>
                         <li>Multi-steps per product</li>
-                        <li>Multi-employee assignment per step</li>
+                        <li>Multi-member assignment per step</li>
                         <li>Progress tracking (completedQuantity, status)</li>
                         <li>
-                          Path structure: xoxo/workflows, xoxo/employees,
+                          Path structure: xoxo/workflows, xoxo/members,
                           xoxo/orders
                         </li>
                       </ul>

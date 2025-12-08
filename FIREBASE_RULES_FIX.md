@@ -57,4 +57,4 @@ Firebase Realtime Database hiện tại có security rules chặn read/write.
 ## Sau khi fix:
 
 - Console sẽ hiện data thay vì "Permission denied"
-- UI sẽ hiển thị workflows, employees, orders
+- UI sẽ hiển thị workflows, members, orders

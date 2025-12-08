@@ -43,8 +43,10 @@ interface FirebaseUser {
 
 export default function DashboardLayout({
   children,
+  modal,
 }: {
   children: React.ReactNode;
+  modal: React.ReactNode;
 }) {
   const pageTitle = useSiteTitleStore((state) => state.title);
   const router = useRouter();
@@ -500,9 +502,7 @@ export default function DashboardLayout({
                 ...(pageTitle
                   ? [
                       {
-                        title: (
-                          <span className="text-gray-500">{pageTitle}</span>
-                        ),
+                        title: <span className="font-bold">{pageTitle}</span>,
                       },
                     ]
                   : []),
@@ -558,7 +558,10 @@ export default function DashboardLayout({
               <LoaderApp />
             </div>
           ) : (
-            children
+            <>
+              {children}
+              {modal}
+            </>
           )}
         </Content>
       </Layout>

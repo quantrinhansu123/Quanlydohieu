@@ -43,27 +43,27 @@ const ROLE_LABELS: Record<StaffRole, string> = {
   admin: "Admin",
 };
 
-export default function EmployeeManager() {
+export default function MemberManager() {
   const firebaseApp = useFirebaseApp();
-  const { data: employees, isLoading } =
-    useRealtimeList<Omit<Staff, "id">>("employees");
+  const { data: members, isLoading } =
+    useRealtimeList<Omit<Staff, "id">>("members");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingEmployee, setEditingEmployee] = useState<Staff | null>(null);
+  const [editingMember, setEditingMember] = useState<Staff | null>(null);
   const [form] = Form.useForm();
   const [submitting, setSubmitting] = useState(false);
 
   // ========== HANDLERS ==========
 
-  const handleOpenModal = (employee?: Staff) => {
-    if (employee) {
-      setEditingEmployee(employee);
+  const handleOpenModal = (member?: Staff) => {
+    if (member) {
+      setEditingMember(member);
       form.setFieldsValue({
-        name: employee.name,
-        role: employee.role,
+        name: member.name,
+        role: member.role,
       });
     } else {
-      setEditingEmployee(null);
+      setEditingMember(null);
       form.resetFields();
     }
     setIsModalOpen(true);
@@ -71,7 +71,7 @@ export default function EmployeeManager() {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setEditingEmployee(null);
+    setEditingMember(null);
     form.resetFields();
   };
 
@@ -80,8 +80,8 @@ export default function EmployeeManager() {
       const values = await form.validateFields();
       setSubmitting(true);
 
-      if (editingEmployee) {
-        await updateStaff(firebaseApp, editingEmployee.id, values);
+      if (editingMember) {
+        await updateStaff(firebaseApp, editingMember.id, values);
         message.success("Cập nhật nhân viên thành công!");
       } else {
         await createStaff(firebaseApp, values);
@@ -90,19 +90,19 @@ export default function EmployeeManager() {
 
       handleCloseModal();
     } catch (error) {
-      console.error("Error submitting employee:", error);
+      console.error("Error submitting member:", error);
       message.error("Có lỗi xảy ra, vui lòng thử lại!");
     } finally {
       setSubmitting(false);
     }
   };
 
-  const handleDelete = async (employeeId: string) => {
+  const handleDelete = async (memberId: string) => {
     try {
-      await deleteStaff(firebaseApp, employeeId);
+      await deleteStaff(firebaseApp, memberId);
       message.success("Xóa nhân viên thành công!");
     } catch (error) {
-      console.error("Error deleting employee:", error);
+      console.error("Error deleting member:", error);
       message.error("Có lỗi xảy ra, vui lòng thử lại!");
     }
   };
@@ -206,7 +206,7 @@ export default function EmployeeManager() {
 
       <Table
         columns={columns}
-        dataSource={employees || []}
+        dataSource={members || []}
         loading={isLoading}
         rowKey="id"
         pagination={{
@@ -218,13 +218,13 @@ export default function EmployeeManager() {
 
       {/* Create/Edit Modal */}
       <Modal
-        title={editingEmployee ? "Chỉnh sửa nhân viên" : "Thêm nhân viên mới"}
+        title={editingMember ? "Chỉnh sửa nhân viên" : "Thêm nhân viên mới"}
         open={isModalOpen}
         onOk={handleSubmit}
         onCancel={handleCloseModal}
         confirmLoading={submitting}
         width={500}
-        okText={editingEmployee ? "Cập nhật" : "Tạo mới"}
+        okText={editingMember ? "Cập nhật" : "Tạo mới"}
         cancelText="Hủy"
       >
         <Form form={form} layout="vertical" className="mt-4">

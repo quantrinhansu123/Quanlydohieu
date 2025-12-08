@@ -4,11 +4,11 @@ import type {
   CreateOrderPayload,
   Order,
   OrderProduct,
-  ProductStage,
+  ProductWorkflow,
   Staff,
-  Stage,
-  UpdateStageProgressPayload,
-  UpdateStageStaffPayload,
+  UpdateWorkflowProgressPayload,
+  UpdateWorkflowStaffPayload,
+  Workflow,
 } from '@/types/workflow';
 import type { FirebaseApp } from 'firebase/app';
 import { getDatabase, push, ref, remove, set, update } from 'firebase/database';
@@ -19,7 +19,7 @@ import { getDatabase, push, ref, remove, set, update } from 'firebase/database';
  * Generate a unique order code (e.g., ORD001, ORD002)
  */
 function generateOrderCode(): string {
-  const timestamp = Date.now().toString().slice(-6);
+  const timestamp = new Date().getTime().toString().slice(-6);
   const random = Math.random().toString(36).substring(2, 5).toUpperCase();
   return `ORD${timestamp}${random}`;
 }
@@ -34,47 +34,47 @@ function getDB(firebaseApp: FirebaseApp) {
 // ==================== STAGES (WORKFLOW TEMPLATES) ====================
 
 /**
- * Create a new stage template
+ * Create a new workflow template
  */
-export async function createStage(
+export async function createWorkflow(
   firebaseApp: FirebaseApp,
-  stage: Omit<Stage, 'id' | 'createdAt'>
+  workflow: Omit<Workflow, 'id' | 'createdAt'>
 ): Promise<string> {
   const db = getDB(firebaseApp);
-  const stagesRef = ref(db, 'xoxo/stages');
-  const newStageRef = push(stagesRef);
+  const workflowsRef = ref(db, 'xoxo/workflows');
+  const newWorkflowRef = push(workflowsRef);
 
-  await set(newStageRef, {
-    ...stage,
+  await set(newWorkflowRef, {
+    ...workflow,
     createdAt: Date.now(),
   });
 
-  return newStageRef.key!;
+  return newWorkflowRef.key!;
 }
 
 /**
- * Update a stage template
+ * Update a workflow template
  */
-export async function updateStage(
+export async function updateWorkflow(
   firebaseApp: FirebaseApp,
-  stageId: string,
-  updates: Partial<Omit<Stage, 'id' | 'createdAt'>>
+  workflowCode: string,
+  updates: Partial<Omit<Workflow, 'id' | 'createdAt'>>
 ): Promise<void> {
   const db = getDB(firebaseApp);
-  const stageRef = ref(db, `xoxo/stages/${stageId}`);
-  await update(stageRef, updates);
+  const workflowRef = ref(db, `xoxo/workflows/${workflowCode}`);
+  await update(workflowRef, updates);
 }
 
 /**
- * Delete a stage template
+ * Delete a workflow template
  */
-export async function deleteStage(
+export async function deleteWorkflow(
   firebaseApp: FirebaseApp,
-  stageId: string
+  workflowCode: string
 ): Promise<void> {
   const db = getDB(firebaseApp);
-  const stageRef = ref(db, `xoxo/stages/${stageId}`);
-  await remove(stageRef);
+  const workflowRef = ref(db, `xoxo/workflows/${workflowCode}`);
+  await remove(workflowRef);
 }
 
 // ==================== STAFF (EMPLOYEES) ====================
@@ -126,12 +126,12 @@ export async function deleteStaff(
 // ==================== ORDERS ====================
 
 /**
- * Create a new order with products and stages
+ * Create a new order with products and workflows
  */
 export async function createOrder(
   firebaseApp: FirebaseApp,
   payload: CreateOrderPayload,
-  stages: Stage[]
+  workflows: Workflow[]
 ): Promise<string> {
   const db = getDB(firebaseApp);
   const ordersRef = ref(db, 'xoxo/orders');
@@ -140,34 +140,34 @@ export async function createOrder(
   const now = Date.now();
   const orderCode = generateOrderCode();
 
-  // Build products with stages
+  // Build products with workflows
   const products: { [key: string]: OrderProduct } = {};
 
   for (const productPayload of payload.products) {
     const productKey = push(ref(db, 'temp')).key!; // Generate unique key
 
-    // Clone stages from templates
-    const productStages: { [key: string]: ProductStage } = {};
+    // Clone workflows from templates
+    const productWorkflows: { [key: string]: ProductWorkflow } = {};
 
-    stages.forEach((stage, index) => {
-      const stageKey = `stage${index + 1}`;
+    workflows.forEach((workflow, index) => {
+      const workflowKey = `workflow${index + 1}`;
 
       // Convert defaultStaff array to object map
       const staffMap: { [key: string]: boolean } = {};
-      if (stage.defaultStaff) {
-        stage.defaultStaff.forEach((staffId) => {
+      if (workflow.defaultStaff) {
+        workflow.defaultStaff.forEach((staffId) => {
           staffMap[staffId] = true;
         });
       }
 
-      productStages[stageKey] = {
-        stageId: stage.id,
-        name: stage.name,
+      productWorkflows[workflowKey] = {
+        workflowCode: workflow.id,
+        name: workflow.name,
         staff: staffMap,
         status: 'pending',
         completedQuantity: 0,
         updatedAt: now,
-        order: stage.order || index,
+        order: workflow.order || index,
       };
     });
 
@@ -175,7 +175,7 @@ export async function createOrder(
       name: productPayload.name,
       quantity: productPayload.quantity,
       price: productPayload.price,
-      stages: productStages,
+      workflows: productWorkflows,
       createdAt: now,
     };
   }
@@ -199,15 +199,15 @@ export async function createOrder(
 }
 
 /**
- * Update stage progress (completedQuantity, status, staff)
+ * Update workflow progress (completedQuantity, status, staff)
  */
-export async function updateStageProgress(
+export async function updateWorkflowProgress(
   firebaseApp: FirebaseApp,
-  payload: UpdateStageProgressPayload
+  payload: UpdateWorkflowProgressPayload
 ): Promise<void> {
   const db = getDB(firebaseApp);
-  const stagePath = `xoxo/orders/${payload.orderId}/products/${payload.productId}/stages/${payload.stageKey}`;
-  const stageRef = ref(db, stagePath);
+  const workflowPath = `xoxo/orders/${payload.orderCode}/products/${payload.productId}/workflows/${payload.workflowKey}`;
+  const workflowRef = ref(db, workflowPath);
 
   const updates: any = {
     updatedAt: Date.now(),
@@ -225,18 +225,18 @@ export async function updateStageProgress(
     updates.staff = payload.staff;
   }
 
-  await update(stageRef, updates);
+  await update(workflowRef, updates);
 }
 
 /**
- * Assign or remove a staff member from a stage
+ * Assign or remove a staff member from a workflow
  */
-export async function updateStageStaff(
+export async function updateWorkflowStaff(
   firebaseApp: FirebaseApp,
-  payload: UpdateStageStaffPayload
+  payload: UpdateWorkflowStaffPayload
 ): Promise<void> {
   const db = getDB(firebaseApp);
-  const staffPath = `xoxo/orders/${payload.orderId}/products/${payload.productId}/stages/${payload.stageKey}/staff/${payload.staffId}`;
+  const staffPath = `xoxo/orders/${payload.orderCode}/products/${payload.productId}/workflows/${payload.workflowKey}/staff/${payload.staffId}`;
   const staffRef = ref(db, staffPath);
 
   if (payload.action === 'add') {
@@ -246,9 +246,9 @@ export async function updateStageStaff(
   }
 
   // Update timestamp
-  const stagePath = `xoxo/orders/${payload.orderId}/products/${payload.productId}/stages/${payload.stageKey}`;
-  const stageRef = ref(db, stagePath);
-  await update(stageRef, { updatedAt: Date.now() });
+  const workflowPath = `xoxo/orders/${payload.orderCode}/products/${payload.productId}/workflows/${payload.workflowKey}`;
+  const workflowRef = ref(db, workflowPath);
+  await update(workflowRef, { updatedAt: Date.now() });
 }
 
 /**
@@ -256,10 +256,10 @@ export async function updateStageStaff(
  */
 export async function deleteOrder(
   firebaseApp: FirebaseApp,
-  orderId: string
+  orderCode: string
 ): Promise<void> {
   const db = getDB(firebaseApp);
-  const orderRef = ref(db, `xoxo/orders/${orderId}`);
+  const orderRef = ref(db, `xoxo/orders/${orderCode}`);
   await remove(orderRef);
 }
 
@@ -268,11 +268,11 @@ export async function deleteOrder(
  */
 export async function updateOrderStatus(
   firebaseApp: FirebaseApp,
-  orderId: string,
+  orderCode: string,
   status: 'draft' | 'active' | 'completed' | 'cancelled'
 ): Promise<void> {
   const db = getDB(firebaseApp);
-  const orderRef = ref(db, `xoxo/orders/${orderId}`);
+  const orderRef = ref(db, `xoxo/orders/${orderCode}`);
   await update(orderRef, {
     status,
     updatedAt: Date.now(),

@@ -3,18 +3,18 @@ const fs = require("fs");
 // Generate mock data for ORDER_FLOW.md specification
 function generateMockData() {
   const workflows = generateWorkflows();
-  const employees = generateEmployees();
-  const orders = generateOrders(20, workflows, employees);
+  const members = generateMembers();
+  const orders = generateOrders(20, workflows, members);
 
   const mockData = {
     workflows,
-    employees,
+    members,
     orders,
     metadata: {
       generated_at: new Date().toISOString(),
       specification: "ORDER_FLOW.md Firebase Realtime Database",
       total_workflows: Object.keys(workflows).length,
-      total_employees: Object.keys(employees).length,
+      total_members: Object.keys(members).length,
       total_orders: Object.keys(orders).length,
     },
   };
@@ -28,8 +28,8 @@ function generateMockData() {
   );
   console.log(
     `📊 ${Object.keys(workflows).length} workflows, ${
-      Object.keys(employees).length
-    } employees, ${Object.keys(orders).length} orders`
+      Object.keys(members).length
+    } members, ${Object.keys(orders).length} orders`
   );
   console.log(
     `📁 File size: ${(
@@ -40,23 +40,23 @@ function generateMockData() {
 
 function generateWorkflows() {
   const workflowTemplates = [
-    { name: "Cutting", defaultEmployees: ["NV001", "NV002"] },
-    { name: "Sewing", defaultEmployees: ["NV001"] },
-    { name: "Quality Control", defaultEmployees: ["NV004"] },
-    { name: "Packaging", defaultEmployees: ["NV002", "NV005"] },
-    { name: "Washing", defaultEmployees: ["NV003"] },
-    { name: "Ironing", defaultEmployees: ["NV002"] },
-    { name: "Embroidery", defaultEmployees: ["NV006"] },
-    { name: "Button Sewing", defaultEmployees: ["NV001", "NV002"] },
+    { name: "Cutting", defaultMembers: ["NV001", "NV002"] },
+    { name: "Sewing", defaultMembers: ["NV001"] },
+    { name: "Quality Control", defaultMembers: ["NV004"] },
+    { name: "Packaging", defaultMembers: ["NV002", "NV005"] },
+    { name: "Washing", defaultMembers: ["NV003"] },
+    { name: "Ironing", defaultMembers: ["NV002"] },
+    { name: "Embroidery", defaultMembers: ["NV006"] },
+    { name: "Button Sewing", defaultMembers: ["NV001", "NV002"] },
   ];
 
   const workflows = {};
 
   workflowTemplates.forEach((template, index) => {
-    const workflowId = `workflowId${String(index + 1).padStart(3, "0")}`;
-    workflows[workflowId] = {
+    const workflowCode = `workflowCode${String(index + 1).padStart(3, "0")}`;
+    workflows[workflowCode] = {
       name: template.name,
-      defaultEmployees: template.defaultEmployees,
+      defaultMembers: template.defaultMembers,
       createdAt: getTimestamp(randomInt(30, 365)), // Created 30-365 days ago
     };
   });
@@ -64,8 +64,8 @@ function generateWorkflows() {
   return workflows;
 }
 
-function generateEmployees() {
-  const employeeData = [
+function generateMembers() {
+  const memberData = [
     { id: "NV001", name: "Nguyen Van A", role: "worker" },
     { id: "NV002", name: "Tran Thi B", role: "worker" },
     { id: "NV003", name: "Le Van C", role: "worker" },
@@ -78,18 +78,18 @@ function generateEmployees() {
     { id: "NV010", name: "Ngo Thi Manager", role: "manager" },
   ];
 
-  const employees = {};
-  employeeData.forEach((emp) => {
-    employees[emp.id] = {
+  const members = {};
+  memberData.forEach((emp) => {
+    members[emp.id] = {
       name: emp.name,
       role: emp.role,
     };
   });
 
-  return employees;
+  return members;
 }
 
-function generateOrders(count, workflows, employees) {
+function generateOrders(count, workflows, members) {
   const orders = {};
   const customerNames = [
     "Linh",
@@ -155,20 +155,23 @@ function generateOrders(count, workflows, employees) {
 
 function generateStepsForProduct(workflows, orderCreatedAt, productQuantity) {
   const steps = {};
-  const workflowIds = Object.keys(workflows);
+  const workflowCodes = Object.keys(workflows);
 
   // Each product gets 3-5 random workflow steps
   const stepCount = randomInt(3, 5);
-  const selectedWorkflows = shuffleArray([...workflowIds]).slice(0, stepCount);
+  const selectedWorkflows = shuffleArray([...workflowCodes]).slice(
+    0,
+    stepCount
+  );
 
-  selectedWorkflows.forEach((workflowId, index) => {
+  selectedWorkflows.forEach((workflowCode, index) => {
     const stepId = `step${index + 1}`;
-    const workflow = workflows[workflowId];
+    const workflow = workflows[workflowCode];
 
-    // Convert defaultEmployees array to object map
-    const employees = {};
-    workflow.defaultEmployees.forEach((empId) => {
-      employees[empId] = true;
+    // Convert defaultMembers array to object map
+    const members = {};
+    workflow.defaultMembers.forEach((empId) => {
+      members[empId] = true;
     });
 
     // Generate realistic progress
@@ -182,9 +185,9 @@ function generateStepsForProduct(workflows, orderCreatedAt, productQuantity) {
     }
 
     steps[stepId] = {
-      workflowId: workflowId,
+      workflowCode: workflowCode,
       name: workflow.name,
-      employees: employees,
+      members: members,
       status: status,
       completedQuantity: completedQuantity,
       updatedAt: orderCreatedAt + randomInt(0, 86400 * 7), // Updated within 7 days of order creation

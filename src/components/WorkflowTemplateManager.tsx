@@ -3,11 +3,11 @@
 import { useFirebaseApp } from "@/firebase";
 import { useRealtimeList } from "@/firebase/hooks/useRealtime";
 import {
-  createStage,
-  deleteStage,
-  updateStage,
+  createWorkflow,
+  deleteWorkflow,
+  updateWorkflow,
 } from "@/services/workflowService";
-import type { Staff, Stage } from "@/types/workflow";
+import type { Staff, Workflow } from "@/types/workflow";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   Button,
@@ -25,24 +25,24 @@ import type { ColumnsType } from "antd/es/table";
 import { useState } from "react";
 
 interface WorkflowTemplateManagerProps {
-  employees: Staff[];
+  members: Staff[];
 }
 
 export default function WorkflowTemplateManager({
-  employees,
+  members,
 }: WorkflowTemplateManagerProps) {
   const firebaseApp = useFirebaseApp();
   const { data: workflows, isLoading } =
-    useRealtimeList<Omit<Stage, "id">>("workflows");
+    useRealtimeList<Omit<Workflow, "id">>("workflows");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingWorkflow, setEditingWorkflow] = useState<Stage | null>(null);
+  const [editingWorkflow, setEditingWorkflow] = useState<Workflow | null>(null);
   const [form] = Form.useForm();
   const [submitting, setSubmitting] = useState(false);
 
   // ========== HANDLERS ==========
 
-  const handleOpenModal = (workflow?: Stage) => {
+  const handleOpenModal = (workflow?: Workflow) => {
     if (workflow) {
       setEditingWorkflow(workflow);
       form.setFieldsValue({
@@ -70,11 +70,11 @@ export default function WorkflowTemplateManager({
 
       if (editingWorkflow) {
         // Update existing workflow
-        await updateStage(firebaseApp, editingWorkflow.id, values);
+        await updateWorkflow(firebaseApp, editingWorkflow.id, values);
         message.success("Cập nhật workflow thành công!");
       } else {
         // Create new workflow
-        await createStage(firebaseApp, values);
+        await createWorkflow(firebaseApp, values);
         message.success("Tạo workflow mới thành công!");
       }
 
@@ -87,9 +87,9 @@ export default function WorkflowTemplateManager({
     }
   };
 
-  const handleDelete = async (workflowId: string) => {
+  const handleDelete = async (workflowCode: string) => {
     try {
-      await deleteStage(firebaseApp, workflowId);
+      await deleteWorkflow(firebaseApp, workflowCode);
       message.success("Xóa workflow thành công!");
     } catch (error) {
       console.error("Error deleting workflow:", error);
@@ -99,7 +99,7 @@ export default function WorkflowTemplateManager({
 
   // ========== TABLE COLUMNS ==========
 
-  const columns: ColumnsType<Stage> = [
+  const columns: ColumnsType<Workflow> = [
     {
       title: "Thứ tự",
       dataIndex: "order",
@@ -118,16 +118,16 @@ export default function WorkflowTemplateManager({
     },
     {
       title: "Nhân viên mặc định",
-      dataIndex: "defaultEmployees",
-      key: "defaultEmployees",
-      render: (employeeIds: string[] = []) => (
+      dataIndex: "defaultMembers",
+      key: "defaultMembers",
+      render: (memberIds: string[] = []) => (
         <Space wrap>
-          {employeeIds.length > 0 ? (
-            employeeIds.map((empId) => {
-              const employee = employees.find((e) => e.id === empId);
+          {memberIds.length > 0 ? (
+            memberIds.map((empId) => {
+              const member = members.find((e) => e.id === empId);
               return (
                 <Tag key={empId} color="green">
-                  {employee?.name || empId}
+                  {member?.name || empId}
                 </Tag>
               );
             })
@@ -240,7 +240,7 @@ export default function WorkflowTemplateManager({
           </Form.Item>
 
           <Form.Item
-            name="defaultEmployees"
+            name="defaultMembers"
             label="Nhân viên mặc định"
             help="Những nhân viên này sẽ tự động được gán khi tạo đơn hàng mới"
           >
@@ -248,7 +248,7 @@ export default function WorkflowTemplateManager({
               mode="multiple"
               placeholder="Chọn nhân viên..."
               size="large"
-              options={employees.map((emp) => ({
+              options={members.map((emp) => ({
                 label: `${emp.name} (${emp.role})`,
                 value: emp.id,
               }))}

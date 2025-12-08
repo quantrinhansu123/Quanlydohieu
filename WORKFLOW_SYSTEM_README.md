@@ -9,7 +9,7 @@ Database** theo đúng spec trong `ORDER_FLOW.md`.
 
 - ✅ **Multi-product per order**: Mỗi đơn hàng chứa nhiều sản phẩm
 - ✅ **Multi-workflow steps per product**: Mỗi sản phẩm có nhiều công đoạn
-- ✅ **Multi-employee assignment**: Nhiều nhân viên trên mỗi công đoạn
+- ✅ **Multi-member assignment**: Nhiều nhân viên trên mỗi công đoạn
 - ✅ **Realtime sync**: Tất cả thay đổi được đồng bộ tức thì
 - ✅ **Progress tracking**: Theo dõi tiến độ (completedQuantity, status)
 - ✅ **Kanban board**: Visualize workflow với 3 trạng thái (pending,
@@ -30,7 +30,7 @@ src/
 │   └── workflowService.ts            # CRUD operations
 ├── components/
 │   ├── WorkflowTemplateManager.tsx   # Quản lý workflow templates
-│   ├── EmployeeManager.tsx           # Quản lý nhân viên
+│   ├── MemberManager.tsx           # Quản lý nhân viên
 │   ├── CreateOrderModal.tsx          # Tạo đơn hàng mới
 │   └── WorkflowKanban.tsx            # Kanban board tracking
 └── app/(root)/
@@ -75,7 +75,7 @@ Vào **Rules** tab trong Realtime Database và paste:
     "workflows": {
       ".indexOn": ["createdAt", "order"]
     },
-    "employees": {
+    "members": {
       ".indexOn": ["role", "createdAt"]
     },
     "orders": {
@@ -155,9 +155,9 @@ Truy cập: **http://localhost:3000/workflow-management**
 ```typescript
 {
   "workflows": {
-    "workflowId001": {
+    "workflowCode001": {
       "name": "Cắt vải",
-      "defaultEmployees": ["empId001", "empId002"],
+      "defaultMembers": ["empId001", "empId002"],
       "createdAt": 1733392100,
       "order": 0
     }
@@ -165,11 +165,11 @@ Truy cập: **http://localhost:3000/workflow-management**
 }
 ```
 
-### Employees
+### Members
 
 ```typescript
 {
-  "employees": {
+  "members": {
     "empId001": {
       "name": "Nguyễn Văn A",
       "role": "worker",
@@ -198,9 +198,9 @@ Truy cập: **http://localhost:3000/workflow-management**
           "price": 150000,
           "steps": {
             "step1": {
-              "workflowId": "workflowId001",
+              "workflowCode": "workflowCode001",
               "name": "Cắt vải",
-              "employees": { "empId001": true },
+              "members": { "empId001": true },
               "status": "in_progress",
               "completedQuantity": 50,
               "updatedAt": 1733392400
@@ -223,31 +223,31 @@ Truy cập: **http://localhost:3000/workflow-management**
 // Tạo workflow template
 createWorkflowTemplate(firebaseApp, {
   name: "Cắt vải",
-  defaultEmployees: ["empId001"],
+  defaultMembers: ["empId001"],
   order: 0,
 });
 
 // Cập nhật workflow
-updateWorkflowTemplate(firebaseApp, workflowId, { name: "Cắt vải mới" });
+updateWorkflowTemplate(firebaseApp, workflowCode, { name: "Cắt vải mới" });
 
 // Xóa workflow
-deleteWorkflowTemplate(firebaseApp, workflowId);
+deleteWorkflowTemplate(firebaseApp, workflowCode);
 ```
 
-### Employees
+### Members
 
 ```typescript
 // Tạo nhân viên
-createEmployee(firebaseApp, {
+createMember(firebaseApp, {
   name: "Nguyễn Văn A",
   role: "worker",
 });
 
 // Cập nhật nhân viên
-updateEmployee(firebaseApp, employeeId, { role: "manager" });
+updateMember(firebaseApp, memberId, { role: "manager" });
 
 // Xóa nhân viên
-deleteEmployee(firebaseApp, employeeId);
+deleteMember(firebaseApp, memberId);
 ```
 
 ### Orders
@@ -275,11 +275,11 @@ updateStepProgress(firebaseApp, {
 });
 
 // Thêm/xóa nhân viên khỏi step
-updateStepEmployees(firebaseApp, {
+updateStepMembers(firebaseApp, {
   orderId: "orderId001",
   productId: "productId001",
   stepId: "step1",
-  employeeId: "empId002",
+  memberId: "empId002",
   action: "add", // or 'remove'
 });
 ```
@@ -294,7 +294,7 @@ Hook cơ bản để lắng nghe một path trong Realtime Database:
 
 ```typescript
 const { data, isLoading, error } = useRealtimeValue<WorkflowTemplate>(
-  "workflows/workflowId001"
+  "workflows/workflowCode001"
 );
 ```
 
@@ -308,7 +308,7 @@ const {
   isLoading,
   error,
 } = useRealtimeList<WorkflowTemplate>("workflows");
-// data = [{id: 'workflowId001', name: 'Cắt vải', ...}, ...]
+// data = [{id: 'workflowCode001', name: 'Cắt vải', ...}, ...]
 ```
 
 ### useRealtimeDoc
@@ -329,15 +329,15 @@ const { data, isLoading, error } = useRealtimeDoc<Order>("orders/orderId001");
 Quản lý workflow templates (CRUD operations).
 
 ```tsx
-<WorkflowTemplateManager employees={employees} />
+<WorkflowTemplateManager members={members} />
 ```
 
-### EmployeeManager
+### MemberManager
 
 Quản lý nhân viên (CRUD operations).
 
 ```tsx
-<EmployeeManager />
+<MemberManager />
 ```
 
 ### CreateOrderModal
@@ -349,7 +349,7 @@ Modal tạo đơn hàng mới với products và workflow clone.
   open={isOpen}
   onClose={handleClose}
   workflows={workflows}
-  employees={employees}
+  members={members}
   currentUserId="userId"
 />
 ```
@@ -359,7 +359,7 @@ Modal tạo đơn hàng mới với products và workflow clone.
 Kanban board để tracking workflow steps realtime.
 
 ```tsx
-<WorkflowKanban orders={orders} employees={employees} />
+<WorkflowKanban orders={orders} members={members} />
 ```
 
 ---

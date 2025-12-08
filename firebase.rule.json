@@ -14,8 +14,8 @@
               ".read": "auth != null",
               ".write": "auth != null",
 
-              "stages": {
-                "$stageId": {
+              "workflows": {
+                "$workflowCode": {
                   ".read": "auth != null",
                   ".write": "auth != null"
                 }
@@ -25,8 +25,8 @@
         }
       },
 
-      "stages": {
-        "$stageId": {
+      "workflows": {
+        "$workflowCode": {
           ".read": "auth != null",
           ".write": "auth != null"
         }

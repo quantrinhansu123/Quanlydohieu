@@ -3,11 +3,11 @@
 import { useFirebaseApp } from "@/firebase";
 import { useRealtimeList } from "@/firebase/hooks/useRealtime";
 import {
-  createStage,
-  deleteStage,
-  updateStage,
+  createWorkflow,
+  deleteWorkflow,
+  updateWorkflow,
 } from "@/services/workflowService";
-import type { Staff, Stage } from "@/types/workflow";
+import type { Staff, Workflow } from "@/types/workflow";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   Button,
@@ -24,32 +24,32 @@ import {
 import type { ColumnsType } from "antd/es/table";
 import { useState } from "react";
 
-interface StageManagerProps {
+interface WorkflowManagerProps {
   staff: Staff[];
 }
 
-export default function StageManager({ staff }: StageManagerProps) {
+export default function WorkflowManager({ staff }: WorkflowManagerProps) {
   const firebaseApp = useFirebaseApp();
-  const { data: stages, isLoading } =
-    useRealtimeList<Omit<Stage, "id">>("xoxo/stages");
+  const { data: workflows, isLoading } =
+    useRealtimeList<Omit<Workflow, "id">>("xoxo/workflows");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingStage, setEditingStage] = useState<Stage | null>(null);
+  const [editingWorkflow, setEditingWorkflow] = useState<Workflow | null>(null);
   const [form] = Form.useForm();
   const [submitting, setSubmitting] = useState(false);
 
   // ========== HANDLERS ==========
 
-  const handleOpenModal = (stage?: Stage) => {
-    if (stage) {
-      setEditingStage(stage);
+  const handleOpenModal = (workflow?: Workflow) => {
+    if (workflow) {
+      setEditingWorkflow(workflow);
       form.setFieldsValue({
-        name: stage.name,
-        defaultStaff: stage.defaultStaff || [],
-        order: stage.order || 0,
+        name: workflow.name,
+        defaultStaff: workflow.defaultStaff || [],
+        order: workflow.order || 0,
       });
     } else {
-      setEditingStage(null);
+      setEditingWorkflow(null);
       form.resetFields();
     }
     setIsModalOpen(true);
@@ -57,7 +57,7 @@ export default function StageManager({ staff }: StageManagerProps) {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setEditingStage(null);
+    setEditingWorkflow(null);
     form.resetFields();
   };
 
@@ -66,36 +66,36 @@ export default function StageManager({ staff }: StageManagerProps) {
       const values = await form.validateFields();
       setSubmitting(true);
 
-      if (editingStage) {
-        await updateStage(firebaseApp, editingStage.id, values);
+      if (editingWorkflow) {
+        await updateWorkflow(firebaseApp, editingWorkflow.id, values);
         message.success("Cập nhật công đoạn thành công!");
       } else {
-        await createStage(firebaseApp, values);
+        await createWorkflow(firebaseApp, values);
         message.success("Tạo công đoạn mới thành công!");
       }
 
       handleCloseModal();
     } catch (error) {
-      console.error("Error submitting stage:", error);
+      console.error("Error submitting workflow:", error);
       message.error("Có lỗi xảy ra, vui lòng thử lại!");
     } finally {
       setSubmitting(false);
     }
   };
 
-  const handleDelete = async (stageId: string) => {
+  const handleDelete = async (workflowCode: string) => {
     try {
-      await deleteStage(firebaseApp, stageId);
+      await deleteWorkflow(firebaseApp, workflowCode);
       message.success("Xóa công đoạn thành công!");
     } catch (error) {
-      console.error("Error deleting stage:", error);
+      console.error("Error deleting workflow:", error);
       message.error("Có lỗi xảy ra, vui lòng thử lại!");
     }
   };
 
   // ========== TABLE COLUMNS ==========
 
-  const columns: ColumnsType<Stage> = [
+  const columns: ColumnsType<Workflow> = [
     {
       title: "Thứ tự",
       dataIndex: "order",
@@ -194,7 +194,7 @@ export default function StageManager({ staff }: StageManagerProps) {
 
       <Table
         columns={columns}
-        dataSource={stages || []}
+        dataSource={workflows || []}
         loading={isLoading}
         rowKey="id"
         pagination={{
@@ -206,13 +206,13 @@ export default function StageManager({ staff }: StageManagerProps) {
 
       {/* Create/Edit Modal */}
       <Modal
-        title={editingStage ? "Chỉnh sửa công đoạn" : "Thêm công đoạn mới"}
+        title={editingWorkflow ? "Chỉnh sửa công đoạn" : "Thêm công đoạn mới"}
         open={isModalOpen}
         onOk={handleSubmit}
         onCancel={handleCloseModal}
         confirmLoading={submitting}
         width={600}
-        okText={editingStage ? "Cập nhật" : "Tạo mới"}
+        okText={editingWorkflow ? "Cập nhật" : "Tạo mới"}
         cancelText="Hủy"
       >
         <Form form={form} layout="vertical" className="mt-4">

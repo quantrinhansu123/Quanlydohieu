@@ -38,6 +38,7 @@ export default function AuthPage() {
           </p>
         </div>
         {renderView()}
+        
       </div>
     </div>
   );

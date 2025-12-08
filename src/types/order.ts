@@ -1,38 +1,46 @@
-import { DiscountType } from "@/types/enum";
+import { CustomerSource, DiscountType } from "@/types/enum";
+import { IMembers } from "@/types/members";
 import type { UploadFile } from "antd/es/upload/interface";
 import type { Dayjs } from "dayjs";
 
 export enum OrderStatus {
   PENDING = "pending",
   IN_PROGRESS = "in_progress",
+  ON_HOLD = "on_hold",
   COMPLETED = "completed",
   CANCELLED = "cancelled",
 }
 // Basic interfaces for Firebase data structure
-export interface Staff {
-  name: string;
-  role: string;
-}
 
 export interface Workflow {
   name: string;
+  department?: string;
 }
 
 export interface FirebaseStaff {
-  [key: string]: Staff;
+  [key: string]: IMembers;
 }
 
 export interface FirebaseWorkflows {
   [key: string]: Workflow;
 }
 
-// Stage and Product data structures
-export interface StageData {
+export interface FirebaseDepartments {
+  [key: string]: {
+    code: string;
+    name: string;
+    createdAt?: number;
+    updatedAt?: number;
+  };
+}
+
+// Workflow and Product data structures
+export interface WorkflowData {
   id: string;
-  stageId: string;
-  stageName: string;
-  employees: string[];
-  status: string;
+  workflowCode: string;
+  workflowName: string;
+  members: string[];
+  isDone: boolean;
 }
 
 export interface ProductData {
@@ -40,22 +48,22 @@ export interface ProductData {
   name: string;
   quantity: number;
   price: number;
+  commissionPercentage?: number; // Optional commission percentage for staff
   images: (UploadFile & { firebaseUrl?: string })[];
-  stages: StageData[];
+  workflows: WorkflowData[];
 }
-export enum StageStatus {
+export enum WorkflowStatus {
   Pending = "pending",
   InProgress = "in_progress",
   Completed = "completed",
 }
 
 // Firebase storage data structures
-export interface FirebaseStageData {
-  workflowId: string;
+export interface FirebaseWorkflowData {
+  workflowCode: string;
   workflowName: string;
-  name: string;
-  employees: string[];
-  status: StageStatus;
+  members: string[];
+  isDone: boolean;
   updatedAt: number;
 }
 
@@ -63,6 +71,7 @@ export interface FirebaseProductData {
   name: string;
   quantity: number;
   price: number;
+  commissionPercentage?: number; // Optional commission percentage for staff
   images: Array<{
     uid: string;
     name: string;
@@ -73,30 +82,10 @@ export interface FirebaseProductData {
     name: string;
     url: string;
   }>;
-  stages: Record<string, FirebaseStageData>;
+  workflows: Record<string, FirebaseWorkflowData>;
 }
 
-export interface Order {
-  id: string;              // Firebase document ID
-  orderId: string;
-  customerName: string;
-  address: string;
-  phone: string;
-  email: string;
-  orderDate: number;       // timestamp
-  deliveryDate: number;    // timestamp
-  createdAt: number;       // timestamp
-  createdBy: string;
-  createdByName: string;
-  discount: number;
-  discountType: DiscountType;
-  notes: string;
-  products: Record<string, FirebaseProductData>;
-  code: string;
-  status: OrderStatus;     // Order status
-  shippingFee?: number;
-  updatedAt?: number;      // timestamp
-}
+
 
 export interface ProcessedProductData {
   id: string;
@@ -109,20 +98,22 @@ export interface ProcessedProductData {
     firebaseUrl?: string;
     error?: boolean;
   }>;
-  stages: StageData[];
+  workflows: WorkflowData[];
 }
 
 export interface FirebaseOrderData {
-  orderId: string;
   code: string;
   customerName: string;
   phone: string;
   email: string;
   address: string;
+  customerSource: CustomerSource;
   orderDate: number;
   deliveryDate: number;
   createdBy: string;
   createdByName: string;
+  consultantId?: string;
+  consultantName?: string;
   createdAt?: number;
   updatedAt?: number;
   notes?: string;
@@ -131,6 +122,9 @@ export interface FirebaseOrderData {
   shippingFee?: number;
   products: Record<string, FirebaseProductData>;
     status?: OrderStatus;
+    totalAmount?: number;
+    discountAmount?: number;
+    subtotal?: number;
 }
 
 // Form related interfaces
@@ -140,21 +134,24 @@ export interface FormValues {
   phone: string;
   email: string;
   address: string;
+  customerSource: CustomerSource;
   orderDate: Dayjs;
   deliveryDate: Dayjs;
-  createdBy?: string;
-  createdByName?: string;
+  createdBy: string;
+  createdByName: string;
+  consultantId?: string;
   notes?: string;
   discount?: number;
   discountType?: DiscountType;
   shippingFee?: number;
     status?: OrderStatus;
+    totalAmount?: number;
 }
 
 export interface OrderFormProps {
   mode: "create" | "update";
-  orderId?: string;
-  onSuccess?: (orderId: string) => void;
+  orderCode?: string;
+  onSuccess?: (orderCode: string) => void;
   onCancel?: () => void;
 }
 
@@ -164,6 +161,8 @@ export interface ProductCardProps {
   onUpdate: (product: ProductData) => void;
   onRemove: () => void;
   staffOptions: Array<{ value: string; label: string }>;
-  stageOptions: Array<{ value: string; label: string }>;
+  workflowOptions: Array<{ value: string; label: string }>;
   workflows: FirebaseWorkflows;
+  staff: FirebaseStaff;
+  departments: FirebaseDepartments;
 }

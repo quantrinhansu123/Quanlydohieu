@@ -25,7 +25,7 @@ console.log(
   "1. copyToClipboard(JSON.stringify(mockData.workflows, null, 2)) - for workflows"
 );
 console.log(
-  "2. copyToClipboard(JSON.stringify(mockData.employees, null, 2)) - for employees"
+  "2. copyToClipboard(JSON.stringify(mockData.members, null, 2)) - for members"
 );
 console.log(
   "3. copyToClipboard(JSON.stringify(mockData.orders, null, 2)) - for orders"

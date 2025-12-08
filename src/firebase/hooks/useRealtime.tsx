@@ -28,7 +28,7 @@ export interface UseRealtimeValueResult<T> {
  * Can handle both single values and object maps.
  *
  * @template T Optional type for data. Defaults to any.
- * @param {string | null | undefined} path - The database path (e.g., 'workflows' or 'orders/orderId001')
+ * @param {string | null | undefined} path - The database path (e.g., 'workflows' or 'orders/orderCode001')
  * @returns {UseRealtimeValueResult<T>} Object with data, isLoading, error.
  */
 export function useRealtimeValue<T = any>(

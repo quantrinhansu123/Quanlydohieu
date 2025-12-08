@@ -59,12 +59,12 @@ interface ProductItem {
 
 interface ProductTracking {
   id: string;
-  orderId: string;
+  orderCode: string;
   invoiceNumber: string;
   customer: string;
   items: ProductItem[];
-  currentStage: string;
-  stageProgress: number;
+  currentWorkflow: string;
+  workflowProgress: number;
   status:
     | "in_progress"
     | "completed"
@@ -79,7 +79,7 @@ interface ProductTracking {
   completedDate?: string;
   estimatedDays: number;
   actualDays?: number;
-  stages: {
+  workflows: {
     name: string;
     status: "wait" | "process" | "finish" | "error";
     department: string;
@@ -115,7 +115,7 @@ interface ProductTracking {
 const mockProductTracking: ProductTracking[] = [
   {
     id: "1",
-    orderId: "DH-2024-001",
+    orderCode: "DH-2024-001",
     invoiceNumber: "HD-2024-001",
     customer: "Nguyễn Văn A",
     items: [
@@ -150,8 +150,8 @@ const mockProductTracking: ProductTracking[] = [
         },
       },
     ],
-    currentStage: "Phục hồi màu",
-    stageProgress: 60,
+    currentWorkflow: "Phục hồi màu",
+    workflowProgress: 60,
     status: "in_progress",
     priority: "high",
     department: "Phòng phục hồi màu",
@@ -159,7 +159,7 @@ const mockProductTracking: ProductTracking[] = [
     startDate: "2024-12-01 08:00",
     dueDate: "2024-12-05 17:00",
     estimatedDays: 4,
-    stages: [
+    workflows: [
       {
         name: "Tiếp nhận",
         status: "finish",
@@ -246,7 +246,7 @@ const mockProductTracking: ProductTracking[] = [
   },
   {
     id: "2",
-    orderId: "DH-2024-002",
+    orderCode: "DH-2024-002",
     invoiceNumber: "HD-2024-002",
     customer: "Trần Thị B",
     items: [
@@ -269,8 +269,8 @@ const mockProductTracking: ProductTracking[] = [
         },
       },
     ],
-    currentStage: "Hoàn thành",
-    stageProgress: 100,
+    currentWorkflow: "Hoàn thành",
+    workflowProgress: 100,
     status: "completed",
     priority: "medium",
     department: "QC",
@@ -280,7 +280,7 @@ const mockProductTracking: ProductTracking[] = [
     completedDate: "2024-12-01 15:30",
     estimatedDays: 3,
     actualDays: 3,
-    stages: [
+    workflows: [
       {
         name: "Tiếp nhận",
         status: "finish",
@@ -394,7 +394,7 @@ const mockProductTracking: ProductTracking[] = [
   },
   {
     id: "3",
-    orderId: "DH-2024-003",
+    orderCode: "DH-2024-003",
     invoiceNumber: "HD-2024-003",
     customer: "Lê Văn C",
     items: [
@@ -411,8 +411,8 @@ const mockProductTracking: ProductTracking[] = [
         },
       },
     ],
-    currentStage: "Vệ sinh",
-    stageProgress: 20,
+    currentWorkflow: "Vệ sinh",
+    workflowProgress: 20,
     status: "problem",
     priority: "high",
     department: "Phòng vệ sinh",
@@ -420,7 +420,7 @@ const mockProductTracking: ProductTracking[] = [
     startDate: "2024-12-02 08:00",
     dueDate: "2024-12-04 17:00",
     estimatedDays: 2,
-    stages: [
+    workflows: [
       {
         name: "Tiếp nhận",
         status: "finish",
@@ -484,7 +484,7 @@ const mockProductTracking: ProductTracking[] = [
   },
   {
     id: "4",
-    orderId: "DH-2024-004",
+    orderCode: "DH-2024-004",
     invoiceNumber: "HD-2024-004",
     customer: "Phạm Thị D",
     items: [
@@ -504,8 +504,8 @@ const mockProductTracking: ProductTracking[] = [
         },
       },
     ],
-    currentStage: "Chưa bắt đầu",
-    stageProgress: 0,
+    currentWorkflow: "Chưa bắt đầu",
+    workflowProgress: 0,
     status: "in_progress",
     priority: "low",
     department: "Lễ tân",
@@ -513,7 +513,7 @@ const mockProductTracking: ProductTracking[] = [
     startDate: "2024-12-03 10:00",
     dueDate: "2024-12-06 17:00",
     estimatedDays: 3,
-    stages: [
+    workflows: [
       {
         name: "Tiếp nhận",
         status: "finish",
@@ -554,7 +554,7 @@ const mockProductTracking: ProductTracking[] = [
   },
   {
     id: "5",
-    orderId: "DH-2024-005",
+    orderCode: "DH-2024-005",
     invoiceNumber: "HD-2024-005",
     customer: "Hoàng Văn E",
     items: [
@@ -571,8 +571,8 @@ const mockProductTracking: ProductTracking[] = [
         },
       },
     ],
-    currentStage: "Hoàn thành",
-    stageProgress: 100,
+    currentWorkflow: "Hoàn thành",
+    workflowProgress: 100,
     status: "complaint",
     priority: "high",
     department: "CSKH",
@@ -582,7 +582,7 @@ const mockProductTracking: ProductTracking[] = [
     completedDate: "2024-11-28 16:00",
     estimatedDays: 3,
     actualDays: 3,
-    stages: [
+    workflows: [
       {
         name: "Tiếp nhận",
         status: "finish",
@@ -717,7 +717,7 @@ const ProductTrackingDetailDrawer: React.FC<
         <Descriptions bordered column={2} size="small">
           <Descriptions.Item label="Đơn hàng" span={2}>
             <Space>
-              <Text strong>{data.orderId}</Text>
+              <Text strong>{data.orderCode}</Text>
               <Text className="text-gray-500">({data.invoiceNumber})</Text>
             </Space>
           </Descriptions.Item>
@@ -741,7 +741,7 @@ const ProductTrackingDetailDrawer: React.FC<
             </Tag>
           </Descriptions.Item>
           <Descriptions.Item label="Giai đoạn hiện tại">
-            <Text strong>{data.currentStage}</Text>
+            <Text strong>{data.currentWorkflow}</Text>
           </Descriptions.Item>
           <Descriptions.Item label="Bộ phận">
             <Text>{data.department}</Text>
@@ -754,10 +754,10 @@ const ProductTrackingDetailDrawer: React.FC<
           </Descriptions.Item>
           <Descriptions.Item label="Tiến độ">
             <Space vertical size="small" className="w-full">
-              <Progress percent={data.stageProgress} size="small" />
+              <Progress percent={data.workflowProgress} size="small" />
               <Text className="text-xs text-gray-500">
-                {data.stages.filter((s) => s.status === "finish").length} /{" "}
-                {data.stages.length} giai đoạn
+                {data.workflows.filter((s) => s.status === "finish").length} /{" "}
+                {data.workflows.length} giai đoạn
               </Text>
             </Space>
           </Descriptions.Item>
@@ -940,41 +940,41 @@ const ProductTrackingDetailDrawer: React.FC<
         </Space>
       </Card>
 
-      {/* Stages Progress */}
+      {/* Workflows Progress */}
       <Card size="small" title="Hành trình sản phẩm">
         <Steps
           orientation="vertical"
           size="small"
-          current={data.stages.findIndex((s) => s.status === "process")}
-          items={data.stages.map((stage) => ({
-            title: stage.name,
+          current={data.workflows.findIndex((s) => s.status === "process")}
+          items={data.workflows.map((workflow) => ({
+            title: workflow.name,
             status:
-              stage.status === "finish"
+              workflow.status === "finish"
                 ? "finish"
-                : stage.status === "process"
+                : workflow.status === "process"
                 ? "process"
-                : stage.status === "error"
+                : workflow.status === "error"
                 ? "error"
                 : "wait",
             description: (
               <Space vertical size={0}>
                 <Text className="text-xs">
-                  <TeamOutlined /> {stage.department} - {stage.technician}
+                  <TeamOutlined /> {workflow.department} - {workflow.technician}
                 </Text>
-                {stage.startTime && (
+                {workflow.startTime && (
                   <Text className="text-xs text-gray-500">
-                    Bắt đầu: {dayjs(stage.startTime).format("DD/MM HH:mm")}
+                    Bắt đầu: {dayjs(workflow.startTime).format("DD/MM HH:mm")}
                   </Text>
                 )}
-                {stage.endTime && (
+                {workflow.endTime && (
                   <Text className="text-xs text-gray-500">
-                    Kết thúc: {dayjs(stage.endTime).format("DD/MM HH:mm")} (
-                    {stage.duration}h)
+                    Kết thúc: {dayjs(workflow.endTime).format("DD/MM HH:mm")} (
+                    {workflow.duration}h)
                   </Text>
                 )}
-                {stage.notes && (
+                {workflow.notes && (
                   <Text className="text-xs italic text-orange-600">
-                    {stage.notes}
+                    {workflow.notes}
                   </Text>
                 )}
               </Space>
@@ -1230,7 +1230,7 @@ export default function ProductTrackingPage() {
       render: (_: unknown, record: ProductTracking) => (
         <Space vertical size={0}>
           <Text strong className="text-sm">
-            {record.orderId}
+            {record.orderCode}
           </Text>
           <Text className="text-xs text-gray-500">{record.invoiceNumber}</Text>
           <Text className="text-xs">{record.customer}</Text>
@@ -1260,15 +1260,15 @@ export default function ProductTrackingPage() {
     },
     {
       title: "Giai đoạn hiện tại",
-      dataIndex: "currentStage",
-      key: "currentStage",
+      dataIndex: "currentWorkflow",
+      key: "currentWorkflow",
       width: 180,
-      render: (stage: string, record: ProductTracking) => (
+      render: (workflow: string, record: ProductTracking) => (
         <Space vertical size="small" className="w-full">
           <Text strong className="text-sm">
-            {stage}
+            {workflow}
           </Text>
-          <Progress percent={record.stageProgress} size="small" />
+          <Progress percent={record.workflowProgress} size="small" />
         </Space>
       ),
     },
@@ -1389,13 +1389,13 @@ export default function ProductTrackingPage() {
               >
                 <Space vertical size="small" className="w-full">
                   <Text strong className="text-sm">
-                    {product.orderId}
+                    {product.orderCode}
                   </Text>
                   <Text className="text-xs text-gray-500">
                     {product.customer}
                   </Text>
-                  <Text className="text-xs">{product.currentStage}</Text>
-                  <Progress percent={product.stageProgress} size="small" />
+                  <Text className="text-xs">{product.currentWorkflow}</Text>
+                  <Progress percent={product.workflowProgress} size="small" />
                   <div className="flex items-center justify-between">
                     <Tag
                       color={getPriorityColor(product.priority)}
@@ -1467,7 +1467,7 @@ export default function ProductTrackingPage() {
       header={{
         searchInput: {
           placeholder: "Tìm kiếm đơn hàng, khách hàng, sản phẩm...",
-          filterKeys: ["orderId", "invoiceNumber", "customer"],
+          filterKeys: ["orderCode", "invoiceNumber", "customer"],
         },
         filters: {
           fields: filterFields,

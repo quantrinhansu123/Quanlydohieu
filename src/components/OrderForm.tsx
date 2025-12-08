@@ -1,26 +1,38 @@
 "use client";
 
 import { useUser } from "@/firebase/provider";
-import { DiscountType } from "@/types/enum";
+import {
+  CustomerSource,
+  CustomerSourceOptions,
+  DiscountType,
+  ROLES,
+} from "@/types/enum";
 import {
   OrderStatus,
+  type FirebaseDepartments,
   type FirebaseOrderData,
   type FirebaseProductData,
   type FirebaseStaff,
-  type FirebaseStageData,
+  type FirebaseWorkflowData,
   type FirebaseWorkflows,
   type FormValues,
   type OrderFormProps,
   type ProductCardProps,
   type ProductData,
-  type Staff,
-  type StageData,
   type Workflow,
+  type WorkflowData,
 } from "@/types/order";
+import { calculateOrderTotals } from "@/utils/calcultateOrderTotals";
+import { generateRandomCode } from "@/utils/generateRandomCode";
 import { getBase64 } from "@/utils/getBase64";
+import { groupMembersByRole } from "@/utils/membersMapRole";
 import {
+  CloseOutlined,
   DeleteOutlined,
+  LoadingOutlined,
   PlusOutlined,
+  ReloadOutlined,
+  SaveOutlined,
   ShoppingCartOutlined,
   TagOutlined,
   UploadOutlined,
@@ -30,6 +42,7 @@ import {
   App,
   Button,
   Card,
+  Checkbox,
   Col,
   DatePicker,
   Empty,
@@ -50,12 +63,23 @@ import {
   getDatabase,
   off,
   onValue,
-  push,
+  set,
   update,
 } from "firebase/database";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import {
+  getDownloadURL,
+  getStorage,
+  ref as storageRef,
+  uploadBytes,
+} from "firebase/storage";
 import { Wrench } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -71,54 +95,53 @@ const ProductCard: React.FC<ProductCardProps> = ({
   onUpdate,
   onRemove,
   staffOptions,
-  stageOptions,
+  workflowOptions,
   workflows,
+  staff,
+  departments,
 }) => {
   const { message } = App.useApp();
 
-  const addStage = () => {
-    const newStageId = `STAGE_${new Date().getTime()}`;
-    const firstWorkflowId = Object.keys(workflows)[0] || "";
-    const firstWorkflowName = workflows[firstWorkflowId]?.name || "";
-    const newStage: StageData = {
-      id: newStageId,
-      stageId: firstWorkflowId,
-      stageName: firstWorkflowName,
-      employees: [],
-      status: "pending",
-    };
+  const addWorkflow = () => {
+    const newWorkflowCode = `STAGE_${new Date().getTime()}`;
+    const newWorkflow: WorkflowData = {
+      id: newWorkflowCode,
+      members: [],
+      isDone: false,
+    } as any;
     onUpdate({
       ...product,
-      stages: [...product.stages, newStage],
+      workflows: [...product.workflows, newWorkflow],
     });
   };
 
-  const updateStage = (
-    stageIndex: number,
+  const updateWorkflow = (
+    workflowIndex: number,
     field: string,
-    value: string | string[]
+    value: string | string[] | boolean
   ) => {
-    const updatedStages = [...product.stages];
-    if (field === "stageId" && typeof value === "string") {
-      updatedStages[stageIndex] = {
-        ...updatedStages[stageIndex],
-        stageId: value,
-        stageName: workflows[value]?.name || "",
+    const updatedWorkflows = [...product.workflows];
+    if (field === "workflowCode" && typeof value === "string") {
+      updatedWorkflows[workflowIndex] = {
+        ...updatedWorkflows[workflowIndex],
+        workflowCode: value,
+        workflowName: workflows[value]?.name || "",
+        members: [], // Clear members when workflow changes
       };
     } else {
-      updatedStages[stageIndex] = {
-        ...updatedStages[stageIndex],
+      updatedWorkflows[workflowIndex] = {
+        ...updatedWorkflows[workflowIndex],
         [field]: value,
       };
     }
-    onUpdate({ ...product, stages: updatedStages });
+    onUpdate({ ...product, workflows: updatedWorkflows });
   };
 
-  const removeStage = (stageIndex: number) => {
-    const updatedStages = product.stages.filter(
-      (_, index: number) => index !== stageIndex
+  const removeWorkflow = (workflowIndex: number) => {
+    const updatedWorkflows = product.workflows.filter(
+      (_, index: number) => index !== workflowIndex
     );
-    onUpdate({ ...product, stages: updatedStages });
+    onUpdate({ ...product, workflows: updatedWorkflows });
   };
 
   const updateProduct = (
@@ -152,7 +175,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       <div className="space-y-4">
         {/* Product Basic Info */}
         <Row gutter={16}>
-          <Col span={12}>
+          <Col span={10}>
             <div className="space-y-2 flex flex-col">
               <Text strong className="text-gray-700">
                 Tên sản phẩm <Text type="danger">*</Text>
@@ -171,7 +194,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               )}
             </div>
           </Col>
-          <Col span={6}>
+          <Col span={4}>
             <div className="space-y-2 flex flex-col">
               <Text strong className="text-gray-700">
                 Số lượng <Text type="danger">*</Text>
@@ -193,7 +216,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               )}
             </div>
           </Col>
-          <Col span={6}>
+          <Col span={5}>
             <div className="space-y-2 flex flex-col">
               <Text strong className="text-gray-700">
                 Giá (VNĐ) <Text type="danger">*</Text>
@@ -218,6 +241,38 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   Vui lòng nhập giá sản phẩm
                 </Text>
               )}
+            </div>
+          </Col>
+          <Col span={5}>
+            <div className="space-y-2 flex flex-col">
+              <Text strong className="text-gray-700">
+                Hoa hồng (%){" "}
+                <Text type="secondary" className="text-xs">
+                  (Tùy chọn)
+                </Text>
+              </Text>
+              <InputNumber
+                min={0}
+                max={100}
+                placeholder="0"
+                value={product.commissionPercentage || 0}
+                onChange={(value) =>
+                  updateProduct("commissionPercentage", value || 0)
+                }
+                formatter={(value) => `${value}%`}
+                parser={(value) => Number(value?.replace("%", "") || 0) as any}
+                className="w-full"
+                step={0.1}
+                precision={1}
+              />
+              <Text type="secondary" className="text-xs">
+                {product.commissionPercentage && product.price
+                  ? `≈ ${(
+                      (product.price * (product.commissionPercentage || 0)) /
+                      100
+                    ).toLocaleString("vi-VN")} VNĐ`
+                  : "Nhập % hoa hồng"}
+              </Text>
             </div>
           </Col>
         </Row>
@@ -307,23 +362,23 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <div className="h-px bg-gray-200 flex-1"></div>
         </div>
 
-        {/* Stages Table */}
-        {product.stages.length > 0 ? (
+        {/* Workflows Table */}
+        {product.workflows.length > 0 ? (
           <div className="overflow-hidden rounded-lg border border-gray-200 mb-4">
             <Table
-              dataSource={product.stages.map(
-                (stage: StageData, index: number) => ({
-                  ...stage,
-                  key: stage.id,
+              dataSource={product.workflows.map(
+                (workflow: WorkflowData, index: number) => ({
+                  ...workflow,
+                  key: workflow.id,
                   stt: index + 1,
                 })
               )}
               pagination={false}
               size="small"
-              className="stages-table"
+              className="workflows-table"
               columns={[
                 {
-                  title: "Công đoạn",
+                  title: "#",
                   dataIndex: "stt",
                   key: "stt",
                   width: 60,
@@ -335,54 +390,105 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   ),
                 },
                 {
-                  title: "Công việc",
-                  dataIndex: "stageId",
-                  key: "stageId",
+                  title: "Công đoạn",
+                  dataIndex: "workflowCode",
+                  key: "workflowCode",
                   width: "25%",
                   render: (value, record, index) => (
                     <Select
                       value={value}
+                      placeholder="Chọn công đoạn"
                       onChange={(newValue) =>
-                        updateStage(index, "stageId", newValue)
+                        updateWorkflow(index, "workflowCode", newValue)
                       }
                       className="w-full"
                       size="small"
                     >
-                      {stageOptions.map(
-                        (option: { value: string; label: string }) => (
-                          <Option key={option.value} value={option.value}>
-                            {option.label}
-                          </Option>
-                        )
+                      {workflowOptions.map(
+                        (option: { value: string; label: string }) => {
+                          const workflow = workflows[option.value];
+                          const departmentCode = workflow?.department || "";
+                          const departmentName =
+                            departments[departmentCode]?.name ||
+                            "Chưa có phòng ban";
+
+                          return (
+                            <Option key={option.value} value={option.value}>
+                              {option.label}{" "}
+                              {departmentName && `- [${departmentName}]`}
+                            </Option>
+                          );
+                        }
                       )}
                     </Select>
                   ),
                 },
                 {
                   title: "Nhân viên thực hiện",
-                  dataIndex: "employees",
-                  key: "employees",
+                  dataIndex: "members",
+                  key: "members",
                   width: "35%",
-                  render: (value, record, index) => (
-                    <Select
-                      mode="multiple"
-                      placeholder="Chọn nhân viên"
-                      value={value}
-                      onChange={(newValue) =>
-                        updateStage(index, "employees", newValue)
-                      }
-                      className="w-full"
-                      size="small"
-                      maxTagCount={2}
-                    >
-                      {staffOptions.map(
-                        (option: { value: string; label: string }) => (
-                          <Option key={option.value} value={option.value}>
-                            {option.label}
-                          </Option>
+                  render: (value, record, index) => {
+                    const selectedWorkflow = workflows[record.workflowCode];
+                    const departmentCode = selectedWorkflow?.department;
+
+                    // Filter staff by department if workflow is selected
+                    const filteredStaffOptions = departmentCode
+                      ? staffOptions.filter(
+                          (option: {
+                            value: string;
+                            label: string;
+                            departmentCodes?: string[];
+                          }) => {
+                            const staffMember = staff[option.value];
+                            return staffMember?.departments?.includes(
+                              departmentCode
+                            );
+                          }
                         )
-                      )}
-                    </Select>
+                      : [];
+
+                    return (
+                      <Select
+                        mode="multiple"
+                        placeholder={
+                          record.workflowCode
+                            ? "Chọn nhân viên"
+                            : "Chọn công đoạn trước"
+                        }
+                        value={value}
+                        onChange={(newValue) =>
+                          updateWorkflow(index, "members", newValue)
+                        }
+                        className="w-full"
+                        size="small"
+                        maxTagCount={2}
+                        disabled={!record.workflowCode}
+                      >
+                        {filteredStaffOptions.map(
+                          (option: { value: string; label: string }) => (
+                            <Option key={option.value} value={option.value}>
+                              {option.label}
+                            </Option>
+                          )
+                        )}
+                      </Select>
+                    );
+                  },
+                },
+                {
+                  title: "Trạng thái",
+                  dataIndex: "isDone",
+                  key: "isDone",
+                  width: "35%",
+                  hidden: true,
+                  render: (value, record, index) => (
+                    <Checkbox
+                      checked={value}
+                      onChange={(e) =>
+                        updateWorkflow(index, "isDone", e.target.checked)
+                      }
+                    />
                   ),
                 },
                 {
@@ -396,7 +502,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                       danger
                       size="small"
                       icon={<DeleteOutlined />}
-                      onClick={() => removeStage(index)}
+                      onClick={() => removeWorkflow(index)}
                       className="hover:bg-red-50"
                     />
                   ),
@@ -415,7 +521,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <Button
           type="dashed"
           icon={<PlusOutlined />}
-          onClick={addStage}
+          onClick={addWorkflow}
           className="w-full border-blue-300 text-primary hover:border-blue-500 hover:text-primary"
         >
           Thêm công đoạn
@@ -425,493 +531,653 @@ const ProductCard: React.FC<ProductCardProps> = ({
   );
 };
 
-const OrderForm: React.FC<OrderFormProps> = ({
-  mode,
-  orderId,
-  onSuccess,
-  onCancel,
-}) => {
-  const [form] = Form.useForm();
-  const [products, setProducts] = useState<ProductData[]>([]);
-  const [staff, setStaff] = useState<FirebaseStaff>({});
-  const [workflows, setWorkflows] = useState<FirebaseWorkflows>({});
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const { user } = useUser();
-  const { message } = App.useApp();
+interface ChildHandle {
+  onResetForm: () => void;
+}
 
-  // Load staff and workflows from Firebase
-  useEffect(() => {
-    const database = getDatabase();
-    const staffRef = dbRef(database, "xoxo/employees");
-    const workflowsRef = dbRef(database, "xoxo/workflows");
+const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
+  ({ mode, orderCode, onSuccess, onCancel }, ref) => {
+    const [form] = Form.useForm();
+    const [products, setProducts] = useState<ProductData[]>([]);
+    const [staff, setStaff] = useState<FirebaseStaff>({});
+    const [workflows, setWorkflows] = useState<FirebaseWorkflows>({});
+    const [departments, setDepartments] = useState<FirebaseDepartments>({});
+    const [loading, setLoading] = useState(true);
+    const [submitting, setSubmitting] = useState(false);
+    const { user } = useUser();
+    const { message } = App.useApp();
 
-    const loadData = async () => {
-      try {
-        onValue(staffRef, (snapshot) => {
-          const staffData = snapshot.val() || {};
-          setStaff(staffData);
+    // Calculate total amount and update form when dependencies change
+    const totalAmount = React.useMemo(() => {
+      const subtotal = products.reduce(
+        (sum, product) => sum + product.quantity * product.price,
+        0
+      );
+      const discount = form.getFieldValue("discount") || 0;
+      const discountType =
+        form.getFieldValue("discountType") || DiscountType.Amount;
+      const shippingFee = form.getFieldValue("shippingFee") || 0;
+      const discountAmount =
+        discountType === DiscountType.Percentage
+          ? (subtotal * discount) / 100
+          : discount;
+      return subtotal - discountAmount + shippingFee;
+    }, [products, form]);
+
+    // Update form field when total changes
+    React.useEffect(() => {
+      form.setFieldsValue({ totalAmount });
+    }, [totalAmount, form]);
+
+    const handleResetForm = () => {
+      form.resetFields();
+      // Auto-fill current user again for create mode
+      if (mode === "create" && user) {
+        setProducts([]);
+        form.setFieldsValue({
+          createdBy: user.uid,
+          createdByName: user.displayName,
+          code: generateRandomCode("ORD_"),
+          orderDate: dayjs(),
         });
-
-        onValue(workflowsRef, (snapshot) => {
-          const workflowData = snapshot.val() || {};
-          setWorkflows(workflowData);
-        });
-
-        // Load existing order data if in update mode
-        if (mode === "update" && orderId) {
-          const orderRef = dbRef(database, `xoxo/orders/${orderId}`);
-          onValue(orderRef, (snapshot) => {
-            const orderData = snapshot.val();
-            if (orderData) {
-              populateFormWithOrderData(orderData);
-            }
-          });
-        }
-
-        setLoading(false);
-      } catch (error) {
-        console.error("Error loading Firebase data:", error);
-        message.error("Không thể tải dữ liệu nhân viên và quy trình!");
-        setLoading(false);
+      } else {
+        populateFormWithOrderData(orderDataRef.current);
       }
     };
 
-    loadData();
-
-    return () => {
-      off(staffRef);
-      off(workflowsRef);
-    };
-  }, [message, mode, orderId]);
-
-  // Populate form with existing order data
-  const populateFormWithOrderData = (orderData: FirebaseOrderData) => {
-    form.setFieldsValue({
-      code: orderData.code,
-      customerName: orderData.customerName,
-      phone: orderData.phone,
-      email: orderData.email,
-      address: orderData.address,
-      orderDate: dayjs(orderData.orderDate),
-      deliveryDate: dayjs(orderData.deliveryDate),
-      createdByName: orderData.createdByName,
-      createdBy: orderData.createdBy,
-      notes: orderData.notes || "",
-      discount: orderData.discount || 0,
-      discountType: orderData.discountType || DiscountType.Amount,
-      shippingFee: orderData.shippingFee || 0,
-      status: orderData.status || OrderStatus.PENDING,
-    });
-
-    // Convert products data back to form format
-    const productsArray = Object.entries(orderData.products || {}).map(
-      ([productId, productData]: [string, FirebaseProductData]) => ({
-        id: productId,
-        name: productData.name,
-        quantity: productData.quantity,
-        price: productData.price || 0,
-        images:
-          productData.images?.map((img: any, index: number) => ({
-            uid: img.uid || `img-${index}`,
-            name: img.name || `image-${index}`,
-            status: "done" as const,
-            url: img.url,
-            firebaseUrl: img.url,
-          })) || [],
-        stages: Object.entries(productData.stages || {}).map(
-          ([stageId, stageData]: [string, FirebaseStageData]) => ({
-            id: stageId,
-            stageId: stageData.workflowId,
-            stageName: stageData.name,
-            employees: stageData.employees || [],
-            status: stageData.status || "pending",
-          })
-        ),
-      })
+    useImperativeHandle(
+      ref,
+      () => ({
+        onResetForm: handleResetForm,
+      }),
+      []
     );
 
-    setProducts(productsArray);
-  };
+    // Populate form with existing order data
+    const populateFormWithOrderData = (orderData: FirebaseOrderData) => {
+      form.setFieldsValue({
+        code: orderData.code,
+        customerName: orderData.customerName,
+        phone: orderData.phone,
+        email: orderData.email,
+        address: orderData.address,
+        customerSource: orderData.customerSource,
+        orderDate: dayjs(orderData.orderDate),
+        deliveryDate: dayjs(orderData.deliveryDate),
+        createdBy: orderData.createdBy,
+        consultantId: orderData.consultantId || "",
+        notes: orderData.notes || "",
+        discount: orderData.discount || 0,
+        discountType: orderData.discountType || DiscountType.Amount,
+        shippingFee: orderData.shippingFee || 0,
+        status: orderData.status || OrderStatus.PENDING,
+        totalAmount: orderData.totalAmount,
+      });
 
-  // Prepare options for selects
-  const staffOptions = Object.entries(staff).map(([id, staffMember]) => ({
-    value: id,
-    label: `${(staffMember as Staff).name} (${(staffMember as Staff).role})`,
-  }));
-
-  const stageOptions = Object.entries(workflows).map(([id, workflow]) => ({
-    value: id,
-    label: (workflow as Workflow).name,
-  }));
-
-  const addProduct = () => {
-    const newProductId = `PRODUCT_${new Date().getTime()}`;
-    const newProduct: ProductData = {
-      id: newProductId,
-      name: "",
-      quantity: 1,
-      price: 0,
-      images: [],
-      stages: [],
-    };
-    products.unshift(newProduct);
-    setProducts([...products]);
-  };
-
-  const updateProduct = (index: number, updatedProduct: ProductData) => {
-    const updatedProducts = [...products];
-    updatedProducts[index] = updatedProduct;
-    setProducts(updatedProducts);
-  };
-
-  const removeProduct = (index: number) => {
-    setProducts(products.filter((_, i) => i !== index));
-  };
-
-  const generateOrderId = () => {
-    return `ORD_${new Date().getTime()}`;
-  };
-
-  const uploadImageToFirebase = async (
-    file: File,
-    productId: string,
-    imageIndex: number
-  ): Promise<string> => {
-    const storage = getStorage();
-    const fileName = `orders/${new Date().getTime()}_${productId}_${imageIndex}_${
-      file.name
-    }`;
-    const storageRef = ref(storage, fileName);
-
-    const snapshot = await uploadBytes(storageRef, file);
-    return await getDownloadURL(snapshot.ref);
-  };
-
-  const onFinish = async (values: FormValues) => {
-    console.log(values, "vvvvvvvvvvvvvv");
-    if (products.length === 0) {
-      message.warning("Vui lòng thêm ít nhất một sản phẩm!");
-      return;
-    }
-
-    if (
-      values.discountType === DiscountType.Percentage &&
-      (values.discount || 0) > 100
-    ) {
-      message.warning("Giảm giá theo phần trăm không được vượt quá 100%!");
-      return;
-    }
-    // Validate products
-    for (const product of products) {
-      if (!product.name.trim()) {
-        message.warning("Vui lòng nhập tên cho tất cả sản phẩm!");
-        return;
-      }
-      if (!product.quantity || product.quantity < 1) {
-        message.warning("Vui lòng nhập số lượng hợp lệ cho tất cả sản phẩm!");
-        return;
-      }
-      if (!product.price || product.price < 0) {
-        message.warning("Vui lòng nhập giá hợp lệ cho tất cả sản phẩm!");
-        return;
-      }
-      if (product.images.length === 0) {
-        message.warning("Vui lòng tải lên ít nhất 1 ảnh cho mỗi sản phẩm!");
-        return;
-      }
-      if (product.stages.length === 0) {
-        message.warning("Mỗi sản phẩm phải có ít nhất một công đoạn!");
-        return;
-      }
-      for (const stage of product.stages) {
-        if (!stage.stageId) {
-          message.warning("Vui lòng chọn công đoạn cho tất cả các bước!");
-          return;
-        }
-        if (!stage.employees || stage.employees.length === 0) {
-          message.warning(
-            "Vui lòng chọn nhân viên thực hiện cho tất cả công đoạn!"
-          );
-          return;
-        }
-      }
-    }
-
-    setSubmitting(true);
-
-    try {
-      const hideLoading = message.loading("Đang tải ảnh lên Firebase...", 0);
-
-      // Upload all images to Firebase
-      const productsWithUploadedImages = await Promise.all(
-        products.map(async (product) => {
-          const uploadedImages = await Promise.all(
-            product.images.map(async (image: any, index: number) => {
-              if (image.originFileObj) {
-                try {
-                  const firebaseUrl = await uploadImageToFirebase(
-                    image.originFileObj as File,
-                    product.id,
-                    index
-                  );
-                  return {
-                    uid: image.uid,
-                    name: image.name,
-                    url: firebaseUrl,
-                    firebaseUrl,
-                  };
-                } catch (error) {
-                  console.error(`Error uploading image ${image.name}:`, error);
-                  message.error(`Không thể tải ảnh ${image.name} lên Firebase`);
-                  return {
-                    uid: image.uid,
-                    name: image.name,
-                    url: image.url,
-                    error: true,
-                  };
-                }
-              }
-              return image;
+      // Convert products data back to form format
+      const productsArray = Object.entries(orderData.products || {}).map(
+        ([productId, productData]: [string, FirebaseProductData]) => ({
+          id: productId,
+          name: productData.name,
+          quantity: productData.quantity,
+          price: productData.price || 0,
+          commissionPercentage: productData.commissionPercentage || 0,
+          images:
+            productData.images?.map((img: any, index: number) => ({
+              uid: img.uid || `img-${index}`,
+              name: img.name || `image-${index}`,
+              url: img.url,
+              firebaseUrl: img.url,
+            })) || [],
+          workflows: Object.entries(productData.workflows || {}).map(
+            ([workflowCode, workflowData]: [string, FirebaseWorkflowData]) => ({
+              id: workflowCode,
+              workflowCode: workflowData.workflowCode,
+              workflowName: workflowData.workflowName,
+              members: workflowData.members || [],
+              isDone: workflowData.isDone || false,
             })
-          );
-
-          return {
-            ...product,
-            images: uploadedImages,
-          };
+          ),
         })
       );
 
-      hideLoading();
+      setProducts(productsArray);
+    };
 
-      const now = new Date().getTime();
-      const orderData: FirebaseOrderData = {
-        orderId: mode === "create" ? generateOrderId() : orderId!,
-        code: values.code,
-        status: values.status || OrderStatus.PENDING,
-        customerName: values.customerName,
-        phone: values.phone,
-        email: values.email,
-        address: values.address,
+    const memberOptions = groupMembersByRole(staff);
 
-        orderDate: values.orderDate
-          ? values.orderDate.valueOf()
-          : new Date().getTime(),
-        deliveryDate: values.deliveryDate
-          ? values.deliveryDate.valueOf()
-          : new Date().getTime(),
-        createdBy: user?.uid || "unknown",
-        createdByName:
-          values.createdByName ||
-          user?.displayName ||
-          user?.email ||
-          "Người dùng hiện tại",
-        notes: values.notes || "",
-        discount: values.discount || 0,
-        discountType: values.discountType || DiscountType.Amount,
-        shippingFee: values.shippingFee || 0,
-        ...(mode === "create" && { createdAt: now }),
-        updatedAt: now,
-        products: productsWithUploadedImages.reduce((acc, product) => {
-          acc[product.id] = {
-            name: product.name,
-            quantity: product.quantity,
-            price: product.price,
-            images: product.images.map((img: any) => ({
-              uid: img.uid,
-              name: img.name,
-              url: img.firebaseUrl || img.url || "",
-            })),
-            stages: product.stages.reduce((stageAcc: any, stage: StageData) => {
-              stageAcc[stage.id] = {
-                workflowId: stage.stageId,
-                workflowName: workflows[stage.stageId]?.name || "",
-                employees: stage.employees,
-                status: stage.status,
-                updatedAt: now,
-              };
-              return stageAcc;
-            }, {} as Record<string, FirebaseStageData>),
-          };
-          return acc;
-        }, {} as Record<string, FirebaseProductData>),
+    const workflowOptions = Object.entries(workflows).map(([id, workflow]) => ({
+      value: id,
+      label: (workflow as Workflow).name,
+    }));
+
+    const orderDataRef = useRef<any>(null);
+
+    const addProduct = () => {
+      const newProductId = `PRODUCT_${new Date().getTime()}`;
+      const newProduct: ProductData = {
+        id: newProductId,
+        name: "",
+        quantity: 1,
+        price: 0,
+        commissionPercentage: 0,
+        images: [],
+        workflows: [],
+      };
+      products.unshift(newProduct);
+      setProducts([...products]);
+    };
+
+    const updateProduct = (index: number, updatedProduct: ProductData) => {
+      const updatedProducts = [...products];
+      updatedProducts[index] = updatedProduct;
+      setProducts(updatedProducts);
+    };
+
+    const removeProduct = (index: number) => {
+      setProducts(products.filter((_, i) => i !== index));
+    };
+
+    const uploadImageToFirebase = async (
+      file: File,
+      productId: string,
+      imageIndex: number
+    ): Promise<string> => {
+      const storage = getStorage();
+      const fileName = `orders/${new Date().getTime()}_${productId}_${imageIndex}_${
+        file.name
+      }`;
+      const storageReference = storageRef(storage, fileName);
+
+      const snapshot = await uploadBytes(storageReference, file);
+      return await getDownloadURL(snapshot.ref);
+    };
+
+    const onFinish = async (values: FormValues) => {
+      console.log(values, "vvvvvvvvvvvvvv");
+      if (products.length === 0) {
+        message.warning("Vui lòng thêm ít nhất một sản phẩm!");
+        return;
+      }
+
+      if (
+        values.discountType === DiscountType.Percentage &&
+        (values.discount || 0) > 100
+      ) {
+        message.warning("Giảm giá theo phần trăm không được vượt quá 100%!");
+        return;
+      }
+      // Validate products
+      for (const product of products) {
+        if (!product.name.trim()) {
+          message.warning("Vui lòng nhập tên cho tất cả sản phẩm!");
+          return;
+        }
+        if (!product.quantity || product.quantity < 1) {
+          message.warning("Vui lòng nhập số lượng hợp lệ cho tất cả sản phẩm!");
+          return;
+        }
+        if (!product.price || product.price < 0) {
+          message.warning("Vui lòng nhập giá hợp lệ cho tất cả sản phẩm!");
+          return;
+        }
+        if (product.images.length === 0) {
+          message.warning("Vui lòng tải lên ít nhất 1 ảnh cho mỗi sản phẩm!");
+          return;
+        }
+        if (product.workflows.length === 0) {
+          message.warning("Mỗi sản phẩm phải có ít nhất một công đoạn!");
+          return;
+        }
+        for (const workflow of product.workflows) {
+          if (!workflow.workflowCode) {
+            message.warning("Vui lòng chọn công đoạn cho tất cả các bước!");
+            return;
+          }
+          if (!workflow.members || workflow.members.length === 0) {
+            message.warning(
+              "Vui lòng chọn nhân viên thực hiện cho tất cả công đoạn!"
+            );
+            return;
+          }
+        }
+      }
+
+      setSubmitting(true);
+
+      try {
+        const hideLoading = message.loading("Đang tải ảnh lên Firebase...", 0);
+
+        // Upload all images to Firebase
+        const productsWithUploadedImages = await Promise.all(
+          products.map(async (product) => {
+            const uploadedImages = await Promise.all(
+              product.images.map(async (image: any, index: number) => {
+                if (image.originFileObj) {
+                  try {
+                    const firebaseUrl = await uploadImageToFirebase(
+                      image.originFileObj as File,
+                      product.id,
+                      index
+                    );
+                    return {
+                      uid: image.uid,
+                      name: image.name,
+                      url: firebaseUrl,
+                      firebaseUrl,
+                    };
+                  } catch (error) {
+                    console.error(
+                      `Error uploading image ${image.name}:`,
+                      error
+                    );
+                    message.error(
+                      `Không thể tải ảnh ${image.name} lên Firebase`
+                    );
+                    return {
+                      uid: image.uid,
+                      name: image.name,
+                      url: image.url,
+                      error: true,
+                    };
+                  }
+                }
+                return image;
+              })
+            );
+
+            return {
+              ...product,
+              images: uploadedImages,
+            };
+          })
+        );
+
+        hideLoading();
+
+        const now = new Date().getTime();
+        const discount = values.discount;
+        const discountType = values.discountType || DiscountType.Amount;
+        const shippingFee = values.shippingFee;
+        const totals = calculateOrderTotals(
+          products,
+          discount,
+          discountType,
+          shippingFee
+        );
+        const orderData: FirebaseOrderData = {
+          code: values.code,
+          status: values.status || OrderStatus.PENDING,
+          customerName: values.customerName,
+          phone: values.phone,
+          email: values.email,
+          address: values.address,
+          customerSource: values.customerSource || CustomerSource.Other,
+          orderDate: values.orderDate
+            ? values.orderDate.valueOf()
+            : new Date().getTime(),
+          totalAmount: totals.total,
+          discountAmount: totals.discountAmount,
+          subtotal: totals.subtotal,
+          deliveryDate: values.deliveryDate
+            ? values.deliveryDate.valueOf()
+            : new Date().getTime(),
+          createdBy: user?.uid || "unknown",
+          createdByName:
+            values.createdByName ||
+            user?.displayName ||
+            user?.email ||
+            "Người dùng hiện tại",
+          ...(values.consultantId && {
+            consultantId: values.consultantId,
+            consultantName: staff[values.consultantId]?.name || "",
+          }),
+          notes: values.notes || "",
+          discount: values.discount || 0,
+          discountType: values.discountType || DiscountType.Amount,
+          shippingFee: values.shippingFee || 0,
+          ...(mode === "create" && { createdAt: now }),
+          updatedAt: now,
+          products: productsWithUploadedImages.reduce((acc, product) => {
+            acc[product.id] = {
+              name: product.name,
+              quantity: product.quantity,
+              price: product.price,
+              commissionPercentage: product.commissionPercentage || 0,
+              images: product.images.map((img: any) => ({
+                uid: img.uid,
+                name: img.name,
+                url: img.firebaseUrl || img.url || "",
+              })),
+              workflows: product.workflows.reduce(
+                (workflowAcc: any, workflow: WorkflowData) => {
+                  workflowAcc[workflow.id] = {
+                    workflowCode: workflow.workflowCode,
+                    workflowName: workflows[workflow.workflowCode]?.name || "",
+                    members: workflow.members,
+                    isDone: workflow.isDone,
+                    updatedAt: now,
+                  };
+                  return workflowAcc;
+                },
+                {} as Record<string, FirebaseWorkflowData>
+              ),
+            };
+            return acc;
+          }, {} as Record<string, FirebaseProductData>),
+        };
+
+        const database = getDatabase();
+
+        if (mode === "create") {
+          const orderRef = dbRef(database, `xoxo/orders/${orderData.code}`);
+
+          await set(orderRef, orderData);
+
+          message.success("Đơn hàng đã được tạo thành công!");
+          onSuccess?.(orderData.code);
+        } else {
+          const orderRef = dbRef(database, `xoxo/orders/${orderCode}`);
+          await update(orderRef, orderData);
+          message.success("Đơn hàng đã được cập nhật thành công!");
+          onSuccess?.(orderCode!);
+        }
+
+        // Reset form for create mode
+        if (mode === "create") {
+          form.resetFields();
+          setProducts([]);
+        }
+      } catch (error) {
+        console.error("Error saving order:", error);
+        message.error("Có lỗi xảy ra khi lưu đơn hàng!");
+      } finally {
+        setSubmitting(false);
+      }
+    };
+
+    // Auto-fill current user when component mounts (create mode only)
+    useEffect(() => {
+      if (mode === "create" && user) {
+        form.setFieldsValue({
+          createdBy: user.uid,
+          createdByName:
+            user.displayName || user.email || "Người dùng hiện tại",
+          code: generateRandomCode("ORD_"),
+        });
+      }
+    }, [user, form, mode]);
+
+    // Load staff and workflows from Firebase
+    useEffect(() => {
+      const database = getDatabase();
+      const staffRef = dbRef(database, "xoxo/members");
+      const workflowsRef = dbRef(database, "xoxo/workflows");
+      const departmentsRef = dbRef(database, "xoxo/departments");
+
+      const loadData = async () => {
+        try {
+          onValue(staffRef, (snapshot) => {
+            const staffData = snapshot.val() || {};
+            setStaff(staffData);
+          });
+
+          onValue(workflowsRef, (snapshot) => {
+            const workflowData = snapshot.val() || {};
+            setWorkflows(workflowData);
+          });
+
+          onValue(departmentsRef, (snapshot) => {
+            const departmentsData = snapshot.val() || {};
+            setDepartments(departmentsData);
+          });
+
+          // Load existing order data if in update mode
+          if (mode === "update" && orderCode) {
+            const orderRef = dbRef(database, `xoxo/orders/${orderCode}`);
+            onValue(orderRef, (snapshot) => {
+              const orderData = snapshot.val();
+              if (orderData) {
+                populateFormWithOrderData(orderData);
+                orderDataRef.current = orderData;
+              }
+            });
+          }
+
+          setLoading(false);
+        } catch (error) {
+          console.error("Error loading Firebase data:", error);
+          message.error("Không thể tải dữ liệu nhân viên và quy trình!");
+          setLoading(false);
+        }
       };
 
-      const database = getDatabase();
+      loadData();
 
-      if (mode === "create") {
-        const ordersRef = dbRef(database, "xoxo/orders");
-        const newOrderRef = await push(ordersRef, orderData);
-        message.success("Đơn hàng đã được tạo thành công!");
-        onSuccess?.(newOrderRef.key!);
-      } else {
-        const orderRef = dbRef(database, `xoxo/orders/${orderId}`);
-        await update(orderRef, orderData);
-        message.success("Đơn hàng đã được cập nhật thành công!");
-        onSuccess?.(orderId!);
-      }
+      return () => {
+        off(staffRef);
+        off(workflowsRef);
+        off(departmentsRef);
+      };
+    }, [mode, orderCode]);
 
-      // Reset form for create mode
-      if (mode === "create") {
-        form.resetFields();
-        setProducts([]);
-      }
-    } catch (error) {
-      console.error("Error saving order:", error);
-      message.error("Có lỗi xảy ra khi lưu đơn hàng!");
-    } finally {
-      setSubmitting(false);
-    }
-  };
+    return (
+      <Form form={form} layout="vertical" onFinish={onFinish}>
+        <div className="gap-6 flex flex-col">
+          {/* Order Basic Information */}
+          <Card
+            title={
+              <div className="flex items-center gap-2">
+                <UserOutlined />
+                <Text strong>
+                  {mode === "create"
+                    ? "Thông tin đơn hàng"
+                    : "Cập nhật đơn hàng"}
+                </Text>
+              </div>
+            }
+            className="bg-white shadow-sm"
+          >
+            {/* Thông tin khách hàng */}
+            <div className="mb-6">
+              <div className="mb-3 pb-2 border-b border-gray-200">
+                <Text strong>Khách hàng</Text>
+              </div>
+              <Row gutter={24}>
+                <Col span={6}>
+                  <Form.Item
+                    label={
+                      mode === "create"
+                        ? "Mã đơn hàng (tự động)"
+                        : "Mã đơn hàng"
+                    }
+                    name="code"
+                    rules={[
+                      { required: true, message: "Vui lòng nhập mã đơn hàng!" },
+                    ]}
+                  >
+                    <Input disabled placeholder="VD: ORD_AD2342" />
+                  </Form.Item>
+                </Col>
+                <Col span={9}>
+                  <Form.Item
+                    label="Tên khách hàng"
+                    name="customerName"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng nhập tên khách hàng!",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="VD: Nguyễn Thị Lan Anh" />
+                  </Form.Item>
+                </Col>
+                <Col span={9}>
+                  <Form.Item
+                    label="Số điện thoại"
+                    name="phone"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng nhập số điện thoại!",
+                      },
+                      {
+                        pattern: /^[0-9]{10,11}$/,
+                        message: "Số điện thoại không hợp lệ!",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="VD: 0123456789" />
+                  </Form.Item>
+                </Col>
+              </Row>
 
-  // Auto-fill current user when component mounts (create mode only)
-  useEffect(() => {
-    if (mode === "create" && user) {
-      form.setFieldsValue({
-        createdByName: user.displayName || user.email || "Người dùng hiện tại",
-        createdBy: user.uid,
-      });
-    }
-  }, [user, form, mode]);
+              <Row gutter={24}>
+                <Col span={9}>
+                  <Form.Item
+                    label="Email"
+                    name="email"
+                    rules={[
+                      { required: true, message: "Vui lòng nhập email!" },
+                      { type: "email", message: "Email không hợp lệ!" },
+                    ]}
+                  >
+                    <Input placeholder="VD: khachhang@email.com" />
+                  </Form.Item>
+                </Col>
+                <Col span={15}>
+                  <Form.Item label="Nguồn khách hàng" name="customerSource">
+                    <Select
+                      placeholder="Chọn nguồn khách hàng"
+                      className="w-full"
+                      allowClear
+                      showSearch={{
+                        optionFilterProp: "children",
+                        filterOption: (input, option) =>
+                          String(option?.label || "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase()),
+                      }}
+                    >
+                      {CustomerSourceOptions.map((option) => (
+                        <Option key={option.value} value={option.value}>
+                          {option.label}
+                        </Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+                {/* <Col span={6}> */}
 
-  return (
-    <Form form={form} layout="vertical" onFinish={onFinish}>
-      <Form.Item name="status">
-        <Input hidden />
-      </Form.Item>
-      <div className="gap-6 flex flex-col">
-        {/* Order Basic Information */}
-        <Card
-          title={
-            <div className="flex items-center gap-2">
-              <UserOutlined />
-              <Text strong>
-                {mode === "create" ? "Thông tin đơn hàng" : "Cập nhật đơn hàng"}
-              </Text>
-            </div>
-          }
-          className="bg-white shadow-sm"
-        >
-          <Row gutter={24}>
-            <Col span={8}>
-              <Form.Item
-                label="Mã đơn hàng"
-                name="code"
-                rules={[
-                  { required: true, message: "Vui lòng nhập mã đơn hàng!" },
-                ]}
-              >
-                <Input placeholder="VD: XOX2024120001" />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                label="Tên khách hàng"
-                name="customerName"
-                rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng nhập tên khách hàng!",
-                  },
-                ]}
-              >
-                <Input placeholder="VD: Nguyễn Thị Lan Anh" />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                label="Số điện thoại"
-                name="phone"
-                rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng nhập số điện thoại!",
-                  },
-                  {
-                    pattern: /^[0-9]{10,11}$/,
-                    message: "Số điện thoại không hợp lệ!",
-                  },
-                ]}
-              >
-                <Input placeholder="VD: 0123456789" />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Row gutter={24}>
-            <Col span={8}>
-              <Form.Item
-                label="Email"
-                name="email"
-                rules={[
-                  { required: true, message: "Vui lòng nhập email!" },
-                  { type: "email", message: "Email không hợp lệ!" },
-                ]}
-              >
-                <Input placeholder="VD: khachhang@email.com" />
-              </Form.Item>
-            </Col>
-            <Col span={16}>
+                {/* </Col> */}
+              </Row>
               <Form.Item
                 label="Địa chỉ"
                 name="address"
                 rules={[{ required: true, message: "Vui lòng nhập địa chỉ!" }]}
               >
-                <Input placeholder="VD: 123 Đường ABC, Quận XYZ, TP.HN" />
+                <Input.TextArea
+                  rows={2}
+                  placeholder="VD: 123 Đường ABC, Quận XYZ, TP.HN"
+                />
               </Form.Item>
-            </Col>
-          </Row>
+            </div>
 
-          <Row gutter={24}>
-            <Col span={8}>
-              <Form.Item
-                label="Ngày đặt"
-                name="orderDate"
-                initialValue={mode === "create" ? dayjs() : undefined}
-                rules={[{ required: true, message: "Vui lòng chọn ngày đặt!" }]}
-              >
-                <DatePicker
-                  className="w-full"
-                  format="DD/MM/YYYY"
-                  placeholder="Chọn ngày đặt"
-                />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                label="Ngày giao dự kiến"
-                name="deliveryDate"
-                rules={[
-                  { required: true, message: "Vui lòng chọn ngày giao!" },
-                ]}
-              >
-                <DatePicker
-                  className="w-full"
-                  format="DD/MM/YYYY"
-                  placeholder="Chọn ngày giao"
-                  disabledDate={(current) =>
-                    current && current < dayjs().endOf("day")
-                  }
-                />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="Nhân viên tạo đơn" name="createdByName">
-                <Input
-                  disabled
-                  placeholder="Đang tải thông tin người dùng..."
-                  prefix={<UserOutlined className="text-gray-400" />}
-                  className="bg-gray-50"
-                />
-              </Form.Item>
-              <Form.Item name="createdBy">
-                <Input disabled hidden />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={24}>
-            <Col span={24}>
+            {/* Thông tin đơn hàng */}
+            <div className="mb-6">
+              <div className="mb-3 pb-2 border-b border-gray-200">
+                <Text strong>Thời gian</Text>
+              </div>
+              <Row gutter={24}>
+                <Col span={8}>
+                  <Form.Item
+                    label="Ngày đặt"
+                    name="orderDate"
+                    initialValue={mode === "create" ? dayjs() : undefined}
+                    rules={[
+                      { required: true, message: "Vui lòng chọn ngày đặt!" },
+                    ]}
+                  >
+                    <DatePicker
+                      disabled
+                      className="w-full"
+                      format="DD/MM/YYYY"
+                      placeholder="Chọn ngày đặt"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={8}>
+                  <Form.Item
+                    label="Ngày giao dự kiến"
+                    name="deliveryDate"
+                    rules={[
+                      { required: true, message: "Vui lòng chọn ngày giao!" },
+                    ]}
+                  >
+                    <DatePicker
+                      className="w-full"
+                      format="DD/MM/YYYY"
+                      placeholder="Chọn ngày giao"
+                      disabledDate={(current) =>
+                        current && current < dayjs().endOf("day")
+                      }
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </div>
+
+            {/* Thông tin nhân viên */}
+            <div className="">
+              <div className="mb-3 pb-2 border-b border-gray-200">
+                <Text strong>Nhân viên</Text>
+              </div>
+              <Row gutter={24}>
+                <Col span={12}>
+                  <Form.Item
+                    required
+                    label="Nhân viên tạo đơn"
+                    name="createdByName"
+                  >
+                    <Input
+                      disabled
+                      placeholder="Đang tải thông tin người dùng..."
+                      prefix={<UserOutlined className="text-gray-400" />}
+                      className="bg-gray-50"
+                    />
+                  </Form.Item>
+                  <Form.Item name="createdBy" className="absolute">
+                    <Input disabled hidden />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    required
+                    label="Nhân viên tư vấn"
+                    name="consultantId"
+                  >
+                    <Select
+                      placeholder="Chọn nhân viên tư vấn"
+                      className="w-full"
+                      allowClear
+                      showSearch={{
+                        optionFilterProp: "children",
+                        filterOption: (input, option) =>
+                          String(option?.label || "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase()),
+                      }}
+                    >
+                      {memberOptions[ROLES.sales].map((option) => (
+                        <Option key={option.value} value={option.value}>
+                          {option.label}
+                        </Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </Row>
               <Form.Item label="Ghi chú đơn hàng" name="notes">
                 <Input.TextArea
                   rows={3}
@@ -920,317 +1186,342 @@ const OrderForm: React.FC<OrderFormProps> = ({
                   showCount
                 />
               </Form.Item>
-            </Col>
-          </Row>
-        </Card>
+            </div>
+          </Card>
 
-        {/* Products Section */}
-        <Card
-          title={
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <TagOutlined />
-                <Text strong>Danh sách sản phẩm</Text>
-                <Tag color="yellow">{products.length} sản phẩm</Tag>
-              </div>
-              <Button
-                type="primary"
-                htmlType="button"
-                icon={<PlusOutlined />}
-                onClick={addProduct}
-                className="bg-primary hover:bg-primary"
-              >
-                Thêm sản phẩm
-              </Button>
-            </div>
-          }
-          className="bg-white shadow-sm"
-        >
-          {products.length === 0 ? (
-            <div className="text-center py-8">
-              <Empty
-                description={`Chưa có sản phẩm nào. Nhấn "Thêm sản phẩm" để bắt đầu.`}
-              />
-            </div>
-          ) : (
-            <div className="space-y-4 max-h-[600px] flex flex-col gap-4 overflow-y-auto pr-2">
-              {products.map((product, index) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  onUpdate={(updatedProduct: ProductData) =>
-                    updateProduct(index, updatedProduct)
-                  }
-                  onRemove={() => removeProduct(index)}
-                  staffOptions={staffOptions}
-                  stageOptions={stageOptions}
-                  workflows={workflows}
-                />
-              ))}
-            </div>
-          )}
-        </Card>
-
-        {/* Order Summary */}
-        {products.length > 0 && (
+          {/* Products Section */}
           <Card
             title={
-              <div className="flex items-center gap-2">
-                <ShoppingCartOutlined />
-                <Text strong>Tổng kết đơn hàng</Text>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <TagOutlined />
+                  <Text strong>Danh sách sản phẩm</Text>
+                  <Tag color="yellow">{products.length} sản phẩm</Tag>
+                </div>
+                <Button
+                  type="primary"
+                  htmlType="button"
+                  icon={<PlusOutlined />}
+                  onClick={addProduct}
+                  className="bg-primary hover:bg-primary"
+                >
+                  Thêm sản phẩm
+                </Button>
               </div>
             }
             className="bg-white shadow-sm"
           >
-            <Row gutter={24}>
-              <Col span={14}>
-                <div className="space-y-3 max-h-[400px] overflow-y-auto">
-                  {products.map((product, index) => {
-                    const subtotal = product.quantity * product.price;
-                    return (
-                      <div
-                        key={product.id}
-                        className="flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0"
-                      >
-                        <div className="flex-1">
-                          <Text>{product.name || `Sản phẩm ${index + 1}`}</Text>
-                          <br />
-                          <Text type="secondary" className="text-sm">
-                            {product.quantity} x{" "}
-                            {product.price?.toLocaleString("vi-VN")} VNĐ
-                          </Text>
-                        </div>
-                        <div className="text-right">
-                          <Text strong>
-                            {subtotal.toLocaleString("vi-VN")} VNĐ
-                          </Text>
-                        </div>
-                      </div>
-                    );
-                  })}
+            {products.length === 0 ? (
+              <div className="text-center py-8">
+                <Empty
+                  description={`Chưa có sản phẩm nào. Nhấn "Thêm sản phẩm" để bắt đầu.`}
+                />
+              </div>
+            ) : (
+              <div className="space-y-4 max-h-[600px] flex flex-col gap-4 overflow-y-auto pr-2">
+                {products.map((product, index) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onUpdate={(updatedProduct: ProductData) =>
+                      updateProduct(index, updatedProduct)
+                    }
+                    onRemove={() => removeProduct(index)}
+                    staffOptions={memberOptions[ROLES.worker]}
+                    workflowOptions={workflowOptions}
+                    workflows={workflows}
+                    staff={staff}
+                    departments={departments}
+                  />
+                ))}
+              </div>
+            )}
+          </Card>
+
+          {/* Order Summary */}
+          {products.length > 0 && (
+            <Card
+              title={
+                <div className="flex items-center gap-2">
+                  <ShoppingCartOutlined />
+                  <Text strong>Tổng kết đơn hàng</Text>
                 </div>
-              </Col>
-              <Col span={10}>
-                <div className="space-y-4 border-l border-gray-200 pl-4">
-                  <div className="flex justify-between gap-4">
-                    <div className="flex-1">
-                      <Form.Item dependencies={["discountType"]}>
-                        {({ getFieldValue }) => {
-                          const discountType =
-                            getFieldValue("discountType") ||
-                            DiscountType.Amount;
-                          const isPercentage =
-                            discountType === DiscountType.Percentage;
+              }
+              className="bg-white shadow-sm"
+            >
+              <Row gutter={24}>
+                <Col span={14}>
+                  <div className="space-y-3 max-h-[400px] overflow-y-auto">
+                    {products.map((product, index) => {
+                      const subtotal = product.quantity * product.price;
+                      return (
+                        <div
+                          key={product.id}
+                          className="flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0"
+                        >
+                          <div className="flex-1">
+                            <Text>
+                              {product.name || `Sản phẩm ${index + 1}`}
+                            </Text>
+                            <br />
+                            <Text type="secondary" className="text-sm">
+                              {product.quantity} x{" "}
+                              {product.price?.toLocaleString("vi-VN")} VNĐ
+                            </Text>
+                          </div>
+                          <div className="text-right">
+                            <Text strong>
+                              {subtotal.toLocaleString("vi-VN")} VNĐ
+                            </Text>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </Col>
+                <Col span={10}>
+                  <div className="space-y-4 border-l border-gray-200 pl-4">
+                    <div className="flex justify-between gap-4">
+                      <div className="flex-1">
+                        <Form.Item dependencies={["discountType"]}>
+                          {({ getFieldValue }) => {
+                            const discountType =
+                              getFieldValue("discountType") ||
+                              DiscountType.Amount;
+                            const isPercentage =
+                              discountType === DiscountType.Percentage;
 
-                          // Rules validation luôn kiểm tra cả 2 trường hợp
-                          const validationRules = [
-                            {
-                              validator: (_: any, value: any) => {
-                                if (!value || value === 0)
+                            // Rules validation luôn kiểm tra cả 2 trường hợp
+                            const validationRules = [
+                              {
+                                validator: (_: any, value: any) => {
+                                  if (!value || value === 0)
+                                    return Promise.resolve();
+
+                                  // Lấy giá trị discountType hiện tại từ form
+                                  const currentDiscountType =
+                                    form.getFieldValue("discountType") ||
+                                    DiscountType.Amount;
+                                  const currentIsPercentage =
+                                    currentDiscountType ===
+                                    DiscountType.Percentage;
+
+                                  if (currentIsPercentage) {
+                                    if (value <= 0 || value >= 100) {
+                                      return Promise.reject(
+                                        new Error("Chỉ từ 0.1% đến 99.9%")
+                                      );
+                                    }
+                                  } else {
+                                    if (value < 0) {
+                                      return Promise.reject(
+                                        new Error("Giá trị phải lớn hơn 0")
+                                      );
+                                    }
+                                  }
                                   return Promise.resolve();
-
-                                // Lấy giá trị discountType hiện tại từ form
-                                const currentDiscountType =
-                                  form.getFieldValue("discountType") ||
-                                  DiscountType.Amount;
-                                const currentIsPercentage =
-                                  currentDiscountType ===
-                                  DiscountType.Percentage;
-
-                                if (currentIsPercentage) {
-                                  if (value <= 0 || value >= 100) {
-                                    return Promise.reject(
-                                      new Error("Chỉ từ 0.1% đến 99.9%")
-                                    );
-                                  }
-                                } else {
-                                  if (value < 0) {
-                                    return Promise.reject(
-                                      new Error("Giá trị phải lớn hơn 0")
-                                    );
-                                  }
-                                }
-                                return Promise.resolve();
+                                },
                               },
-                            },
-                          ];
+                            ];
 
-                          return (
-                            <div>
-                              <div className="mb-2">
-                                <Text>Chiết khấu</Text>
-                              </div>
-                              <Space.Compact>
-                                <Form.Item
-                                  name="discount"
-                                  initialValue={0}
-                                  rules={validationRules}
-                                  style={{
-                                    flex: 1,
-                                    marginRight: 0,
-                                    marginBottom: 0,
-                                  }}
-                                >
-                                  <InputNumber
-                                    min={0}
-                                    max={isPercentage ? 99.9 : undefined}
-                                    placeholder="0"
-                                    step={isPercentage ? 0.1 : 1000}
-                                    formatter={(value) => {
-                                      if (isPercentage) {
-                                        return `${value}`;
-                                      }
-                                      return `${value}`.replace(
-                                        /\B(?=(\d{3})+(?!\d))/g,
-                                        ","
-                                      );
-                                    }}
-                                    parser={(value) => {
-                                      if (isPercentage) {
-                                        return Number(value || 0) as any;
-                                      }
-                                      const parsed = Number(
-                                        value?.replace(/,/g, "") || 0
-                                      );
-                                      return parsed as any;
-                                    }}
-                                    className="w-full"
-                                  />
-                                </Form.Item>
-                                <Form.Item
-                                  name="discountType"
-                                  initialValue={DiscountType.Amount}
-                                  style={{ marginRight: 0, marginBottom: 0 }}
-                                >
-                                  <Select
-                                    style={{ width: 80 }}
-                                    onChange={() => {
-                                      // Trigger validation khi thay đổi loại chiết khấu
-                                      setTimeout(() => {
-                                        form.validateFields(["discount"]);
-                                      }, 0);
+                            return (
+                              <div>
+                                <div className="mb-2">
+                                  <Text>Chiết khấu</Text>
+                                </div>
+                                <Space.Compact>
+                                  <Form.Item
+                                    name="discount"
+                                    initialValue={0}
+                                    rules={validationRules}
+                                    style={{
+                                      flex: 1,
+                                      marginRight: 0,
+                                      marginBottom: 0,
                                     }}
                                   >
-                                    <Option value={DiscountType.Amount}>
-                                      VNĐ
-                                    </Option>
-                                    <Option value={DiscountType.Percentage}>
-                                      %
-                                    </Option>
-                                  </Select>
-                                </Form.Item>
-                              </Space.Compact>
-                            </div>
-                          );
-                        }}
-                      </Form.Item>
-                    </div>
-
-                    <div className="flex-1">
-                      <Form.Item
-                        label="Phí vận chuyển (VNĐ)"
-                        name="shippingFee"
-                        initialValue={0}
-                      >
-                        <InputNumber
-                          min={0}
-                          placeholder="0"
-                          formatter={(value) =>
-                            `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                          }
-                          parser={(value) => {
-                            const parsed = Number(
-                              value?.replace(/,/g, "") || 0
+                                    <InputNumber
+                                      min={0}
+                                      max={isPercentage ? 99.9 : undefined}
+                                      placeholder="0"
+                                      step={isPercentage ? 0.1 : 1000}
+                                      formatter={(value) => {
+                                        if (isPercentage) {
+                                          return `${value}`;
+                                        }
+                                        return `${value}`.replace(
+                                          /\B(?=(\d{3})+(?!\d))/g,
+                                          ","
+                                        );
+                                      }}
+                                      parser={(value) => {
+                                        if (isPercentage) {
+                                          return Number(value || 0) as any;
+                                        }
+                                        const parsed = Number(
+                                          value?.replace(/,/g, "") || 0
+                                        );
+                                        return parsed as any;
+                                      }}
+                                      className="w-full"
+                                    />
+                                  </Form.Item>
+                                  <Form.Item
+                                    name="discountType"
+                                    initialValue={DiscountType.Amount}
+                                    style={{ marginRight: 0, marginBottom: 0 }}
+                                  >
+                                    <Select
+                                      style={{ width: 80 }}
+                                      onChange={() => {
+                                        // Trigger validation khi thay đổi loại chiết khấu
+                                        setTimeout(() => {
+                                          form.validateFields(["discount"]);
+                                        }, 0);
+                                      }}
+                                    >
+                                      <Option value={DiscountType.Amount}>
+                                        VNĐ
+                                      </Option>
+                                      <Option value={DiscountType.Percentage}>
+                                        %
+                                      </Option>
+                                    </Select>
+                                  </Form.Item>
+                                </Space.Compact>
+                              </div>
                             );
-                            return parsed as any;
                           }}
-                          className="w-full"
-                        />
-                      </Form.Item>
+                        </Form.Item>
+                      </div>
+
+                      <div className="flex-1">
+                        <Form.Item
+                          label="Phí vận chuyển (VNĐ)"
+                          name="shippingFee"
+                          initialValue={0}
+                        >
+                          <InputNumber
+                            min={0}
+                            placeholder="0"
+                            formatter={(value) =>
+                              `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                            }
+                            parser={(value) => {
+                              const parsed = Number(
+                                value?.replace(/,/g, "") || 0
+                              );
+                              return parsed as any;
+                            }}
+                            className="w-full"
+                          />
+                        </Form.Item>
+                      </div>
                     </div>
+
+                    <Form.Item
+                      dependencies={["discount", "discountType", "shippingFee"]}
+                    >
+                      {({ getFieldValue }) => {
+                        const discount = getFieldValue("discount") || 0;
+                        const discountType =
+                          getFieldValue("discountType") || DiscountType.Amount;
+                        const shippingFee = getFieldValue("shippingFee") || 0;
+
+                        const totals = calculateOrderTotals(
+                          products,
+                          discount,
+                          discountType,
+                          shippingFee
+                        );
+
+                        return (
+                          <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
+                            <div className="flex justify-between">
+                              <Text>Tạm tính:</Text>
+                              <Text>
+                                {totals.subtotal
+                                  ? totals.subtotal.toLocaleString("vi-VN")
+                                  : "0"}{" "}
+                                VNĐ
+                              </Text>
+                            </div>
+                            <div className="flex justify-between">
+                              <Text>Chiết khấu:</Text>
+                              <Text>
+                                -{totals.discountAmount.toLocaleString("vi-VN")}{" "}
+                                VNĐ
+                                {discountType === DiscountType.Percentage &&
+                                  discount > 0 &&
+                                  ` (${discount}%)`}
+                              </Text>
+                            </div>
+                            <div className="flex justify-between">
+                              <Text>Phí vận chuyển:</Text>
+                              <Text>
+                                +{shippingFee.toLocaleString("vi-VN")} VNĐ
+                              </Text>
+                            </div>
+                            <div className="flex justify-between pt-2 border-t border-gray-300">
+                              <Text strong className="text-lg">
+                                Tổng cộng:
+                              </Text>
+                              <Text strong className="text-lg text-primary">
+                                {totals.total.toLocaleString("vi-VN")} VNĐ
+                              </Text>
+                            </div>
+                          </div>
+                        );
+                      }}
+                    </Form.Item>
                   </div>
+                </Col>
+              </Row>
+            </Card>
+          )}
 
-                  <Form.Item
-                    dependencies={["discount", "discountType", "shippingFee"]}
-                  >
-                    {({ getFieldValue }) => {
-                      const discount = getFieldValue("discount") || 0;
-                      const discountType =
-                        getFieldValue("discountType") || DiscountType.Amount;
-                      const shippingFee = getFieldValue("shippingFee") || 0;
-                      const subtotal = products.reduce(
-                        (sum, product) =>
-                          sum + product.quantity * product.price,
-                        0
-                      );
-                      const discountAmount =
-                        discountType === DiscountType.Percentage
-                          ? (subtotal * discount) / 100
-                          : discount;
-                      const total = subtotal - discountAmount + shippingFee;
-
-                      return (
-                        <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
-                          <div className="flex justify-between">
-                            <Text>Tạm tính:</Text>
-                            <Text>
-                              {subtotal
-                                ? subtotal.toLocaleString("vi-VN")
-                                : "0"}{" "}
-                              VNĐ
-                            </Text>
-                          </div>
-                          <div className="flex justify-between">
-                            <Text>Chiết khấu:</Text>
-                            <Text>
-                              -{discountAmount.toLocaleString("vi-VN")} VNĐ
-                              {discountType === DiscountType.Percentage &&
-                                discount > 0 &&
-                                ` (${discount}%)`}
-                            </Text>
-                          </div>
-                          <div className="flex justify-between">
-                            <Text>Phí vận chuyển:</Text>
-                            <Text>
-                              +{shippingFee.toLocaleString("vi-VN")} VNĐ
-                            </Text>
-                          </div>
-                          <div className="flex justify-between pt-2 border-t border-gray-300">
-                            <Text strong className="text-lg">
-                              Tổng cộng:
-                            </Text>
-                            <Text strong className="text-lg text-primary">
-                              {total.toLocaleString("vi-VN")} VNĐ
-                            </Text>
-                          </div>
-                        </div>
-                      );
-                    }}
-                  </Form.Item>
-                </div>
-              </Col>
-            </Row>
-          </Card>
-        )}
-
-        {/* Submit Button */}
-        <div className="flex justify-end gap-4 py-4 mt-4 border-t bg-white border-gray-200">
-          <Button size="large" onClick={onCancel}>
-            Hủy bỏ
-          </Button>
-          <Button
-            type="primary"
-            size="large"
-            htmlType="submit"
-            loading={submitting}
-            className="bg-primary hover:bg-primary min-w-32"
-          >
-            {mode === "create" ? "Tạo đơn hàng" : "Cập nhật đơn hàng"}
-          </Button>
+          {/* Submit Button */}
+          <div className="flex justify-end gap-4 py-4 sticky bottom-0 mt-4 border-t bg-white border-gray-200">
+            <Button
+              disabled={submitting}
+              icon={<CloseOutlined />}
+              size="large"
+              onClick={onCancel}
+            >
+              Hủy bỏ
+            </Button>
+            <Button
+              size="large"
+              type="dashed"
+              icon={<ReloadOutlined />}
+              disabled={submitting}
+              onClick={handleResetForm}
+              className="min-w-32"
+            >
+              Đặt lại
+            </Button>
+            <Button
+              disabled={submitting}
+              icon={submitting ? <LoadingOutlined spin /> : <SaveOutlined />}
+              type="primary"
+              size="large"
+              htmlType="submit"
+              loading={submitting}
+              className="bg-primary hover:bg-primary min-w-32"
+            >
+              {mode === "create" ? "Tạo đơn hàng" : "Cập nhật đơn hàng"}
+            </Button>
+          </div>
         </div>
-      </div>
-    </Form>
-  );
-};
+        <Form.Item name="status">
+          <Input hidden />
+        </Form.Item>
+        <Form.Item name="totalAmount">
+          <Input hidden />
+        </Form.Item>
+      </Form>
+    );
+  }
+);
 
 export default OrderForm;

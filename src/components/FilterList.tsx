@@ -11,6 +11,7 @@ import {
   Select,
 } from "antd";
 import { FormInstance } from "antd/lib";
+import React from "react";
 
 interface FilterListProps {
   fields: FilterField[];
@@ -116,10 +117,11 @@ export const FilterList: React.FC<FilterListProps> = ({
   if (fields.length === 0) {
     return <Empty description="Không có bộ lọc nào" />;
   }
+  const Wrap = isMobile ? Card : React.Fragment;
 
   return (
-    <Card>
-      <div className=" flex  justify-between  items-center">
+    <Wrap>
+      <div className=" flex  justify-between min-w-2xl  items-center">
         <h3 className=" font-medium  mb-0">Bộ lọc</h3>
         {isMobile && (
           <Button
@@ -143,6 +145,6 @@ export const FilterList: React.FC<FilterListProps> = ({
           </Button>
         </div>
       </Form>
-    </Card>
+    </Wrap>
   );
 };

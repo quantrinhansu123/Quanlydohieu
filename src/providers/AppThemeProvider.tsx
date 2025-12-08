@@ -6,8 +6,11 @@ import { ThemeName, getThemeTokens, themeColors } from "@/configs/theme";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { App as AntdApp, ConfigProvider, theme as antdTheme } from "antd";
 import vi from "antd/locale/vi_VN";
+import dayjs from "dayjs";
 import React, { createContext, useContext, useEffect, useState } from "react";
 // Context để các component con có thể gọi hàm chuyển theme
+dayjs.locale("vi");
+
 type ThemeContextType = {
   mode: "light" | "dark";
   themeName: ThemeName;

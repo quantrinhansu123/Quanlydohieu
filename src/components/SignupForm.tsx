@@ -36,13 +36,14 @@ export function SignupForm({ setView }: SignupFormProps) {
         values.email,
         values.password
       );
+      console.log(userCredential, "sdfsdf");
 
       // Cập nhật tên hiển thị
       await updateProfile(userCredential.user, {
         displayName: values.displayName,
       });
 
-      router.push("/dashboard");
+      // router.push("/dashboard");
     } catch (err: any) {
       console.error("Signup error:", err);
       setError(getErrorMessage(err));

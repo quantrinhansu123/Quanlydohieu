@@ -2,36 +2,36 @@
   "workflows": {
     "-O1a2b3c4d5e6f7g8h9i": {
       "name": "Cắt vải",
-      "defaultEmployees": ["-O1e2f3g4h5i6j7k8l9m", "-O1e2f3g4h5i6j7k8l9n"],
+      "defaultMembers": ["-O1e2f3g4h5i6j7k8l9m", "-O1e2f3g4h5i6j7k8l9n"],
       "createdAt": 1733392100000,
       "order": 0
     },
     "-O1a2b3c4d5e6f7g8h9j": {
       "name": "May",
-      "defaultEmployees": ["-O1e2f3g4h5i6j7k8l9m"],
+      "defaultMembers": ["-O1e2f3g4h5i6j7k8l9m"],
       "createdAt": 1733392110000,
       "order": 1
     },
     "-O1a2b3c4d5e6f7g8h9k": {
       "name": "Là ủi",
-      "defaultEmployees": ["-O1e2f3g4h5i6j7k8l9o"],
+      "defaultMembers": ["-O1e2f3g4h5i6j7k8l9o"],
       "createdAt": 1733392120000,
       "order": 2
     },
     "-O1a2b3c4d5e6f7g8h9l": {
       "name": "Kiểm tra chất lượng",
-      "defaultEmployees": ["-O1e2f3g4h5i6j7k8l9p"],
+      "defaultMembers": ["-O1e2f3g4h5i6j7k8l9p"],
       "createdAt": 1733392130000,
       "order": 3
     },
     "-O1a2b3c4d5e6f7g8h9m": {
       "name": "Đóng gói",
-      "defaultEmployees": ["-O1e2f3g4h5i6j7k8l9q"],
+      "defaultMembers": ["-O1e2f3g4h5i6j7k8l9q"],
       "createdAt": 1733392140000,
       "order": 4
     }
   },
-  "employees": {
+  "members": {
     "-O1e2f3g4h5i6j7k8l9m": {
       "name": "Nguyễn Văn A",
       "role": "worker",
@@ -87,9 +87,9 @@
           "createdAt": 1733392300000,
           "steps": {
             "step1": {
-              "workflowId": "-O1a2b3c4d5e6f7g8h9i",
+              "workflowCode": "-O1a2b3c4d5e6f7g8h9i",
               "name": "Cắt vải",
-              "employees": {
+              "members": {
                 "-O1e2f3g4h5i6j7k8l9m": true,
                 "-O1e2f3g4h5i6j7k8l9n": true
               },
@@ -99,9 +99,9 @@
               "order": 0
             },
             "step2": {
-              "workflowId": "-O1a2b3c4d5e6f7g8h9j",
+              "workflowCode": "-O1a2b3c4d5e6f7g8h9j",
               "name": "May",
-              "employees": {
+              "members": {
                 "-O1e2f3g4h5i6j7k8l9m": true
               },
               "status": "in_progress",
@@ -110,9 +110,9 @@
               "order": 1
             },
             "step3": {
-              "workflowId": "-O1a2b3c4d5e6f7g8h9k",
+              "workflowCode": "-O1a2b3c4d5e6f7g8h9k",
               "name": "Là ủi",
-              "employees": {
+              "members": {
                 "-O1e2f3g4h5i6j7k8l9o": true
               },
               "status": "pending",
@@ -121,9 +121,9 @@
               "order": 2
             },
             "step4": {
-              "workflowId": "-O1a2b3c4d5e6f7g8h9l",
+              "workflowCode": "-O1a2b3c4d5e6f7g8h9l",
               "name": "Kiểm tra chất lượng",
-              "employees": {
+              "members": {
                 "-O1e2f3g4h5i6j7k8l9p": true
               },
               "status": "pending",
@@ -132,9 +132,9 @@
               "order": 3
             },
             "step5": {
-              "workflowId": "-O1a2b3c4d5e6f7g8h9m",
+              "workflowCode": "-O1a2b3c4d5e6f7g8h9m",
               "name": "Đóng gói",
-              "employees": {
+              "members": {
                 "-O1e2f3g4h5i6j7k8l9q": true
               },
               "status": "pending",
@@ -151,9 +151,9 @@
           "createdAt": 1733392300000,
           "steps": {
             "step1": {
-              "workflowId": "-O1a2b3c4d5e6f7g8h9i",
+              "workflowCode": "-O1a2b3c4d5e6f7g8h9i",
               "name": "Cắt vải",
-              "employees": {
+              "members": {
                 "-O1e2f3g4h5i6j7k8l9m": true
               },
               "status": "in_progress",
@@ -162,9 +162,9 @@
               "order": 0
             },
             "step2": {
-              "workflowId": "-O1a2b3c4d5e6f7g8h9j",
+              "workflowCode": "-O1a2b3c4d5e6f7g8h9j",
               "name": "May",
-              "employees": {
+              "members": {
                 "-O1e2f3g4h5i6j7k8l9m": true
               },
               "status": "pending",
@@ -173,9 +173,9 @@
               "order": 1
             },
             "step3": {
-              "workflowId": "-O1a2b3c4d5e6f7g8h9k",
+              "workflowCode": "-O1a2b3c4d5e6f7g8h9k",
               "name": "Là ủi",
-              "employees": {
+              "members": {
                 "-O1e2f3g4h5i6j7k8l9o": true
               },
               "status": "pending",
@@ -184,9 +184,9 @@
               "order": 2
             },
             "step4": {
-              "workflowId": "-O1a2b3c4d5e6f7g8h9l",
+              "workflowCode": "-O1a2b3c4d5e6f7g8h9l",
               "name": "Kiểm tra chất lượng",
-              "employees": {
+              "members": {
                 "-O1e2f3g4h5i6j7k8l9p": true
               },
               "status": "pending",
@@ -195,9 +195,9 @@
               "order": 3
             },
             "step5": {
-              "workflowId": "-O1a2b3c4d5e6f7g8h9m",
+              "workflowCode": "-O1a2b3c4d5e6f7g8h9m",
               "name": "Đóng gói",
-              "employees": {
+              "members": {
                 "-O1e2f3g4h5i6j7k8l9q": true
               },
               "status": "pending",
@@ -227,9 +227,9 @@
           "createdAt": 1733393000000,
           "steps": {
             "step1": {
-              "workflowId": "-O1a2b3c4d5e6f7g8h9i",
+              "workflowCode": "-O1a2b3c4d5e6f7g8h9i",
               "name": "Cắt vải",
-              "employees": {
+              "members": {
                 "-O1e2f3g4h5i6j7k8l9n": true
               },
               "status": "pending",
@@ -238,9 +238,9 @@
               "order": 0
             },
             "step2": {
-              "workflowId": "-O1a2b3c4d5e6f7g8h9j",
+              "workflowCode": "-O1a2b3c4d5e6f7g8h9j",
               "name": "May",
-              "employees": {
+              "members": {
                 "-O1e2f3g4h5i6j7k8l9m": true
               },
               "status": "pending",
@@ -249,9 +249,9 @@
               "order": 1
             },
             "step3": {
-              "workflowId": "-O1a2b3c4d5e6f7g8h9k",
+              "workflowCode": "-O1a2b3c4d5e6f7g8h9k",
               "name": "Là ủi",
-              "employees": {
+              "members": {
                 "-O1e2f3g4h5i6j7k8l9o": true
               },
               "status": "pending",
@@ -260,9 +260,9 @@
               "order": 2
             },
             "step4": {
-              "workflowId": "-O1a2b3c4d5e6f7g8h9l",
+              "workflowCode": "-O1a2b3c4d5e6f7g8h9l",
               "name": "Kiểm tra chất lượng",
-              "employees": {
+              "members": {
                 "-O1e2f3g4h5i6j7k8l9p": true
               },
               "status": "pending",
@@ -271,9 +271,9 @@
               "order": 3
             },
             "step5": {
-              "workflowId": "-O1a2b3c4d5e6f7g8h9m",
+              "workflowCode": "-O1a2b3c4d5e6f7g8h9m",
               "name": "Đóng gói",
-              "employees": {
+              "members": {
                 "-O1e2f3g4h5i6j7k8l9q": true
               },
               "status": "pending",

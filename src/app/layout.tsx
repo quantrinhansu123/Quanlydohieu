@@ -1,9 +1,15 @@
 import AppContext from "@/app/context";
 import "antd/dist/reset.css";
+import dayjs from "dayjs";
+import "dayjs/locale/vi";
+import relativeTime from "dayjs/plugin/relativeTime";
+import React from "react";
 
 import "@/styles/globals.css";
 import type { Metadata, Viewport } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
+dayjs.extend(relativeTime);
+dayjs.locale("vi");
 
 export const metadata: Metadata = {
   title: {

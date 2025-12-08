@@ -1,11 +1,11 @@
-# System Specification: Order Workflow, Products, Employees, and Tracking (Firebase Realtime Database)
+# System Specification: Order Workflow, Products, Members, and Tracking (Firebase Realtime Database)
 
 ## Overview
 
 Build a production workflow management module using Firebase Realtime Database.
 The system must support orders, multiple products per order, multiple workflow
-steps per product, and the assignment of multiple employees to each step. All
-data must be synchronized in real time.
+steps per product, and the assignment of multiple members to each step. All data
+must be synchronized in real time.
 
 ---
 
@@ -29,16 +29,16 @@ data must be synchronized in real time.
 - Each workflow step template includes:
 
   - `name`
-  - Optional default employees
+  - Optional default members
 
 - When creating a new order, product steps are automatically populated based on
   these workflow templates.
 
-### 3. Employees
+### 3. Members
 
-- Employees are stored in `/employees`
-- Each employee has `id`, `name`, and a `role` field.
-- Workflow steps can have multiple assigned employees.
+- Members are stored in `/members`
+- Each member has `id`, `name`, and a `role` field.
+- Workflow steps can have multiple assigned members.
 
 ### 4. Workflow Execution Tracking
 
@@ -46,7 +46,7 @@ For every workflow step inside an order:
 
 - Track `status` (`pending`, `in_progress`, `completed`)
 - Track `completedQuantity`
-- Track list of assigned employees
+- Track list of assigned members
 - Track `updatedAt` timestamp
 
 ### 5. Real-time Updates
@@ -56,7 +56,7 @@ For every workflow step inside an order:
 
   - Updating `completedQuantity`
   - Changing `status`
-  - Adding or removing employees from a step
+  - Adding or removing members from a step
 
 ---
 
@@ -67,14 +67,14 @@ For every workflow step inside an order:
 ```json
 {
   "workflows": {
-    "workflowId001": {
+    "workflowCode001": {
       "name": "Cutting",
-      "defaultEmployees": ["NV001", "NV002"],
+      "defaultMembers": ["NV001", "NV002"],
       "createdAt": 1733392100
     },
-    "workflowId002": {
+    "workflowCode002": {
       "name": "Sewing",
-      "defaultEmployees": ["NV001"],
+      "defaultMembers": ["NV001"],
       "createdAt": 1733392100
     }
   }
@@ -83,11 +83,11 @@ For every workflow step inside an order:
 
 ---
 
-### **Employees**
+### **Members**
 
 ```json
 {
-  "employees": {
+  "members": {
     "NV001": { "name": "Nguyen Van A", "role": "worker" },
     "NV002": { "name": "Tran Thi B", "role": "worker" },
     "NV003": { "name": "Le Van Sale", "role": "sale" }
@@ -113,17 +113,17 @@ For every workflow step inside an order:
           "quantity": 100,
           "steps": {
             "step1": {
-              "workflowId": "workflowId001",
+              "workflowCode": "workflowCode001",
               "name": "Cutting",
-              "employees": { "NV001": true, "NV002": true },
+              "members": { "NV001": true, "NV002": true },
               "status": "pending",
               "completedQuantity": 0,
               "updatedAt": 1733392300
             },
             "step2": {
-              "workflowId": "workflowId002",
+              "workflowCode": "workflowCode002",
               "name": "Sewing",
-              "employees": { "NV001": true },
+              "members": { "NV001": true },
               "status": "pending",
               "completedQuantity": 0,
               "updatedAt": 1733392300
@@ -158,21 +158,21 @@ For every workflow step inside an order:
 
   - Updating `completedQuantity`
   - Updating `status`
-  - Updating `employees`
+  - Updating `members`
 
-### **4. Assign or Remove Employees**
+### **4. Assign or Remove Members**
 
-- Update employee list:
+- Update member list:
 
   ```
-  employees: { employeeId: true }
+  members: { memberId: true }
   ```
 
 ---
 
 ## Additional Implementation Rules
 
-- Use object maps instead of arrays for employees, products, and steps to avoid
+- Use object maps instead of arrays for members, products, and steps to avoid
   array index issues in Firebase.
 - Always update timestamps using server time.
 - All reads and writes must be optimized for Realtime Database (no unnecessary

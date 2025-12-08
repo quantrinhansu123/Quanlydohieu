@@ -10,6 +10,7 @@ export type PropRowDetails<T> = {
 };
 interface ICommonTableProps<T> {
   sortable?: boolean;
+  rowKey?: string
   total?: number;
   dataSource?: T[];
   columns: TableColumnsType<T>;
@@ -39,6 +40,7 @@ const CommonTable = <T extends object>({
   pagination,
   onRowClick,
   rowSelection,
+  rowKey = "id",
 }: ICommonTableProps<T>) => {
   const isMobile = useIsMobile();
   const [selectedRow, setSelectedRow] = useState<T | null>(null);
@@ -174,7 +176,7 @@ const CommonTable = <T extends object>({
       <div className="relative">
         <Table<T>
           {...(paging ? footerProps : {})}
-          rowKey="id"
+          rowKey={rowKey}
           bordered={true}
           loading={loading}
           columns={columns}

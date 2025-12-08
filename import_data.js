@@ -26,9 +26,9 @@ async function importMockData() {
     await db.ref("xoxo/workflows").set(mockData.workflows);
     console.log("✅ Workflows imported");
 
-    // Import employees
-    await db.ref("xoxo/employees").set(mockData.employees);
-    console.log("✅ Employees imported");
+    // Import members
+    await db.ref("xoxo/members").set(mockData.members);
+    console.log("✅ Members imported");
 
     // Import orders
     await db.ref("xoxo/orders").set(mockData.orders);
@@ -41,8 +41,8 @@ async function importMockData() {
     console.log("🎉 All data imported successfully!");
     console.log(
       `📊 ${Object.keys(mockData.workflows).length} workflows, ${
-        Object.keys(mockData.employees).length
-      } employees, ${Object.keys(mockData.orders).length} orders`
+        Object.keys(mockData.members).length
+      } members, ${Object.keys(mockData.orders).length} orders`
     );
 
     process.exit(0);

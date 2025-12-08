@@ -75,34 +75,34 @@ Fields:
 
      - productName (string)
      - quantity (number)
-     - A list of stages that belong to this product
+     - A list of workflows that belong to this product
 
 ---
 
-## Stage Selector Requirements
+## Workflow Selector Requirements
 
-Each product contains multiple stages.
+Each product contains multiple workflows.
 
-Stage data from mocked JSON:
+Workflow data from mocked JSON:
 
 ```json
 {
   "xoxo": {
-    "stages": {
-      "st1": { "stageName": "Cutting" },
-      "st2": { "stageName": "Sewing" },
-      "st3": { "stageName": "Packaging" }
+    "workflows": {
+      "st1": { "workflowName": "Cutting" },
+      "st2": { "workflowName": "Sewing" },
+      "st3": { "workflowName": "Packaging" }
     }
   }
 }
 ```
 
-### For each stage:
+### For each workflow:
 
 - Show an AntD `<Card>`
 - Inside card:
 
-  - Stage Name
+  - Workflow Name
   - Staff Assignment: `<Select mode="multiple" />` Options: list of staff
   - Status selector: `<Select />` with:
 
@@ -117,8 +117,8 @@ Stage data from mocked JSON:
 Build a reusable component: `<ProductCard />` containing:
 
 - Product info fields
-- Stage list
-- Button: “Add Stage”
+- Workflow list
+- Button: “Add Workflow”
 - Button: “Remove Product”
 
 Use AntD `<Card>` + Tailwind for layout.
@@ -142,11 +142,11 @@ When user submits:
     "{productId}": {
       "name": "string",
       "quantity": 10,
-      "stages": {
-        "{stageId}": {
-          "workflowId": "stageId",
-          "name": "Stage Name",
-          "employees": ["staffId1", "staffId2"],
+      "workflows": {
+        "{workflowCode}": {
+          "workflowCode": "workflowCode",
+          "name": "Workflow Name",
+          "members": ["staffId1", "staffId2"],
           "status": "pending",
           "completedQuantity": 0,
           "updatedAt": 1733392000000

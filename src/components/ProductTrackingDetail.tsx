@@ -23,7 +23,7 @@ interface ProductInfo {
 }
 
 interface HistoryItem {
-  stage: string;
+  workflow: string;
   time: string;
   user: string;
   note: string;
@@ -51,49 +51,49 @@ const mockProductInfo: ProductInfo = {
 
 const mockHistory: HistoryItem[] = [
   {
-    stage: "Nhận đồ",
+    workflow: "Nhận đồ",
     time: "2024-12-01 09:30",
     user: "Nguyễn Thu Hương",
     note: "Đã kiểm tra tình trạng ban đầu và chụp ảnh lưu trữ",
     isCompleted: true,
   },
   {
-    stage: "Đánh giá",
+    workflow: "Đánh giá",
     time: "2024-12-01 10:15",
     user: "Trần Văn Minh",
     note: "Cần thay khóa kéo YKK số 5, xi mạ kim loại, sửa chữa lớp da",
     isCompleted: true,
   },
   {
-    stage: "Tháo rời",
+    workflow: "Tháo rời",
     time: "2024-12-01 14:00",
     user: "Lê Thị Phương",
     note: "Đã tháo khóa kéo cũ và các chi tiết kim loại",
     isCompleted: true,
   },
   {
-    stage: "Đang xi mạ",
+    workflow: "Đang xi mạ",
     time: "2024-12-02 08:30",
     user: "Phạm Văn Tùng",
     note: "Đang tiến hành xi mạ các chi tiết kim loại",
     isCurrent: true,
   },
   {
-    stage: "Lắp ráp",
+    workflow: "Lắp ráp",
     time: "",
     user: "",
     note: "Chưa bắt đầu",
     isCompleted: false,
   },
   {
-    stage: "Kiểm tra chất lượng",
+    workflow: "Kiểm tra chất lượng",
     time: "",
     user: "",
     note: "Chưa bắt đầu",
     isCompleted: false,
   },
   {
-    stage: "Hoàn thành",
+    workflow: "Hoàn thành",
     time: "",
     user: "",
     note: "Chưa hoàn thành",
@@ -293,7 +293,7 @@ export default function ProductTrackingDetail() {
                   children: (
                     <div className="pb-4">
                       <div className="font-semibold text-base mb-1">
-                        {item.stage}
+                        {item.workflow}
                       </div>
                       {item.time && (
                         <div className="text-gray-400 text-xs mb-2">

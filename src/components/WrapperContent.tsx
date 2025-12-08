@@ -24,6 +24,7 @@ import {
   Divider,
   Empty,
   Form,
+  FormInstance,
   Input,
   Modal,
   Popover,
@@ -37,8 +38,6 @@ interface LeftControlsProps {
   isMobile: boolean;
   header: {
     buttonBackTo?: string;
-    customToolbar?: React.ReactNode;
-    customToolbarSecondRow?: React.ReactNode;
     searchInput?: {
       placeholder: string;
       filterKeys: (keyof any)[];
@@ -65,7 +64,16 @@ interface LeftControlsProps {
   hasActiveFilters: boolean;
   handleResetFilters: () => void;
   isFilterVisible: boolean;
-  setIsFilterVisible: (value: boolean) => void;
+  setIsFilterVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  onApplyFilter?:
+    | ((
+        arr: {
+          key: string;
+          value: any;
+        }[]
+      ) => void)
+    | undefined;
+  formFilter: FormInstance<any>;
 }
 
 const LeftControls: React.FC<LeftControlsProps> = ({
@@ -84,6 +92,8 @@ const LeftControls: React.FC<LeftControlsProps> = ({
   handleResetFilters,
   isFilterVisible,
   setIsFilterVisible,
+  onApplyFilter,
+  formFilter,
 }) => {
   if (isMobile) {
     return (
@@ -124,23 +134,34 @@ const LeftControls: React.FC<LeftControlsProps> = ({
           />
         )}
 
-        {header.customToolbar && (
-          <div className="flex items-center gap-3 flex-wrap">
-            {header.customToolbar}
-          </div>
-        )}
-
         {header.filters && header.filters.fields && (
-          <Tooltip title={isFilterVisible ? "Ẩn bộ lọc" : "Hiển thị bộ lọc"}>
-            <Button
-              disabled={isLoading || isRefetching}
-              type={isFilterVisible ? "primary" : "default"}
-              icon={<FilterOutlined />}
-              onClick={() => setIsFilterVisible(!isFilterVisible)}
-            />
-          </Tooltip>
+          <Popover
+            trigger="click"
+            placement="bottomLeft"
+            content={
+              <FilterList
+                isMobile={isMobile}
+                form={formFilter}
+                onCancel={() => setIsFilterVisible(false)}
+                fields={header.filters?.fields || []}
+                onApplyFilter={(arr) => onApplyFilter && onApplyFilter(arr)}
+                onReset={() =>
+                  header.filters?.onReset && header.filters.onReset()
+                }
+              />
+            }
+            open={isFilterVisible}
+            onOpenChange={setIsFilterVisible}
+          >
+            <Tooltip title={isFilterVisible ? "Ẩn bộ lọc" : "Hiển thị bộ lọc"}>
+              <Button
+                disabled={isLoading || isRefetching}
+                type={isFilterVisible ? "primary" : "default"}
+                icon={<FilterOutlined />}
+              />
+            </Tooltip>
+          </Popover>
         )}
-
         {header.columnSettings && (
           <Popover
             trigger="click"
@@ -215,12 +236,6 @@ const LeftControls: React.FC<LeftControlsProps> = ({
           </Tooltip>
         )}
       </div>
-
-      {header.customToolbarSecondRow && (
-        <div className="flex items-center gap-3 flex-wrap">
-          {header.customToolbarSecondRow}
-        </div>
-      )}
     </div>
   );
 };
@@ -318,7 +333,7 @@ const RightControls: React.FC<RightControlsProps> = ({
             <Tooltip key={index} title={buttonEnd.name}>
               <span>
                 <Button
-                  disabled={isLoading || isRefetching || buttonEnd.can}
+                  disabled={isLoading || isRefetching || !buttonEnd.can}
                   loading={buttonEnd.isLoading}
                   danger={buttonEnd.danger}
                   type={buttonEnd.type}
@@ -516,6 +531,8 @@ function WrapperContent<T extends object>({
     <div className={`space-y-10 ${className}`}>
       <div className="flex items-center justify-between">
         <LeftControls
+          formFilter={formFilter}
+          onApplyFilter={header.filters?.onApplyFilter}
           isMobile={isMobileView}
           header={header}
           isLoading={isLoading}
@@ -544,24 +561,6 @@ function WrapperContent<T extends object>({
           setIsMobileOptionsOpen={setIsMobileOptionsOpen}
         />
       </div>
-
-      {/* Desktop inline filter panel (always visible on desktop) */}
-      {!isMobileView &&
-        header.filters &&
-        header.filters.fields &&
-        isFilterVisible && (
-          <div className="mt-4">
-            <FilterList
-              isMobile={isMobileView}
-              form={formFilter}
-              fields={header.filters?.fields || []}
-              onApplyFilter={(arr) => header.filters?.onApplyFilter(arr)}
-              onReset={() =>
-                header.filters?.onReset && header.filters.onReset()
-              }
-            />
-          </div>
-        )}
 
       {/* Mobile modal for filters / settings */}
       <Modal

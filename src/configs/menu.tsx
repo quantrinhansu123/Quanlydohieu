@@ -23,7 +23,7 @@ export const allMenuItems: Array<{
 }> = [
   {
     title: "Thống kê",
-    href: "/center",
+    href: "/dashboard",
     Icon: DashboardOutlined,
     permission: null,
   },
@@ -157,7 +157,6 @@ function generateBreadcrumbMap(
   return map;
 }
 
-export const breadcrumbMap: Record<string, string> ={
+export const breadcrumbMap: Record<string, string> = {
   ...generateBreadcrumbMap(allMenuItems),
-}
-
+};

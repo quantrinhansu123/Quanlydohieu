@@ -1,6 +1,6 @@
 // ==================== WORKFLOW SYSTEM TYPES ====================
 
-/** Status of a workflow step/stage */
+/** Status of a workflow step/workflow */
 export type WorkflowStepStatus = 'pending' | 'in_progress' | 'completed';
 
 /** Staff role */
@@ -21,23 +21,23 @@ export interface StaffMap {
 
 // ==================== STAGES (formerly WORKFLOW TEMPLATES) ====================
 
-export interface Stage {
+export interface Workflow {
   id: string;
   name: string;
   defaultStaff?: string[]; // Array of staff IDs
   createdAt: number;
-  order?: number; // For sorting stages
+  order?: number; // For sorting workflows
 }
 
-export interface StageMap {
-  [stageId: string]: Omit<Stage, 'id'>;
+export interface WorkflowMap {
+  [workflowCode: string]: Omit<Workflow, 'id'>;
 }
 
 // ==================== ORDER - PRODUCT - STAGES ====================
 
-/** Stage inside a product (cloned from template) */
-export interface ProductStage {
-  stageId: string;
+/** Workflow inside a product (cloned from template) */
+export interface ProductWorkflow {
+  workflowCode: string;
   name: string;
   staff: { [staffId: string]: boolean }; // Object map for Firebase
   status: WorkflowStepStatus;
@@ -46,8 +46,8 @@ export interface ProductStage {
   order?: number; // For sorting
 }
 
-export interface ProductStageMap {
-  [stageKey: string]: ProductStage;
+export interface ProductWorkflowMap {
+  [workflowKey: string]: ProductWorkflow;
 }
 
 /** Product inside an order */
@@ -55,7 +55,7 @@ export interface OrderProduct {
   name: string;
   quantity: number;
   price?: number;
-  stages: ProductStageMap;
+  workflows: ProductWorkflowMap;
   createdAt?: number;
 }
 
@@ -70,7 +70,7 @@ export interface Order {
   customerName: string;
   customerPhone?: string;
   customerAddress?: string;
-  createdBy: string; // Employee ID
+  createdBy: string; // Member ID
   createdAt: number;
   updatedAt?: number;
   status?: 'draft' | 'active' | 'completed' | 'cancelled';
@@ -80,14 +80,14 @@ export interface Order {
 }
 
 export interface OrderMap {
-  [orderId: string]: Omit<Order, 'id'>;
+  [orderCode: string]: Omit<Order, 'id'>;
 }
 
 // ==================== FIREBASE REALTIME DATABASE ROOT STRUCTURE ====================
 
 export interface RealtimeDatabaseSchema {
   xoxo: {
-    stages: StageMap;
+    workflows: WorkflowMap;
     staff: StaffMap;
     orders: OrderMap;
   };
@@ -109,30 +109,30 @@ export interface CreateOrderPayload {
   }>;
 }
 
-/** Payload for updating stage progress */
-export interface UpdateStageProgressPayload {
-  orderId: string;
+/** Payload for updating workflow progress */
+export interface UpdateWorkflowProgressPayload {
+  orderCode: string;
   productId: string;
-  stageKey: string;
+  workflowKey: string;
   completedQuantity?: number;
   status?: WorkflowStepStatus;
   staff?: { [staffId: string]: boolean };
 }
 
 /** Payload for assigning/removing staff */
-export interface UpdateStageStaffPayload {
-  orderId: string;
+export interface UpdateWorkflowStaffPayload {
+  orderCode: string;
   productId: string;
-  stageKey: string;
+  workflowKey: string;
   staffId: string;
   action: 'add' | 'remove';
 }
 
 // ==================== UI HELPER TYPES ====================
 
-/** Expanded stage data with staff details (for UI display) */
-export interface StageWithDetails extends ProductStage {
-  stageKey: string;
+/** Expanded workflow data with staff details (for UI display) */
+export interface WorkflowWithDetails extends ProductWorkflow {
+  workflowKey: string;
   productId: string;
   productName: string;
   productQuantity: number;
@@ -143,6 +143,6 @@ export interface StageWithDetails extends ProductStage {
 export interface OrderWithDetails extends Order {
   createdByStaff?: Staff;
   totalProducts: number;
-  totalStages: number;
-  completedStages: number;
+  totalWorkflows: number;
+  completedWorkflows: number;
 }

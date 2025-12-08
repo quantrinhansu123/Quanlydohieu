@@ -38,7 +38,7 @@ async function testFirebase() {
       console.log("📊 XOXO keys:", Object.keys(data || {}));
 
       // Test specific paths
-      const paths = ["xoxo/workflows", "xoxo/employees", "xoxo/orders"];
+      const paths = ["xoxo/workflows", "xoxo/members", "xoxo/orders"];
       for (const path of paths) {
         const pathRef = ref(database, path);
         const pathSnapshot = await get(pathRef);

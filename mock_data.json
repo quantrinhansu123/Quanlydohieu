@@ -41,17 +41,8 @@
       "home_type": "Biệt thự",
       "income_range": "20M-50M",
       "education": "Cử nhân",
-      "hobbies": [
-        "Yoga",
-        "Du lịch",
-        "Golf",
-        "Đọc sách"
-      ],
-      "languages_spoken": [
-        "Tiếng Việt",
-        "中文",
-        "Français"
-      ],
+      "hobbies": ["Yoga", "Du lịch", "Golf", "Đọc sách"],
+      "languages_spoken": ["Tiếng Việt", "中文", "Français"],
       "emergency_contact": "0350670922",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tiểu đường",
@@ -101,17 +92,8 @@
       "home_type": "Biệt thự",
       "income_range": "< 20M",
       "education": "MBA",
-      "hobbies": [
-        "Đọc sách",
-        "Tennis",
-        "Yoga",
-        "Nấu ăn"
-      ],
-      "languages_spoken": [
-        "Français",
-        "中文",
-        "English"
-      ],
+      "hobbies": ["Đọc sách", "Tennis", "Yoga", "Nấu ăn"],
+      "languages_spoken": ["Français", "中文", "English"],
       "emergency_contact": "0390088810",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tiểu đường",
@@ -161,15 +143,8 @@
       "home_type": "Nhà riêng",
       "income_range": "< 20M",
       "education": "Tiến sĩ",
-      "hobbies": [
-        "Yoga",
-        "Đọc sách"
-      ],
-      "languages_spoken": [
-        "中文",
-        "Tiếng Việt",
-        "Français"
-      ],
+      "hobbies": ["Yoga", "Đọc sách"],
+      "languages_spoken": ["中文", "Tiếng Việt", "Français"],
       "emergency_contact": "0485260092",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Cao huyết áp",
@@ -219,14 +194,8 @@
       "home_type": "Penthouse",
       "income_range": "< 20M",
       "education": "MBA",
-      "hobbies": [
-        "Đọc sách"
-      ],
-      "languages_spoken": [
-        "Français",
-        "中文",
-        "English"
-      ],
+      "hobbies": ["Đọc sách"],
+      "languages_spoken": ["Français", "中文", "English"],
       "emergency_contact": "0387132416",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Cao huyết áp",
@@ -276,17 +245,8 @@
       "home_type": "Biệt thự",
       "income_range": "> 100M",
       "education": "MBA",
-      "hobbies": [
-        "Yoga",
-        "Du lịch",
-        "Golf",
-        "Nấu ăn"
-      ],
-      "languages_spoken": [
-        "English",
-        "Français",
-        "Tiếng Việt"
-      ],
+      "hobbies": ["Yoga", "Du lịch", "Golf", "Nấu ăn"],
+      "languages_spoken": ["English", "Français", "Tiếng Việt"],
       "emergency_contact": "0371827243",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Cao huyết áp",
@@ -336,15 +296,8 @@
       "home_type": "Biệt thự",
       "income_range": "50M-100M",
       "education": "Cử nhân",
-      "hobbies": [
-        "Yoga",
-        "Du lịch",
-        "Golf",
-        "Tennis"
-      ],
-      "languages_spoken": [
-        "Tiếng Việt"
-      ],
+      "hobbies": ["Yoga", "Du lịch", "Golf", "Tennis"],
+      "languages_spoken": ["Tiếng Việt"],
       "emergency_contact": "0464322875",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Cao huyết áp",
@@ -394,14 +347,8 @@
       "home_type": "Biệt thự",
       "income_range": "< 20M",
       "education": "Tiến sĩ",
-      "hobbies": [
-        "Nấu ăn",
-        "Yoga",
-        "Du lịch"
-      ],
-      "languages_spoken": [
-        "Français"
-      ],
+      "hobbies": ["Nấu ăn", "Yoga", "Du lịch"],
+      "languages_spoken": ["Français"],
       "emergency_contact": "0235215591",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tiểu đường",
@@ -451,15 +398,8 @@
       "home_type": "Chung cư",
       "income_range": "> 100M",
       "education": "Thạc sĩ",
-      "hobbies": [
-        "Yoga",
-        "Du lịch",
-        "Đọc sách",
-        "Golf"
-      ],
-      "languages_spoken": [
-        "Tiếng Việt"
-      ],
+      "hobbies": ["Yoga", "Du lịch", "Đọc sách", "Golf"],
+      "languages_spoken": ["Tiếng Việt"],
       "emergency_contact": "0694487397",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tiểu đường",
@@ -509,15 +449,8 @@
       "home_type": "Chung cư",
       "income_range": "< 20M",
       "education": "MBA",
-      "hobbies": [
-        "Nấu ăn",
-        "Shopping",
-        "Yoga"
-      ],
-      "languages_spoken": [
-        "Français",
-        "中文"
-      ],
+      "hobbies": ["Nấu ăn", "Shopping", "Yoga"],
+      "languages_spoken": ["Français", "中文"],
       "emergency_contact": "0222703305",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tiểu đường",
@@ -567,14 +500,8 @@
       "home_type": "Biệt thự",
       "income_range": "< 20M",
       "education": "Thạc sĩ",
-      "hobbies": [
-        "Shopping",
-        "Tennis",
-        "Yoga"
-      ],
-      "languages_spoken": [
-        "Tiếng Việt"
-      ],
+      "hobbies": ["Shopping", "Tennis", "Yoga"],
+      "languages_spoken": ["Tiếng Việt"],
       "emergency_contact": "0877862818",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tim mạch",
@@ -624,13 +551,8 @@
       "home_type": "Biệt thự",
       "income_range": "50M-100M",
       "education": "Thạc sĩ",
-      "hobbies": [
-        "Golf",
-        "Shopping"
-      ],
-      "languages_spoken": [
-        "中文"
-      ],
+      "hobbies": ["Golf", "Shopping"],
+      "languages_spoken": ["中文"],
       "emergency_contact": "0324864122",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tiểu đường",
@@ -680,14 +602,8 @@
       "home_type": "Biệt thự",
       "income_range": "50M-100M",
       "education": "MBA",
-      "hobbies": [
-        "Du lịch"
-      ],
-      "languages_spoken": [
-        "Tiếng Việt",
-        "English",
-        "中文"
-      ],
+      "hobbies": ["Du lịch"],
+      "languages_spoken": ["Tiếng Việt", "English", "中文"],
       "emergency_contact": "0746344112",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tim mạch",
@@ -737,15 +653,8 @@
       "home_type": "Biệt thự",
       "income_range": "50M-100M",
       "education": "MBA",
-      "hobbies": [
-        "Yoga",
-        "Tennis",
-        "Shopping"
-      ],
-      "languages_spoken": [
-        "Français",
-        "English"
-      ],
+      "hobbies": ["Yoga", "Tennis", "Shopping"],
+      "languages_spoken": ["Français", "English"],
       "emergency_contact": "0272757418",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Cao huyết áp",
@@ -795,13 +704,8 @@
       "home_type": "Nhà riêng",
       "income_range": "< 20M",
       "education": "MBA",
-      "hobbies": [
-        "Tennis",
-        "Du lịch"
-      ],
-      "languages_spoken": [
-        "Français"
-      ],
+      "hobbies": ["Tennis", "Du lịch"],
+      "languages_spoken": ["Français"],
       "emergency_contact": "0396393676",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tiểu đường",
@@ -851,16 +755,8 @@
       "home_type": "Chung cư",
       "income_range": "< 20M",
       "education": "Tiến sĩ",
-      "hobbies": [
-        "Tennis",
-        "Du lịch",
-        "Yoga",
-        "Nấu ăn"
-      ],
-      "languages_spoken": [
-        "Français",
-        "中文"
-      ],
+      "hobbies": ["Tennis", "Du lịch", "Yoga", "Nấu ăn"],
+      "languages_spoken": ["Français", "中文"],
       "emergency_contact": "0326444741",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Cao huyết áp",
@@ -910,16 +806,8 @@
       "home_type": "Biệt thự",
       "income_range": "50M-100M",
       "education": "Thạc sĩ",
-      "hobbies": [
-        "Yoga",
-        "Đọc sách",
-        "Tennis",
-        "Du lịch"
-      ],
-      "languages_spoken": [
-        "Tiếng Việt",
-        "English"
-      ],
+      "hobbies": ["Yoga", "Đọc sách", "Tennis", "Du lịch"],
+      "languages_spoken": ["Tiếng Việt", "English"],
       "emergency_contact": "0166418300",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Cao huyết áp",
@@ -969,12 +857,8 @@
       "home_type": "Penthouse",
       "income_range": "< 20M",
       "education": "MBA",
-      "hobbies": [
-        "Du lịch"
-      ],
-      "languages_spoken": [
-        "Tiếng Việt"
-      ],
+      "hobbies": ["Du lịch"],
+      "languages_spoken": ["Tiếng Việt"],
       "emergency_contact": "0135301249",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tim mạch",
@@ -1024,17 +908,8 @@
       "home_type": "Nhà riêng",
       "income_range": "50M-100M",
       "education": "MBA",
-      "hobbies": [
-        "Golf",
-        "Nấu ăn",
-        "Shopping",
-        "Đọc sách"
-      ],
-      "languages_spoken": [
-        "中文",
-        "Français",
-        "English"
-      ],
+      "hobbies": ["Golf", "Nấu ăn", "Shopping", "Đọc sách"],
+      "languages_spoken": ["中文", "Français", "English"],
       "emergency_contact": "0367742818",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tiểu đường",
@@ -1084,17 +959,8 @@
       "home_type": "Biệt thự",
       "income_range": "> 100M",
       "education": "Cử nhân",
-      "hobbies": [
-        "Tennis",
-        "Shopping",
-        "Yoga",
-        "Đọc sách"
-      ],
-      "languages_spoken": [
-        "Tiếng Việt",
-        "English",
-        "中文"
-      ],
+      "hobbies": ["Tennis", "Shopping", "Yoga", "Đọc sách"],
+      "languages_spoken": ["Tiếng Việt", "English", "中文"],
       "emergency_contact": "0532038243",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tim mạch",
@@ -1144,15 +1010,8 @@
       "home_type": "Chung cư",
       "income_range": "50M-100M",
       "education": "Cử nhân",
-      "hobbies": [
-        "Du lịch",
-        "Yoga"
-      ],
-      "languages_spoken": [
-        "Français",
-        "中文",
-        "English"
-      ],
+      "hobbies": ["Du lịch", "Yoga"],
+      "languages_spoken": ["Français", "中文", "English"],
       "emergency_contact": "0727787300",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Khỏe mạnh",
@@ -1202,16 +1061,8 @@
       "home_type": "Chung cư",
       "income_range": "20M-50M",
       "education": "Thạc sĩ",
-      "hobbies": [
-        "Golf",
-        "Yoga",
-        "Shopping",
-        "Nấu ăn"
-      ],
-      "languages_spoken": [
-        "English",
-        "Tiếng Việt"
-      ],
+      "hobbies": ["Golf", "Yoga", "Shopping", "Nấu ăn"],
+      "languages_spoken": ["English", "Tiếng Việt"],
       "emergency_contact": "0123766601",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Khỏe mạnh",
@@ -1261,15 +1112,8 @@
       "home_type": "Penthouse",
       "income_range": "< 20M",
       "education": "Cử nhân",
-      "hobbies": [
-        "Shopping",
-        "Nấu ăn",
-        "Golf",
-        "Du lịch"
-      ],
-      "languages_spoken": [
-        "Tiếng Việt"
-      ],
+      "hobbies": ["Shopping", "Nấu ăn", "Golf", "Du lịch"],
+      "languages_spoken": ["Tiếng Việt"],
       "emergency_contact": "0520193388",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tiểu đường",
@@ -1319,17 +1163,8 @@
       "home_type": "Chung cư",
       "income_range": "< 20M",
       "education": "Thạc sĩ",
-      "hobbies": [
-        "Tennis",
-        "Shopping",
-        "Golf",
-        "Nấu ăn"
-      ],
-      "languages_spoken": [
-        "Français",
-        "中文",
-        "English"
-      ],
+      "hobbies": ["Tennis", "Shopping", "Golf", "Nấu ăn"],
+      "languages_spoken": ["Français", "中文", "English"],
       "emergency_contact": "0915291948",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tiểu đường",
@@ -1379,14 +1214,8 @@
       "home_type": "Penthouse",
       "income_range": "20M-50M",
       "education": "Cử nhân",
-      "hobbies": [
-        "Shopping",
-        "Đọc sách",
-        "Golf"
-      ],
-      "languages_spoken": [
-        "Tiếng Việt"
-      ],
+      "hobbies": ["Shopping", "Đọc sách", "Golf"],
+      "languages_spoken": ["Tiếng Việt"],
       "emergency_contact": "0767134011",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tim mạch",
@@ -1436,14 +1265,8 @@
       "home_type": "Penthouse",
       "income_range": "< 20M",
       "education": "Tiến sĩ",
-      "hobbies": [
-        "Tennis",
-        "Đọc sách"
-      ],
-      "languages_spoken": [
-        "English",
-        "中文"
-      ],
+      "hobbies": ["Tennis", "Đọc sách"],
+      "languages_spoken": ["English", "中文"],
       "emergency_contact": "0129927211",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tiểu đường",
@@ -1493,15 +1316,8 @@
       "home_type": "Nhà riêng",
       "income_range": "50M-100M",
       "education": "MBA",
-      "hobbies": [
-        "Shopping",
-        "Golf",
-        "Du lịch"
-      ],
-      "languages_spoken": [
-        "中文",
-        "English"
-      ],
+      "hobbies": ["Shopping", "Golf", "Du lịch"],
+      "languages_spoken": ["中文", "English"],
       "emergency_contact": "0470125922",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tim mạch",
@@ -1551,13 +1367,8 @@
       "home_type": "Biệt thự",
       "income_range": "> 100M",
       "education": "Thạc sĩ",
-      "hobbies": [
-        "Shopping",
-        "Tennis"
-      ],
-      "languages_spoken": [
-        "Français"
-      ],
+      "hobbies": ["Shopping", "Tennis"],
+      "languages_spoken": ["Français"],
       "emergency_contact": "0276009802",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Khỏe mạnh",
@@ -1607,16 +1418,8 @@
       "home_type": "Biệt thự",
       "income_range": "20M-50M",
       "education": "Thạc sĩ",
-      "hobbies": [
-        "Du lịch",
-        "Golf",
-        "Shopping",
-        "Tennis"
-      ],
-      "languages_spoken": [
-        "English",
-        "Français"
-      ],
+      "hobbies": ["Du lịch", "Golf", "Shopping", "Tennis"],
+      "languages_spoken": ["English", "Français"],
       "emergency_contact": "0192983530",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tiểu đường",
@@ -1666,13 +1469,8 @@
       "home_type": "Nhà riêng",
       "income_range": "20M-50M",
       "education": "MBA",
-      "hobbies": [
-        "Yoga",
-        "Golf"
-      ],
-      "languages_spoken": [
-        "中文"
-      ],
+      "hobbies": ["Yoga", "Golf"],
+      "languages_spoken": ["中文"],
       "emergency_contact": "0477236932",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Khỏe mạnh",
@@ -1722,16 +1520,8 @@
       "home_type": "Penthouse",
       "income_range": "50M-100M",
       "education": "Cử nhân",
-      "hobbies": [
-        "Du lịch",
-        "Golf",
-        "Nấu ăn"
-      ],
-      "languages_spoken": [
-        "Tiếng Việt",
-        "English",
-        "Français"
-      ],
+      "hobbies": ["Du lịch", "Golf", "Nấu ăn"],
+      "languages_spoken": ["Tiếng Việt", "English", "Français"],
       "emergency_contact": "0511043900",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Khỏe mạnh",
@@ -1781,16 +1571,8 @@
       "home_type": "Chung cư",
       "income_range": "50M-100M",
       "education": "MBA",
-      "hobbies": [
-        "Shopping",
-        "Golf",
-        "Yoga",
-        "Tennis"
-      ],
-      "languages_spoken": [
-        "Tiếng Việt",
-        "English"
-      ],
+      "hobbies": ["Shopping", "Golf", "Yoga", "Tennis"],
+      "languages_spoken": ["Tiếng Việt", "English"],
       "emergency_contact": "0298434618",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tiểu đường",
@@ -1840,13 +1622,8 @@
       "home_type": "Chung cư",
       "income_range": "< 20M",
       "education": "Tiến sĩ",
-      "hobbies": [
-        "Du lịch",
-        "Yoga"
-      ],
-      "languages_spoken": [
-        "中文"
-      ],
+      "hobbies": ["Du lịch", "Yoga"],
+      "languages_spoken": ["中文"],
       "emergency_contact": "0249151144",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tiểu đường",
@@ -1896,13 +1673,8 @@
       "home_type": "Chung cư",
       "income_range": "20M-50M",
       "education": "Tiến sĩ",
-      "hobbies": [
-        "Shopping"
-      ],
-      "languages_spoken": [
-        "Français",
-        "中文"
-      ],
+      "hobbies": ["Shopping"],
+      "languages_spoken": ["Français", "中文"],
       "emergency_contact": "0425409074",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Khỏe mạnh",
@@ -1952,14 +1724,8 @@
       "home_type": "Nhà riêng",
       "income_range": "> 100M",
       "education": "Thạc sĩ",
-      "hobbies": [
-        "Du lịch"
-      ],
-      "languages_spoken": [
-        "Tiếng Việt",
-        "English",
-        "中文"
-      ],
+      "hobbies": ["Du lịch"],
+      "languages_spoken": ["Tiếng Việt", "English", "中文"],
       "emergency_contact": "0931046657",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Khỏe mạnh",
@@ -2009,16 +1775,8 @@
       "home_type": "Penthouse",
       "income_range": "> 100M",
       "education": "MBA",
-      "hobbies": [
-        "Yoga",
-        "Golf",
-        "Đọc sách"
-      ],
-      "languages_spoken": [
-        "Français",
-        "Tiếng Việt",
-        "English"
-      ],
+      "hobbies": ["Yoga", "Golf", "Đọc sách"],
+      "languages_spoken": ["Français", "Tiếng Việt", "English"],
       "emergency_contact": "0592133147",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Cao huyết áp",
@@ -2068,15 +1826,8 @@
       "home_type": "Biệt thự",
       "income_range": "< 20M",
       "education": "Thạc sĩ",
-      "hobbies": [
-        "Shopping",
-        "Yoga",
-        "Tennis"
-      ],
-      "languages_spoken": [
-        "Tiếng Việt",
-        "English"
-      ],
+      "hobbies": ["Shopping", "Yoga", "Tennis"],
+      "languages_spoken": ["Tiếng Việt", "English"],
       "emergency_contact": "0323008235",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Khỏe mạnh",
@@ -2126,13 +1877,8 @@
       "home_type": "Penthouse",
       "income_range": "50M-100M",
       "education": "Tiến sĩ",
-      "hobbies": [
-        "Đọc sách",
-        "Nấu ăn"
-      ],
-      "languages_spoken": [
-        "中文"
-      ],
+      "hobbies": ["Đọc sách", "Nấu ăn"],
+      "languages_spoken": ["中文"],
       "emergency_contact": "0996382822",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tim mạch",
@@ -2182,16 +1928,8 @@
       "home_type": "Nhà riêng",
       "income_range": "< 20M",
       "education": "Tiến sĩ",
-      "hobbies": [
-        "Nấu ăn",
-        "Yoga",
-        "Golf"
-      ],
-      "languages_spoken": [
-        "Tiếng Việt",
-        "English",
-        "中文"
-      ],
+      "hobbies": ["Nấu ăn", "Yoga", "Golf"],
+      "languages_spoken": ["Tiếng Việt", "English", "中文"],
       "emergency_contact": "0356087032",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tim mạch",
@@ -2241,14 +1979,8 @@
       "home_type": "Chung cư",
       "income_range": "> 100M",
       "education": "MBA",
-      "hobbies": [
-        "Shopping",
-        "Đọc sách"
-      ],
-      "languages_spoken": [
-        "Français",
-        "English"
-      ],
+      "hobbies": ["Shopping", "Đọc sách"],
+      "languages_spoken": ["Français", "English"],
       "emergency_contact": "0362654845",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tim mạch",
@@ -2298,16 +2030,8 @@
       "home_type": "Penthouse",
       "income_range": "< 20M",
       "education": "Tiến sĩ",
-      "hobbies": [
-        "Du lịch",
-        "Golf",
-        "Đọc sách"
-      ],
-      "languages_spoken": [
-        "Tiếng Việt",
-        "Français",
-        "中文"
-      ],
+      "hobbies": ["Du lịch", "Golf", "Đọc sách"],
+      "languages_spoken": ["Tiếng Việt", "Français", "中文"],
       "emergency_contact": "0660049691",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tim mạch",
@@ -2357,13 +2081,8 @@
       "home_type": "Penthouse",
       "income_range": "20M-50M",
       "education": "Cử nhân",
-      "hobbies": [
-        "Golf",
-        "Đọc sách"
-      ],
-      "languages_spoken": [
-        "Français"
-      ],
+      "hobbies": ["Golf", "Đọc sách"],
+      "languages_spoken": ["Français"],
       "emergency_contact": "0644913963",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Cao huyết áp",
@@ -2413,16 +2132,8 @@
       "home_type": "Penthouse",
       "income_range": "50M-100M",
       "education": "Thạc sĩ",
-      "hobbies": [
-        "Nấu ăn",
-        "Shopping",
-        "Golf"
-      ],
-      "languages_spoken": [
-        "Français",
-        "中文",
-        "English"
-      ],
+      "hobbies": ["Nấu ăn", "Shopping", "Golf"],
+      "languages_spoken": ["Français", "中文", "English"],
       "emergency_contact": "0334507775",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Khỏe mạnh",
@@ -2472,15 +2183,8 @@
       "home_type": "Penthouse",
       "income_range": "< 20M",
       "education": "Thạc sĩ",
-      "hobbies": [
-        "Shopping",
-        "Tennis",
-        "Yoga"
-      ],
-      "languages_spoken": [
-        "Tiếng Việt",
-        "Français"
-      ],
+      "hobbies": ["Shopping", "Tennis", "Yoga"],
+      "languages_spoken": ["Tiếng Việt", "Français"],
       "emergency_contact": "0977006800",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tim mạch",
@@ -2530,12 +2234,8 @@
       "home_type": "Nhà riêng",
       "income_range": "50M-100M",
       "education": "MBA",
-      "hobbies": [
-        "Đọc sách"
-      ],
-      "languages_spoken": [
-        "中文"
-      ],
+      "hobbies": ["Đọc sách"],
+      "languages_spoken": ["中文"],
       "emergency_contact": "0235603987",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tiểu đường",
@@ -2585,17 +2285,8 @@
       "home_type": "Nhà riêng",
       "income_range": "50M-100M",
       "education": "MBA",
-      "hobbies": [
-        "Shopping",
-        "Du lịch",
-        "Golf",
-        "Nấu ăn"
-      ],
-      "languages_spoken": [
-        "Français",
-        "中文",
-        "English"
-      ],
+      "hobbies": ["Shopping", "Du lịch", "Golf", "Nấu ăn"],
+      "languages_spoken": ["Français", "中文", "English"],
       "emergency_contact": "0971237959",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Cao huyết áp",
@@ -2645,14 +2336,8 @@
       "home_type": "Penthouse",
       "income_range": "< 20M",
       "education": "Cử nhân",
-      "hobbies": [
-        "Nấu ăn",
-        "Du lịch"
-      ],
-      "languages_spoken": [
-        "中文",
-        "English"
-      ],
+      "hobbies": ["Nấu ăn", "Du lịch"],
+      "languages_spoken": ["中文", "English"],
       "emergency_contact": "0954366086",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tiểu đường",
@@ -2702,14 +2387,8 @@
       "home_type": "Nhà riêng",
       "income_range": "< 20M",
       "education": "Thạc sĩ",
-      "hobbies": [
-        "Du lịch"
-      ],
-      "languages_spoken": [
-        "中文",
-        "Français",
-        "English"
-      ],
+      "hobbies": ["Du lịch"],
+      "languages_spoken": ["中文", "Français", "English"],
       "emergency_contact": "0735500808",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Cao huyết áp",
@@ -2759,15 +2438,8 @@
       "home_type": "Nhà riêng",
       "income_range": "< 20M",
       "education": "Tiến sĩ",
-      "hobbies": [
-        "Shopping",
-        "Tennis"
-      ],
-      "languages_spoken": [
-        "Tiếng Việt",
-        "English",
-        "中文"
-      ],
+      "hobbies": ["Shopping", "Tennis"],
+      "languages_spoken": ["Tiếng Việt", "English", "中文"],
       "emergency_contact": "0883193035",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Cao huyết áp",
@@ -2817,15 +2489,8 @@
       "home_type": "Nhà riêng",
       "income_range": "< 20M",
       "education": "Cử nhân",
-      "hobbies": [
-        "Shopping",
-        "Du lịch"
-      ],
-      "languages_spoken": [
-        "Tiếng Việt",
-        "English",
-        "中文"
-      ],
+      "hobbies": ["Shopping", "Du lịch"],
+      "languages_spoken": ["Tiếng Việt", "English", "中文"],
       "emergency_contact": "0771150269",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Tim mạch",
@@ -2875,13 +2540,8 @@
       "home_type": "Chung cư",
       "income_range": "< 20M",
       "education": "Thạc sĩ",
-      "hobbies": [
-        "Đọc sách"
-      ],
-      "languages_spoken": [
-        "中文",
-        "Français"
-      ],
+      "hobbies": ["Đọc sách"],
+      "languages_spoken": ["中文", "Français"],
       "emergency_contact": "0932873070",
       "insurance_info": "Bảo hiểm ABC - Gói Premium",
       "medical_conditions": "Khỏe mạnh",
@@ -2894,7 +2554,7 @@
   "staff": [
     {
       "id": "STAFF_001",
-      "employee_code": "EMP0001",
+      "member_code": "EMP0001",
       "full_name": "Lê Văn Cường",
       "email": "staff1@xoxo.vn",
       "phone_number": "0612602913",
@@ -2906,20 +2566,15 @@
       "hourly_rate": 60340.81,
       "status": "On Leave",
       "hire_date": "2020-12-06",
-      "skills": [
-        "Hardware Repair",
-        "Color Restoration"
-      ],
-      "certifications": [
-        "Leather Care Specialist"
-      ],
+      "skills": ["Hardware Repair", "Color Restoration"],
+      "certifications": ["Leather Care Specialist"],
       "performance_rating": 8.16,
       "created_at": "2025-04-24",
       "updated_at": "2025-11-07"
     },
     {
       "id": "STAFF_002",
-      "employee_code": "EMP0002",
+      "member_code": "EMP0002",
       "full_name": "Trần Thị Bình",
       "email": "staff2@xoxo.vn",
       "phone_number": "0970637570",
@@ -2931,21 +2586,15 @@
       "hourly_rate": 50825.97,
       "status": "Active",
       "hire_date": "2023-10-23",
-      "skills": [
-        "Leather Care",
-        "Color Restoration",
-        "Hardware Repair"
-      ],
-      "certifications": [
-        "Leather Care Specialist"
-      ],
+      "skills": ["Leather Care", "Color Restoration", "Hardware Repair"],
+      "certifications": ["Leather Care Specialist"],
       "performance_rating": 8.85,
       "created_at": "2025-09-01",
       "updated_at": "2025-10-06"
     },
     {
       "id": "STAFF_003",
-      "employee_code": "EMP0003",
+      "member_code": "EMP0003",
       "full_name": "Nguyễn Văn An",
       "email": "staff3@xoxo.vn",
       "phone_number": "0680849610",
@@ -2963,16 +2612,14 @@
         "Color Restoration",
         "Leather Care"
       ],
-      "certifications": [
-        "Quality Assurance"
-      ],
+      "certifications": ["Quality Assurance"],
       "performance_rating": 6.53,
       "created_at": "2025-05-19",
       "updated_at": "2025-11-16"
     },
     {
       "id": "STAFF_004",
-      "employee_code": "EMP0004",
+      "member_code": "EMP0004",
       "full_name": "Lê Văn Cường",
       "email": "staff4@xoxo.vn",
       "phone_number": "0890688726",
@@ -2984,11 +2631,7 @@
       "hourly_rate": 133560.95,
       "status": "On Leave",
       "hire_date": "2025-07-02",
-      "skills": [
-        "Leather Care",
-        "Color Restoration",
-        "Quality Assessment"
-      ],
+      "skills": ["Leather Care", "Color Restoration", "Quality Assessment"],
       "certifications": [
         "Quality Assurance",
         "Luxury Brand Expert",
@@ -3000,7 +2643,7 @@
     },
     {
       "id": "STAFF_005",
-      "employee_code": "EMP0005",
+      "member_code": "EMP0005",
       "full_name": "Trần Thị Bình",
       "email": "staff5@xoxo.vn",
       "phone_number": "0285719583",
@@ -3012,21 +2655,15 @@
       "hourly_rate": 84010.94,
       "status": "Inactive",
       "hire_date": "2024-06-10",
-      "skills": [
-        "Leather Care",
-        "Quality Assessment"
-      ],
-      "certifications": [
-        "Quality Assurance",
-        "Luxury Brand Expert"
-      ],
+      "skills": ["Leather Care", "Quality Assessment"],
+      "certifications": ["Quality Assurance", "Luxury Brand Expert"],
       "performance_rating": 6.41,
       "created_at": "2024-05-29",
       "updated_at": "2025-10-12"
     },
     {
       "id": "STAFF_006",
-      "employee_code": "EMP0006",
+      "member_code": "EMP0006",
       "full_name": "Nguyễn Văn An",
       "email": "staff6@xoxo.vn",
       "phone_number": "0715483399",
@@ -3038,10 +2675,7 @@
       "hourly_rate": 61178.72,
       "status": "Inactive",
       "hire_date": "2021-11-24",
-      "skills": [
-        "Color Restoration",
-        "Leather Care"
-      ],
+      "skills": ["Color Restoration", "Leather Care"],
       "certifications": [
         "Luxury Brand Expert",
         "Quality Assurance",
@@ -3053,7 +2687,7 @@
     },
     {
       "id": "STAFF_007",
-      "employee_code": "EMP0007",
+      "member_code": "EMP0007",
       "full_name": "Nguyễn Văn An",
       "email": "staff7@xoxo.vn",
       "phone_number": "0574493961",
@@ -3065,21 +2699,15 @@
       "hourly_rate": 115517.29,
       "status": "Active",
       "hire_date": "2022-02-07",
-      "skills": [
-        "Leather Care",
-        "Color Restoration"
-      ],
-      "certifications": [
-        "Quality Assurance",
-        "Luxury Brand Expert"
-      ],
+      "skills": ["Leather Care", "Color Restoration"],
+      "certifications": ["Quality Assurance", "Luxury Brand Expert"],
       "performance_rating": 8.76,
       "created_at": "2024-04-16",
       "updated_at": "2025-10-27"
     },
     {
       "id": "STAFF_008",
-      "employee_code": "EMP0008",
+      "member_code": "EMP0008",
       "full_name": "Hoàng Văn Em",
       "email": "staff8@xoxo.vn",
       "phone_number": "0895394838",
@@ -3091,22 +2719,15 @@
       "hourly_rate": 83451.89,
       "status": "Active",
       "hire_date": "2025-08-29",
-      "skills": [
-        "Quality Assessment",
-        "Leather Care",
-        "Color Restoration"
-      ],
-      "certifications": [
-        "Leather Care Specialist",
-        "Luxury Brand Expert"
-      ],
+      "skills": ["Quality Assessment", "Leather Care", "Color Restoration"],
+      "certifications": ["Leather Care Specialist", "Luxury Brand Expert"],
       "performance_rating": 8.04,
       "created_at": "2025-04-28",
       "updated_at": "2025-11-27"
     },
     {
       "id": "STAFF_009",
-      "employee_code": "EMP0009",
+      "member_code": "EMP0009",
       "full_name": "Lê Văn Cường",
       "email": "staff9@xoxo.vn",
       "phone_number": "0110084023",
@@ -3118,11 +2739,7 @@
       "hourly_rate": 91309.64,
       "status": "Active",
       "hire_date": "2024-03-25",
-      "skills": [
-        "Color Restoration",
-        "Quality Assessment",
-        "Hardware Repair"
-      ],
+      "skills": ["Color Restoration", "Quality Assessment", "Hardware Repair"],
       "certifications": [
         "Quality Assurance",
         "Luxury Brand Expert",
@@ -3134,7 +2751,7 @@
     },
     {
       "id": "STAFF_010",
-      "employee_code": "EMP0010",
+      "member_code": "EMP0010",
       "full_name": "Hoàng Văn Em",
       "email": "staff10@xoxo.vn",
       "phone_number": "0896329663",
@@ -3152,17 +2769,14 @@
         "Leather Care",
         "Hardware Repair"
       ],
-      "certifications": [
-        "Leather Care Specialist",
-        "Luxury Brand Expert"
-      ],
+      "certifications": ["Leather Care Specialist", "Luxury Brand Expert"],
       "performance_rating": 8.57,
       "created_at": "2024-08-24",
       "updated_at": "2025-11-03"
     },
     {
       "id": "STAFF_011",
-      "employee_code": "EMP0011",
+      "member_code": "EMP0011",
       "full_name": "Lê Văn Cường",
       "email": "staff11@xoxo.vn",
       "phone_number": "0275706707",
@@ -3191,7 +2805,7 @@
     },
     {
       "id": "STAFF_012",
-      "employee_code": "EMP0012",
+      "member_code": "EMP0012",
       "full_name": "Trần Thị Bình",
       "email": "staff12@xoxo.vn",
       "phone_number": "0779406603",
@@ -3203,21 +2817,15 @@
       "hourly_rate": 136307.49,
       "status": "Active",
       "hire_date": "2025-06-23",
-      "skills": [
-        "Hardware Repair",
-        "Quality Assessment"
-      ],
-      "certifications": [
-        "Leather Care Specialist",
-        "Luxury Brand Expert"
-      ],
+      "skills": ["Hardware Repair", "Quality Assessment"],
+      "certifications": ["Leather Care Specialist", "Luxury Brand Expert"],
       "performance_rating": 6.67,
       "created_at": "2025-01-25",
       "updated_at": "2025-09-29"
     },
     {
       "id": "STAFF_013",
-      "employee_code": "EMP0013",
+      "member_code": "EMP0013",
       "full_name": "Nguyễn Văn An",
       "email": "staff13@xoxo.vn",
       "phone_number": "0259018630",
@@ -3229,21 +2837,15 @@
       "hourly_rate": 60999.75,
       "status": "Inactive",
       "hire_date": "2025-06-13",
-      "skills": [
-        "Leather Care",
-        "Color Restoration",
-        "Hardware Repair"
-      ],
-      "certifications": [
-        "Quality Assurance"
-      ],
+      "skills": ["Leather Care", "Color Restoration", "Hardware Repair"],
+      "certifications": ["Quality Assurance"],
       "performance_rating": 8.31,
       "created_at": "2025-11-23",
       "updated_at": "2025-10-25"
     },
     {
       "id": "STAFF_014",
-      "employee_code": "EMP0014",
+      "member_code": "EMP0014",
       "full_name": "Nguyễn Văn An",
       "email": "staff14@xoxo.vn",
       "phone_number": "0920614712",
@@ -3255,21 +2857,15 @@
       "hourly_rate": 94528.52,
       "status": "Active",
       "hire_date": "2022-12-25",
-      "skills": [
-        "Color Restoration",
-        "Quality Assessment",
-        "Leather Care"
-      ],
-      "certifications": [
-        "Quality Assurance"
-      ],
+      "skills": ["Color Restoration", "Quality Assessment", "Leather Care"],
+      "certifications": ["Quality Assurance"],
       "performance_rating": 9.52,
       "created_at": "2025-05-14",
       "updated_at": "2025-11-04"
     },
     {
       "id": "STAFF_015",
-      "employee_code": "EMP0015",
+      "member_code": "EMP0015",
       "full_name": "Phạm Thị Dung",
       "email": "staff15@xoxo.vn",
       "phone_number": "0236461117",
@@ -3281,21 +2877,15 @@
       "hourly_rate": 60093.41,
       "status": "Inactive",
       "hire_date": "2021-04-28",
-      "skills": [
-        "Color Restoration",
-        "Quality Assessment"
-      ],
-      "certifications": [
-        "Leather Care Specialist",
-        "Luxury Brand Expert"
-      ],
+      "skills": ["Color Restoration", "Quality Assessment"],
+      "certifications": ["Leather Care Specialist", "Luxury Brand Expert"],
       "performance_rating": 9.4,
       "created_at": "2024-01-11",
       "updated_at": "2025-11-10"
     },
     {
       "id": "STAFF_016",
-      "employee_code": "EMP0016",
+      "member_code": "EMP0016",
       "full_name": "Nguyễn Văn An",
       "email": "staff16@xoxo.vn",
       "phone_number": "0336285736",
@@ -3307,20 +2897,15 @@
       "hourly_rate": 116228.26,
       "status": "Inactive",
       "hire_date": "2021-05-09",
-      "skills": [
-        "Leather Care",
-        "Quality Assessment"
-      ],
-      "certifications": [
-        "Quality Assurance"
-      ],
+      "skills": ["Leather Care", "Quality Assessment"],
+      "certifications": ["Quality Assurance"],
       "performance_rating": 9.99,
       "created_at": "2025-11-19",
       "updated_at": "2025-11-30"
     },
     {
       "id": "STAFF_017",
-      "employee_code": "EMP0017",
+      "member_code": "EMP0017",
       "full_name": "Trần Thị Bình",
       "email": "staff17@xoxo.vn",
       "phone_number": "0175231773",
@@ -3332,20 +2917,15 @@
       "hourly_rate": 84926.08,
       "status": "Active",
       "hire_date": "2024-08-07",
-      "skills": [
-        "Hardware Repair",
-        "Color Restoration"
-      ],
-      "certifications": [
-        "Leather Care Specialist"
-      ],
+      "skills": ["Hardware Repair", "Color Restoration"],
+      "certifications": ["Leather Care Specialist"],
       "performance_rating": 8.8,
       "created_at": "2025-07-31",
       "updated_at": "2025-10-19"
     },
     {
       "id": "STAFF_018",
-      "employee_code": "EMP0018",
+      "member_code": "EMP0018",
       "full_name": "Trần Thị Bình",
       "email": "staff18@xoxo.vn",
       "phone_number": "0286033649",
@@ -3357,22 +2937,15 @@
       "hourly_rate": 108774.16,
       "status": "Active",
       "hire_date": "2021-09-27",
-      "skills": [
-        "Hardware Repair",
-        "Quality Assessment",
-        "Color Restoration"
-      ],
-      "certifications": [
-        "Quality Assurance",
-        "Luxury Brand Expert"
-      ],
+      "skills": ["Hardware Repair", "Quality Assessment", "Color Restoration"],
+      "certifications": ["Quality Assurance", "Luxury Brand Expert"],
       "performance_rating": 9.07,
       "created_at": "2025-01-14",
       "updated_at": "2025-10-15"
     },
     {
       "id": "STAFF_019",
-      "employee_code": "EMP0019",
+      "member_code": "EMP0019",
       "full_name": "Phạm Thị Dung",
       "email": "staff19@xoxo.vn",
       "phone_number": "0292039850",
@@ -3401,7 +2974,7 @@
     },
     {
       "id": "STAFF_020",
-      "employee_code": "EMP0020",
+      "member_code": "EMP0020",
       "full_name": "Hoàng Văn Em",
       "email": "staff20@xoxo.vn",
       "phone_number": "0381339898",
@@ -3413,13 +2986,8 @@
       "hourly_rate": 81371.68,
       "status": "Inactive",
       "hire_date": "2023-04-14",
-      "skills": [
-        "Quality Assessment",
-        "Hardware Repair"
-      ],
-      "certifications": [
-        "Leather Care Specialist"
-      ],
+      "skills": ["Quality Assessment", "Hardware Repair"],
+      "certifications": ["Leather Care Specialist"],
       "performance_rating": 7.08,
       "created_at": "2024-08-16",
       "updated_at": "2025-11-24"
@@ -3508,15 +3076,12 @@
         }
       ],
       "assigned_staff": "STAFF_016",
-      "current_stage": "Tiếp nhận",
+      "current_workflow": "Tiếp nhận",
       "estimated_hours": 38.2,
       "actual_hours": 12.85,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00001_1.jpg",
-        "order_00001_2.jpg"
-      ],
+      "photos": ["order_00001_1.jpg", "order_00001_2.jpg"],
       "created_by": "USER_004",
       "warranty_period": 90,
       "follow_up_required": true,
@@ -3596,15 +3161,12 @@
         }
       ],
       "assigned_staff": "STAFF_009",
-      "current_stage": "Hoàn thành",
+      "current_workflow": "Hoàn thành",
       "estimated_hours": 25.17,
       "actual_hours": 28.14,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00002_1.jpg",
-        "order_00002_2.jpg"
-      ],
+      "photos": ["order_00002_1.jpg", "order_00002_2.jpg"],
       "created_by": "USER_007",
       "warranty_period": 365,
       "follow_up_required": true,
@@ -3716,15 +3278,12 @@
         }
       ],
       "assigned_staff": "STAFF_009",
-      "current_stage": "Tiếp nhận",
+      "current_workflow": "Tiếp nhận",
       "estimated_hours": 37.76,
       "actual_hours": 18.46,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00003_1.jpg",
-        "order_00003_2.jpg"
-      ],
+      "photos": ["order_00003_1.jpg", "order_00003_2.jpg"],
       "created_by": "USER_001",
       "warranty_period": 365,
       "follow_up_required": false,
@@ -3772,15 +3331,12 @@
         }
       ],
       "assigned_staff": "STAFF_018",
-      "current_stage": "Xử lý",
+      "current_workflow": "Xử lý",
       "estimated_hours": 4.4,
       "actual_hours": 23.31,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00004_1.jpg",
-        "order_00004_2.jpg"
-      ],
+      "photos": ["order_00004_1.jpg", "order_00004_2.jpg"],
       "created_by": "USER_009",
       "warranty_period": 90,
       "follow_up_required": false,
@@ -3828,15 +3384,12 @@
         }
       ],
       "assigned_staff": "STAFF_009",
-      "current_stage": "Tiếp nhận",
+      "current_workflow": "Tiếp nhận",
       "estimated_hours": 20.03,
       "actual_hours": 38.12,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00005_1.jpg",
-        "order_00005_2.jpg"
-      ],
+      "photos": ["order_00005_1.jpg", "order_00005_2.jpg"],
       "created_by": "USER_005",
       "warranty_period": 90,
       "follow_up_required": false,
@@ -3932,15 +3485,12 @@
         }
       ],
       "assigned_staff": "STAFF_017",
-      "current_stage": "Đánh giá",
+      "current_workflow": "Đánh giá",
       "estimated_hours": 30.9,
       "actual_hours": 15.15,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00006_1.jpg",
-        "order_00006_2.jpg"
-      ],
+      "photos": ["order_00006_1.jpg", "order_00006_2.jpg"],
       "created_by": "USER_001",
       "warranty_period": 90,
       "follow_up_required": false,
@@ -4036,15 +3586,12 @@
         }
       ],
       "assigned_staff": "STAFF_011",
-      "current_stage": "Đánh giá",
+      "current_workflow": "Đánh giá",
       "estimated_hours": 19.45,
       "actual_hours": 34.74,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00007_1.jpg",
-        "order_00007_2.jpg"
-      ],
+      "photos": ["order_00007_1.jpg", "order_00007_2.jpg"],
       "created_by": "USER_006",
       "warranty_period": 365,
       "follow_up_required": false,
@@ -4092,15 +3639,12 @@
         }
       ],
       "assigned_staff": "STAFF_019",
-      "current_stage": "Hoàn thành",
+      "current_workflow": "Hoàn thành",
       "estimated_hours": 20.65,
       "actual_hours": 21.73,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00008_1.jpg",
-        "order_00008_2.jpg"
-      ],
+      "photos": ["order_00008_1.jpg", "order_00008_2.jpg"],
       "created_by": "USER_009",
       "warranty_period": 90,
       "follow_up_required": false,
@@ -4196,15 +3740,12 @@
         }
       ],
       "assigned_staff": "STAFF_014",
-      "current_stage": "Hoàn thành",
+      "current_workflow": "Hoàn thành",
       "estimated_hours": 36.67,
       "actual_hours": 48.34,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00009_1.jpg",
-        "order_00009_2.jpg"
-      ],
+      "photos": ["order_00009_1.jpg", "order_00009_2.jpg"],
       "created_by": "USER_008",
       "warranty_period": 90,
       "follow_up_required": false,
@@ -4300,15 +3841,12 @@
         }
       ],
       "assigned_staff": "STAFF_013",
-      "current_stage": "Trả khách",
+      "current_workflow": "Trả khách",
       "estimated_hours": 10.48,
       "actual_hours": 46.69,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00010_1.jpg",
-        "order_00010_2.jpg"
-      ],
+      "photos": ["order_00010_1.jpg", "order_00010_2.jpg"],
       "created_by": "USER_009",
       "warranty_period": 60,
       "follow_up_required": false,
@@ -4420,15 +3958,12 @@
         }
       ],
       "assigned_staff": "STAFF_018",
-      "current_stage": "Xử lý",
+      "current_workflow": "Xử lý",
       "estimated_hours": 11.04,
       "actual_hours": 31.68,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00011_1.jpg",
-        "order_00011_2.jpg"
-      ],
+      "photos": ["order_00011_1.jpg", "order_00011_2.jpg"],
       "created_by": "USER_007",
       "warranty_period": 60,
       "follow_up_required": false,
@@ -4524,15 +4059,12 @@
         }
       ],
       "assigned_staff": "STAFF_003",
-      "current_stage": "Xử lý",
+      "current_workflow": "Xử lý",
       "estimated_hours": 22.12,
       "actual_hours": 41.75,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00012_1.jpg",
-        "order_00012_2.jpg"
-      ],
+      "photos": ["order_00012_1.jpg", "order_00012_2.jpg"],
       "created_by": "USER_009",
       "warranty_period": 60,
       "follow_up_required": false,
@@ -4580,15 +4112,12 @@
         }
       ],
       "assigned_staff": "STAFF_008",
-      "current_stage": "Xử lý",
+      "current_workflow": "Xử lý",
       "estimated_hours": 10.96,
       "actual_hours": 19.79,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00013_1.jpg",
-        "order_00013_2.jpg"
-      ],
+      "photos": ["order_00013_1.jpg", "order_00013_2.jpg"],
       "created_by": "USER_002",
       "warranty_period": 60,
       "follow_up_required": true,
@@ -4684,15 +4213,12 @@
         }
       ],
       "assigned_staff": "STAFF_016",
-      "current_stage": "Hoàn thành",
+      "current_workflow": "Hoàn thành",
       "estimated_hours": 26.02,
       "actual_hours": 17.15,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00014_1.jpg",
-        "order_00014_2.jpg"
-      ],
+      "photos": ["order_00014_1.jpg", "order_00014_2.jpg"],
       "created_by": "USER_003",
       "warranty_period": 60,
       "follow_up_required": false,
@@ -4788,15 +4314,12 @@
         }
       ],
       "assigned_staff": "STAFF_013",
-      "current_stage": "Đánh giá",
+      "current_workflow": "Đánh giá",
       "estimated_hours": 9.56,
       "actual_hours": 41.21,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00015_1.jpg",
-        "order_00015_2.jpg"
-      ],
+      "photos": ["order_00015_1.jpg", "order_00015_2.jpg"],
       "created_by": "USER_001",
       "warranty_period": 60,
       "follow_up_required": false,
@@ -4892,15 +4415,12 @@
         }
       ],
       "assigned_staff": "STAFF_014",
-      "current_stage": "Hoàn thành",
+      "current_workflow": "Hoàn thành",
       "estimated_hours": 14.45,
       "actual_hours": 31.12,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00016_1.jpg",
-        "order_00016_2.jpg"
-      ],
+      "photos": ["order_00016_1.jpg", "order_00016_2.jpg"],
       "created_by": "USER_002",
       "warranty_period": 180,
       "follow_up_required": false,
@@ -4980,15 +4500,12 @@
         }
       ],
       "assigned_staff": "STAFF_016",
-      "current_stage": "Tiếp nhận",
+      "current_workflow": "Tiếp nhận",
       "estimated_hours": 20.35,
       "actual_hours": 47.36,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00017_1.jpg",
-        "order_00017_2.jpg"
-      ],
+      "photos": ["order_00017_1.jpg", "order_00017_2.jpg"],
       "created_by": "USER_005",
       "warranty_period": 90,
       "follow_up_required": true,
@@ -5052,15 +4569,12 @@
         }
       ],
       "assigned_staff": "STAFF_007",
-      "current_stage": "Hoàn thành",
+      "current_workflow": "Hoàn thành",
       "estimated_hours": 36.9,
       "actual_hours": 33.49,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00018_1.jpg",
-        "order_00018_2.jpg"
-      ],
+      "photos": ["order_00018_1.jpg", "order_00018_2.jpg"],
       "created_by": "USER_009",
       "warranty_period": 180,
       "follow_up_required": false,
@@ -5124,15 +4638,12 @@
         }
       ],
       "assigned_staff": "STAFF_005",
-      "current_stage": "Hoàn thành",
+      "current_workflow": "Hoàn thành",
       "estimated_hours": 39.34,
       "actual_hours": 47.83,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00019_1.jpg",
-        "order_00019_2.jpg"
-      ],
+      "photos": ["order_00019_1.jpg", "order_00019_2.jpg"],
       "created_by": "USER_004",
       "warranty_period": 60,
       "follow_up_required": false,
@@ -5244,15 +4755,12 @@
         }
       ],
       "assigned_staff": "STAFF_020",
-      "current_stage": "Đánh giá",
+      "current_workflow": "Đánh giá",
       "estimated_hours": 18.72,
       "actual_hours": 18.23,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00020_1.jpg",
-        "order_00020_2.jpg"
-      ],
+      "photos": ["order_00020_1.jpg", "order_00020_2.jpg"],
       "created_by": "USER_009",
       "warranty_period": 30,
       "follow_up_required": true,
@@ -5300,15 +4808,12 @@
         }
       ],
       "assigned_staff": "STAFF_016",
-      "current_stage": "Tiếp nhận",
+      "current_workflow": "Tiếp nhận",
       "estimated_hours": 39.47,
       "actual_hours": 10.61,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00021_1.jpg",
-        "order_00021_2.jpg"
-      ],
+      "photos": ["order_00021_1.jpg", "order_00021_2.jpg"],
       "created_by": "USER_002",
       "warranty_period": 365,
       "follow_up_required": true,
@@ -5420,15 +4925,12 @@
         }
       ],
       "assigned_staff": "STAFF_012",
-      "current_stage": "QC",
+      "current_workflow": "QC",
       "estimated_hours": 26.05,
       "actual_hours": 33.51,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00022_1.jpg",
-        "order_00022_2.jpg"
-      ],
+      "photos": ["order_00022_1.jpg", "order_00022_2.jpg"],
       "created_by": "USER_009",
       "warranty_period": 365,
       "follow_up_required": false,
@@ -5524,15 +5026,12 @@
         }
       ],
       "assigned_staff": "STAFF_007",
-      "current_stage": "Tiếp nhận",
+      "current_workflow": "Tiếp nhận",
       "estimated_hours": 16.65,
       "actual_hours": 17.92,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00023_1.jpg",
-        "order_00023_2.jpg"
-      ],
+      "photos": ["order_00023_1.jpg", "order_00023_2.jpg"],
       "created_by": "USER_010",
       "warranty_period": 30,
       "follow_up_required": false,
@@ -5644,15 +5143,12 @@
         }
       ],
       "assigned_staff": "STAFF_020",
-      "current_stage": "Hoàn thành",
+      "current_workflow": "Hoàn thành",
       "estimated_hours": 26.69,
       "actual_hours": 8.5,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00024_1.jpg",
-        "order_00024_2.jpg"
-      ],
+      "photos": ["order_00024_1.jpg", "order_00024_2.jpg"],
       "created_by": "USER_005",
       "warranty_period": 30,
       "follow_up_required": false,
@@ -5764,15 +5260,12 @@
         }
       ],
       "assigned_staff": "STAFF_020",
-      "current_stage": "Xử lý",
+      "current_workflow": "Xử lý",
       "estimated_hours": 5.69,
       "actual_hours": 8.15,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00025_1.jpg",
-        "order_00025_2.jpg"
-      ],
+      "photos": ["order_00025_1.jpg", "order_00025_2.jpg"],
       "created_by": "USER_006",
       "warranty_period": 90,
       "follow_up_required": false,
@@ -5884,15 +5377,12 @@
         }
       ],
       "assigned_staff": "STAFF_001",
-      "current_stage": "Đánh giá",
+      "current_workflow": "Đánh giá",
       "estimated_hours": 21.24,
       "actual_hours": 2.14,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00026_1.jpg",
-        "order_00026_2.jpg"
-      ],
+      "photos": ["order_00026_1.jpg", "order_00026_2.jpg"],
       "created_by": "USER_001",
       "warranty_period": 180,
       "follow_up_required": false,
@@ -6004,15 +5494,12 @@
         }
       ],
       "assigned_staff": "STAFF_005",
-      "current_stage": "Tiếp nhận",
+      "current_workflow": "Tiếp nhận",
       "estimated_hours": 6.57,
       "actual_hours": 45.21,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00027_1.jpg",
-        "order_00027_2.jpg"
-      ],
+      "photos": ["order_00027_1.jpg", "order_00027_2.jpg"],
       "created_by": "USER_008",
       "warranty_period": 60,
       "follow_up_required": true,
@@ -6124,15 +5611,12 @@
         }
       ],
       "assigned_staff": "STAFF_016",
-      "current_stage": "Trả khách",
+      "current_workflow": "Trả khách",
       "estimated_hours": 11.59,
       "actual_hours": 11.14,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00028_1.jpg",
-        "order_00028_2.jpg"
-      ],
+      "photos": ["order_00028_1.jpg", "order_00028_2.jpg"],
       "created_by": "USER_005",
       "warranty_period": 60,
       "follow_up_required": true,
@@ -6228,15 +5712,12 @@
         }
       ],
       "assigned_staff": "STAFF_019",
-      "current_stage": "Đánh giá",
+      "current_workflow": "Đánh giá",
       "estimated_hours": 12.24,
       "actual_hours": 2.79,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00029_1.jpg",
-        "order_00029_2.jpg"
-      ],
+      "photos": ["order_00029_1.jpg", "order_00029_2.jpg"],
       "created_by": "USER_010",
       "warranty_period": 30,
       "follow_up_required": false,
@@ -6348,15 +5829,12 @@
         }
       ],
       "assigned_staff": "STAFF_007",
-      "current_stage": "QC",
+      "current_workflow": "QC",
       "estimated_hours": 22.36,
       "actual_hours": 17.72,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00030_1.jpg",
-        "order_00030_2.jpg"
-      ],
+      "photos": ["order_00030_1.jpg", "order_00030_2.jpg"],
       "created_by": "USER_003",
       "warranty_period": 180,
       "follow_up_required": true,
@@ -6436,15 +5914,12 @@
         }
       ],
       "assigned_staff": "STAFF_002",
-      "current_stage": "Tiếp nhận",
+      "current_workflow": "Tiếp nhận",
       "estimated_hours": 28.03,
       "actual_hours": 5.92,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00031_1.jpg",
-        "order_00031_2.jpg"
-      ],
+      "photos": ["order_00031_1.jpg", "order_00031_2.jpg"],
       "created_by": "USER_009",
       "warranty_period": 180,
       "follow_up_required": false,
@@ -6540,15 +6015,12 @@
         }
       ],
       "assigned_staff": "STAFF_009",
-      "current_stage": "Tiếp nhận",
+      "current_workflow": "Tiếp nhận",
       "estimated_hours": 13.07,
       "actual_hours": 29.64,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00032_1.jpg",
-        "order_00032_2.jpg"
-      ],
+      "photos": ["order_00032_1.jpg", "order_00032_2.jpg"],
       "created_by": "USER_008",
       "warranty_period": 60,
       "follow_up_required": false,
@@ -6644,15 +6116,12 @@
         }
       ],
       "assigned_staff": "STAFF_010",
-      "current_stage": "Xử lý",
+      "current_workflow": "Xử lý",
       "estimated_hours": 32.43,
       "actual_hours": 14.6,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00033_1.jpg",
-        "order_00033_2.jpg"
-      ],
+      "photos": ["order_00033_1.jpg", "order_00033_2.jpg"],
       "created_by": "USER_009",
       "warranty_period": 365,
       "follow_up_required": true,
@@ -6748,15 +6217,12 @@
         }
       ],
       "assigned_staff": "STAFF_003",
-      "current_stage": "Hoàn thành",
+      "current_workflow": "Hoàn thành",
       "estimated_hours": 37.67,
       "actual_hours": 26.55,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00034_1.jpg",
-        "order_00034_2.jpg"
-      ],
+      "photos": ["order_00034_1.jpg", "order_00034_2.jpg"],
       "created_by": "USER_008",
       "warranty_period": 180,
       "follow_up_required": false,
@@ -6820,15 +6286,12 @@
         }
       ],
       "assigned_staff": "STAFF_007",
-      "current_stage": "QC",
+      "current_workflow": "QC",
       "estimated_hours": 6.43,
       "actual_hours": 10.2,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00035_1.jpg",
-        "order_00035_2.jpg"
-      ],
+      "photos": ["order_00035_1.jpg", "order_00035_2.jpg"],
       "created_by": "USER_004",
       "warranty_period": 180,
       "follow_up_required": true,
@@ -6908,15 +6371,12 @@
         }
       ],
       "assigned_staff": "STAFF_003",
-      "current_stage": "Trả khách",
+      "current_workflow": "Trả khách",
       "estimated_hours": 31.79,
       "actual_hours": 38.88,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00036_1.jpg",
-        "order_00036_2.jpg"
-      ],
+      "photos": ["order_00036_1.jpg", "order_00036_2.jpg"],
       "created_by": "USER_010",
       "warranty_period": 60,
       "follow_up_required": true,
@@ -7028,15 +6488,12 @@
         }
       ],
       "assigned_staff": "STAFF_011",
-      "current_stage": "QC",
+      "current_workflow": "QC",
       "estimated_hours": 7.38,
       "actual_hours": 2.12,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00037_1.jpg",
-        "order_00037_2.jpg"
-      ],
+      "photos": ["order_00037_1.jpg", "order_00037_2.jpg"],
       "created_by": "USER_007",
       "warranty_period": 365,
       "follow_up_required": false,
@@ -7100,15 +6557,12 @@
         }
       ],
       "assigned_staff": "STAFF_009",
-      "current_stage": "Tiếp nhận",
+      "current_workflow": "Tiếp nhận",
       "estimated_hours": 8.94,
       "actual_hours": 42.09,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00038_1.jpg",
-        "order_00038_2.jpg"
-      ],
+      "photos": ["order_00038_1.jpg", "order_00038_2.jpg"],
       "created_by": "USER_003",
       "warranty_period": 30,
       "follow_up_required": true,
@@ -7220,15 +6674,12 @@
         }
       ],
       "assigned_staff": "STAFF_010",
-      "current_stage": "Xử lý",
+      "current_workflow": "Xử lý",
       "estimated_hours": 13.54,
       "actual_hours": 23.92,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00039_1.jpg",
-        "order_00039_2.jpg"
-      ],
+      "photos": ["order_00039_1.jpg", "order_00039_2.jpg"],
       "created_by": "USER_003",
       "warranty_period": 180,
       "follow_up_required": false,
@@ -7292,15 +6743,12 @@
         }
       ],
       "assigned_staff": "STAFF_009",
-      "current_stage": "Xử lý",
+      "current_workflow": "Xử lý",
       "estimated_hours": 35.08,
       "actual_hours": 8.06,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00040_1.jpg",
-        "order_00040_2.jpg"
-      ],
+      "photos": ["order_00040_1.jpg", "order_00040_2.jpg"],
       "created_by": "USER_003",
       "warranty_period": 180,
       "follow_up_required": false,
@@ -7412,15 +6860,12 @@
         }
       ],
       "assigned_staff": "STAFF_002",
-      "current_stage": "Trả khách",
+      "current_workflow": "Trả khách",
       "estimated_hours": 15.32,
       "actual_hours": 40.87,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00041_1.jpg",
-        "order_00041_2.jpg"
-      ],
+      "photos": ["order_00041_1.jpg", "order_00041_2.jpg"],
       "created_by": "USER_002",
       "warranty_period": 365,
       "follow_up_required": false,
@@ -7516,15 +6961,12 @@
         }
       ],
       "assigned_staff": "STAFF_012",
-      "current_stage": "Trả khách",
+      "current_workflow": "Trả khách",
       "estimated_hours": 24.72,
       "actual_hours": 33.81,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00042_1.jpg",
-        "order_00042_2.jpg"
-      ],
+      "photos": ["order_00042_1.jpg", "order_00042_2.jpg"],
       "created_by": "USER_008",
       "warranty_period": 30,
       "follow_up_required": false,
@@ -7636,15 +7078,12 @@
         }
       ],
       "assigned_staff": "STAFF_011",
-      "current_stage": "Xử lý",
+      "current_workflow": "Xử lý",
       "estimated_hours": 19.83,
       "actual_hours": 6.15,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00043_1.jpg",
-        "order_00043_2.jpg"
-      ],
+      "photos": ["order_00043_1.jpg", "order_00043_2.jpg"],
       "created_by": "USER_008",
       "warranty_period": 180,
       "follow_up_required": false,
@@ -7740,15 +7179,12 @@
         }
       ],
       "assigned_staff": "STAFF_008",
-      "current_stage": "Trả khách",
+      "current_workflow": "Trả khách",
       "estimated_hours": 7.04,
       "actual_hours": 3.33,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00044_1.jpg",
-        "order_00044_2.jpg"
-      ],
+      "photos": ["order_00044_1.jpg", "order_00044_2.jpg"],
       "created_by": "USER_002",
       "warranty_period": 30,
       "follow_up_required": true,
@@ -7828,15 +7264,12 @@
         }
       ],
       "assigned_staff": "STAFF_007",
-      "current_stage": "Đánh giá",
+      "current_workflow": "Đánh giá",
       "estimated_hours": 38.11,
       "actual_hours": 30.1,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00045_1.jpg",
-        "order_00045_2.jpg"
-      ],
+      "photos": ["order_00045_1.jpg", "order_00045_2.jpg"],
       "created_by": "USER_004",
       "warranty_period": 365,
       "follow_up_required": false,
@@ -7900,15 +7333,12 @@
         }
       ],
       "assigned_staff": "STAFF_007",
-      "current_stage": "Đánh giá",
+      "current_workflow": "Đánh giá",
       "estimated_hours": 32.2,
       "actual_hours": 1.03,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00046_1.jpg",
-        "order_00046_2.jpg"
-      ],
+      "photos": ["order_00046_1.jpg", "order_00046_2.jpg"],
       "created_by": "USER_010",
       "warranty_period": 365,
       "follow_up_required": false,
@@ -7956,15 +7386,12 @@
         }
       ],
       "assigned_staff": "STAFF_013",
-      "current_stage": "QC",
+      "current_workflow": "QC",
       "estimated_hours": 23.99,
       "actual_hours": 2.44,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00047_1.jpg",
-        "order_00047_2.jpg"
-      ],
+      "photos": ["order_00047_1.jpg", "order_00047_2.jpg"],
       "created_by": "USER_007",
       "warranty_period": 180,
       "follow_up_required": false,
@@ -8076,15 +7503,12 @@
         }
       ],
       "assigned_staff": "STAFF_010",
-      "current_stage": "Hoàn thành",
+      "current_workflow": "Hoàn thành",
       "estimated_hours": 27.99,
       "actual_hours": 36.38,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00048_1.jpg",
-        "order_00048_2.jpg"
-      ],
+      "photos": ["order_00048_1.jpg", "order_00048_2.jpg"],
       "created_by": "USER_003",
       "warranty_period": 365,
       "follow_up_required": false,
@@ -8164,15 +7588,12 @@
         }
       ],
       "assigned_staff": "STAFF_004",
-      "current_stage": "Đánh giá",
+      "current_workflow": "Đánh giá",
       "estimated_hours": 14.61,
       "actual_hours": 6.36,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00049_1.jpg",
-        "order_00049_2.jpg"
-      ],
+      "photos": ["order_00049_1.jpg", "order_00049_2.jpg"],
       "created_by": "USER_006",
       "warranty_period": 30,
       "follow_up_required": true,
@@ -8268,15 +7689,12 @@
         }
       ],
       "assigned_staff": "STAFF_011",
-      "current_stage": "Tiếp nhận",
+      "current_workflow": "Tiếp nhận",
       "estimated_hours": 29.53,
       "actual_hours": 23.52,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00050_1.jpg",
-        "order_00050_2.jpg"
-      ],
+      "photos": ["order_00050_1.jpg", "order_00050_2.jpg"],
       "created_by": "USER_003",
       "warranty_period": 180,
       "follow_up_required": false,
@@ -8324,15 +7742,12 @@
         }
       ],
       "assigned_staff": "STAFF_013",
-      "current_stage": "Xử lý",
+      "current_workflow": "Xử lý",
       "estimated_hours": 5.46,
       "actual_hours": 20.65,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00051_1.jpg",
-        "order_00051_2.jpg"
-      ],
+      "photos": ["order_00051_1.jpg", "order_00051_2.jpg"],
       "created_by": "USER_003",
       "warranty_period": 365,
       "follow_up_required": false,
@@ -8396,15 +7811,12 @@
         }
       ],
       "assigned_staff": "STAFF_009",
-      "current_stage": "Đánh giá",
+      "current_workflow": "Đánh giá",
       "estimated_hours": 21.37,
       "actual_hours": 18.3,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00052_1.jpg",
-        "order_00052_2.jpg"
-      ],
+      "photos": ["order_00052_1.jpg", "order_00052_2.jpg"],
       "created_by": "USER_008",
       "warranty_period": 90,
       "follow_up_required": false,
@@ -8452,15 +7864,12 @@
         }
       ],
       "assigned_staff": "STAFF_008",
-      "current_stage": "Hoàn thành",
+      "current_workflow": "Hoàn thành",
       "estimated_hours": 28.54,
       "actual_hours": 15.43,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00053_1.jpg",
-        "order_00053_2.jpg"
-      ],
+      "photos": ["order_00053_1.jpg", "order_00053_2.jpg"],
       "created_by": "USER_001",
       "warranty_period": 60,
       "follow_up_required": true,
@@ -8556,15 +7965,12 @@
         }
       ],
       "assigned_staff": "STAFF_014",
-      "current_stage": "Hoàn thành",
+      "current_workflow": "Hoàn thành",
       "estimated_hours": 16.92,
       "actual_hours": 7.05,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00054_1.jpg",
-        "order_00054_2.jpg"
-      ],
+      "photos": ["order_00054_1.jpg", "order_00054_2.jpg"],
       "created_by": "USER_006",
       "warranty_period": 365,
       "follow_up_required": false,
@@ -8644,15 +8050,12 @@
         }
       ],
       "assigned_staff": "STAFF_012",
-      "current_stage": "Đánh giá",
+      "current_workflow": "Đánh giá",
       "estimated_hours": 25.93,
       "actual_hours": 35.65,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00055_1.jpg",
-        "order_00055_2.jpg"
-      ],
+      "photos": ["order_00055_1.jpg", "order_00055_2.jpg"],
       "created_by": "USER_008",
       "warranty_period": 60,
       "follow_up_required": false,
@@ -8748,15 +8151,12 @@
         }
       ],
       "assigned_staff": "STAFF_002",
-      "current_stage": "QC",
+      "current_workflow": "QC",
       "estimated_hours": 3.01,
       "actual_hours": 6.62,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00056_1.jpg",
-        "order_00056_2.jpg"
-      ],
+      "photos": ["order_00056_1.jpg", "order_00056_2.jpg"],
       "created_by": "USER_007",
       "warranty_period": 90,
       "follow_up_required": true,
@@ -8820,15 +8220,12 @@
         }
       ],
       "assigned_staff": "STAFF_006",
-      "current_stage": "QC",
+      "current_workflow": "QC",
       "estimated_hours": 8.95,
       "actual_hours": 2.44,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00057_1.jpg",
-        "order_00057_2.jpg"
-      ],
+      "photos": ["order_00057_1.jpg", "order_00057_2.jpg"],
       "created_by": "USER_009",
       "warranty_period": 60,
       "follow_up_required": false,
@@ -8876,15 +8273,12 @@
         }
       ],
       "assigned_staff": "STAFF_003",
-      "current_stage": "Xử lý",
+      "current_workflow": "Xử lý",
       "estimated_hours": 3.5,
       "actual_hours": 26.62,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00058_1.jpg",
-        "order_00058_2.jpg"
-      ],
+      "photos": ["order_00058_1.jpg", "order_00058_2.jpg"],
       "created_by": "USER_003",
       "warranty_period": 365,
       "follow_up_required": false,
@@ -8932,15 +8326,12 @@
         }
       ],
       "assigned_staff": "STAFF_018",
-      "current_stage": "Đánh giá",
+      "current_workflow": "Đánh giá",
       "estimated_hours": 26.97,
       "actual_hours": 21.22,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00059_1.jpg",
-        "order_00059_2.jpg"
-      ],
+      "photos": ["order_00059_1.jpg", "order_00059_2.jpg"],
       "created_by": "USER_009",
       "warranty_period": 90,
       "follow_up_required": false,
@@ -9004,15 +8395,12 @@
         }
       ],
       "assigned_staff": "STAFF_002",
-      "current_stage": "Xử lý",
+      "current_workflow": "Xử lý",
       "estimated_hours": 11.41,
       "actual_hours": 30.5,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00060_1.jpg",
-        "order_00060_2.jpg"
-      ],
+      "photos": ["order_00060_1.jpg", "order_00060_2.jpg"],
       "created_by": "USER_010",
       "warranty_period": 60,
       "follow_up_required": true,
@@ -9124,15 +8512,12 @@
         }
       ],
       "assigned_staff": "STAFF_011",
-      "current_stage": "Trả khách",
+      "current_workflow": "Trả khách",
       "estimated_hours": 24.64,
       "actual_hours": 41.27,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00061_1.jpg",
-        "order_00061_2.jpg"
-      ],
+      "photos": ["order_00061_1.jpg", "order_00061_2.jpg"],
       "created_by": "USER_001",
       "warranty_period": 365,
       "follow_up_required": true,
@@ -9228,15 +8613,12 @@
         }
       ],
       "assigned_staff": "STAFF_015",
-      "current_stage": "Đánh giá",
+      "current_workflow": "Đánh giá",
       "estimated_hours": 25.53,
       "actual_hours": 9.22,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00062_1.jpg",
-        "order_00062_2.jpg"
-      ],
+      "photos": ["order_00062_1.jpg", "order_00062_2.jpg"],
       "created_by": "USER_006",
       "warranty_period": 180,
       "follow_up_required": false,
@@ -9348,15 +8730,12 @@
         }
       ],
       "assigned_staff": "STAFF_018",
-      "current_stage": "QC",
+      "current_workflow": "QC",
       "estimated_hours": 9.75,
       "actual_hours": 41.3,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00063_1.jpg",
-        "order_00063_2.jpg"
-      ],
+      "photos": ["order_00063_1.jpg", "order_00063_2.jpg"],
       "created_by": "USER_004",
       "warranty_period": 60,
       "follow_up_required": false,
@@ -9452,15 +8831,12 @@
         }
       ],
       "assigned_staff": "STAFF_012",
-      "current_stage": "QC",
+      "current_workflow": "QC",
       "estimated_hours": 13.8,
       "actual_hours": 48.76,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00064_1.jpg",
-        "order_00064_2.jpg"
-      ],
+      "photos": ["order_00064_1.jpg", "order_00064_2.jpg"],
       "created_by": "USER_008",
       "warranty_period": 365,
       "follow_up_required": false,
@@ -9540,15 +8916,12 @@
         }
       ],
       "assigned_staff": "STAFF_003",
-      "current_stage": "QC",
+      "current_workflow": "QC",
       "estimated_hours": 15.29,
       "actual_hours": 22.2,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00065_1.jpg",
-        "order_00065_2.jpg"
-      ],
+      "photos": ["order_00065_1.jpg", "order_00065_2.jpg"],
       "created_by": "USER_001",
       "warranty_period": 60,
       "follow_up_required": true,
@@ -9596,15 +8969,12 @@
         }
       ],
       "assigned_staff": "STAFF_010",
-      "current_stage": "Xử lý",
+      "current_workflow": "Xử lý",
       "estimated_hours": 25.6,
       "actual_hours": 15.36,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00066_1.jpg",
-        "order_00066_2.jpg"
-      ],
+      "photos": ["order_00066_1.jpg", "order_00066_2.jpg"],
       "created_by": "USER_010",
       "warranty_period": 60,
       "follow_up_required": false,
@@ -9668,15 +9038,12 @@
         }
       ],
       "assigned_staff": "STAFF_018",
-      "current_stage": "QC",
+      "current_workflow": "QC",
       "estimated_hours": 38.15,
       "actual_hours": 7.61,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00067_1.jpg",
-        "order_00067_2.jpg"
-      ],
+      "photos": ["order_00067_1.jpg", "order_00067_2.jpg"],
       "created_by": "USER_007",
       "warranty_period": 60,
       "follow_up_required": true,
@@ -9772,15 +9139,12 @@
         }
       ],
       "assigned_staff": "STAFF_009",
-      "current_stage": "Đánh giá",
+      "current_workflow": "Đánh giá",
       "estimated_hours": 6.73,
       "actual_hours": 31.04,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00068_1.jpg",
-        "order_00068_2.jpg"
-      ],
+      "photos": ["order_00068_1.jpg", "order_00068_2.jpg"],
       "created_by": "USER_008",
       "warranty_period": 30,
       "follow_up_required": false,
@@ -9892,15 +9256,12 @@
         }
       ],
       "assigned_staff": "STAFF_015",
-      "current_stage": "Trả khách",
+      "current_workflow": "Trả khách",
       "estimated_hours": 38.34,
       "actual_hours": 17.1,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00069_1.jpg",
-        "order_00069_2.jpg"
-      ],
+      "photos": ["order_00069_1.jpg", "order_00069_2.jpg"],
       "created_by": "USER_010",
       "warranty_period": 180,
       "follow_up_required": false,
@@ -9964,15 +9325,12 @@
         }
       ],
       "assigned_staff": "STAFF_018",
-      "current_stage": "Đánh giá",
+      "current_workflow": "Đánh giá",
       "estimated_hours": 3.04,
       "actual_hours": 33.89,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00070_1.jpg",
-        "order_00070_2.jpg"
-      ],
+      "photos": ["order_00070_1.jpg", "order_00070_2.jpg"],
       "created_by": "USER_002",
       "warranty_period": 365,
       "follow_up_required": false,
@@ -10068,15 +9426,12 @@
         }
       ],
       "assigned_staff": "STAFF_005",
-      "current_stage": "Tiếp nhận",
+      "current_workflow": "Tiếp nhận",
       "estimated_hours": 26.33,
       "actual_hours": 35.72,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00071_1.jpg",
-        "order_00071_2.jpg"
-      ],
+      "photos": ["order_00071_1.jpg", "order_00071_2.jpg"],
       "created_by": "USER_003",
       "warranty_period": 90,
       "follow_up_required": false,
@@ -10188,15 +9543,12 @@
         }
       ],
       "assigned_staff": "STAFF_009",
-      "current_stage": "Đánh giá",
+      "current_workflow": "Đánh giá",
       "estimated_hours": 6.34,
       "actual_hours": 41.63,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00072_1.jpg",
-        "order_00072_2.jpg"
-      ],
+      "photos": ["order_00072_1.jpg", "order_00072_2.jpg"],
       "created_by": "USER_003",
       "warranty_period": 60,
       "follow_up_required": false,
@@ -10260,15 +9612,12 @@
         }
       ],
       "assigned_staff": "STAFF_018",
-      "current_stage": "Hoàn thành",
+      "current_workflow": "Hoàn thành",
       "estimated_hours": 7.94,
       "actual_hours": 6.19,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00073_1.jpg",
-        "order_00073_2.jpg"
-      ],
+      "photos": ["order_00073_1.jpg", "order_00073_2.jpg"],
       "created_by": "USER_001",
       "warranty_period": 30,
       "follow_up_required": false,
@@ -10316,15 +9665,12 @@
         }
       ],
       "assigned_staff": "STAFF_002",
-      "current_stage": "Hoàn thành",
+      "current_workflow": "Hoàn thành",
       "estimated_hours": 6.67,
       "actual_hours": 18.03,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00074_1.jpg",
-        "order_00074_2.jpg"
-      ],
+      "photos": ["order_00074_1.jpg", "order_00074_2.jpg"],
       "created_by": "USER_007",
       "warranty_period": 60,
       "follow_up_required": false,
@@ -10436,15 +9782,12 @@
         }
       ],
       "assigned_staff": "STAFF_019",
-      "current_stage": "QC",
+      "current_workflow": "QC",
       "estimated_hours": 31.17,
       "actual_hours": 14.37,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00075_1.jpg",
-        "order_00075_2.jpg"
-      ],
+      "photos": ["order_00075_1.jpg", "order_00075_2.jpg"],
       "created_by": "USER_008",
       "warranty_period": 60,
       "follow_up_required": false,
@@ -10540,15 +9883,12 @@
         }
       ],
       "assigned_staff": "STAFF_008",
-      "current_stage": "Tiếp nhận",
+      "current_workflow": "Tiếp nhận",
       "estimated_hours": 11.23,
       "actual_hours": 15.03,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00076_1.jpg",
-        "order_00076_2.jpg"
-      ],
+      "photos": ["order_00076_1.jpg", "order_00076_2.jpg"],
       "created_by": "USER_009",
       "warranty_period": 30,
       "follow_up_required": false,
@@ -10644,15 +9984,12 @@
         }
       ],
       "assigned_staff": "STAFF_010",
-      "current_stage": "Xử lý",
+      "current_workflow": "Xử lý",
       "estimated_hours": 22.12,
       "actual_hours": 5.74,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00077_1.jpg",
-        "order_00077_2.jpg"
-      ],
+      "photos": ["order_00077_1.jpg", "order_00077_2.jpg"],
       "created_by": "USER_009",
       "warranty_period": 180,
       "follow_up_required": false,
@@ -10732,15 +10069,12 @@
         }
       ],
       "assigned_staff": "STAFF_009",
-      "current_stage": "QC",
+      "current_workflow": "QC",
       "estimated_hours": 39.76,
       "actual_hours": 32.96,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00078_1.jpg",
-        "order_00078_2.jpg"
-      ],
+      "photos": ["order_00078_1.jpg", "order_00078_2.jpg"],
       "created_by": "USER_010",
       "warranty_period": 90,
       "follow_up_required": false,
@@ -10788,15 +10122,12 @@
         }
       ],
       "assigned_staff": "STAFF_017",
-      "current_stage": "Đánh giá",
+      "current_workflow": "Đánh giá",
       "estimated_hours": 2.73,
       "actual_hours": 44.14,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00079_1.jpg",
-        "order_00079_2.jpg"
-      ],
+      "photos": ["order_00079_1.jpg", "order_00079_2.jpg"],
       "created_by": "USER_009",
       "warranty_period": 180,
       "follow_up_required": false,
@@ -10876,15 +10207,12 @@
         }
       ],
       "assigned_staff": "STAFF_002",
-      "current_stage": "QC",
+      "current_workflow": "QC",
       "estimated_hours": 6.02,
       "actual_hours": 33.82,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00080_1.jpg",
-        "order_00080_2.jpg"
-      ],
+      "photos": ["order_00080_1.jpg", "order_00080_2.jpg"],
       "created_by": "USER_002",
       "warranty_period": 60,
       "follow_up_required": true,
@@ -10964,15 +10292,12 @@
         }
       ],
       "assigned_staff": "STAFF_010",
-      "current_stage": "QC",
+      "current_workflow": "QC",
       "estimated_hours": 28.9,
       "actual_hours": 20.5,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00081_1.jpg",
-        "order_00081_2.jpg"
-      ],
+      "photos": ["order_00081_1.jpg", "order_00081_2.jpg"],
       "created_by": "USER_009",
       "warranty_period": 30,
       "follow_up_required": false,
@@ -11084,15 +10409,12 @@
         }
       ],
       "assigned_staff": "STAFF_008",
-      "current_stage": "Tiếp nhận",
+      "current_workflow": "Tiếp nhận",
       "estimated_hours": 14.41,
       "actual_hours": 47.75,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00082_1.jpg",
-        "order_00082_2.jpg"
-      ],
+      "photos": ["order_00082_1.jpg", "order_00082_2.jpg"],
       "created_by": "USER_009",
       "warranty_period": 60,
       "follow_up_required": false,
@@ -11140,15 +10462,12 @@
         }
       ],
       "assigned_staff": "STAFF_014",
-      "current_stage": "Đánh giá",
+      "current_workflow": "Đánh giá",
       "estimated_hours": 6.71,
       "actual_hours": 11.3,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00083_1.jpg",
-        "order_00083_2.jpg"
-      ],
+      "photos": ["order_00083_1.jpg", "order_00083_2.jpg"],
       "created_by": "USER_001",
       "warranty_period": 30,
       "follow_up_required": false,
@@ -11212,15 +10531,12 @@
         }
       ],
       "assigned_staff": "STAFF_018",
-      "current_stage": "Tiếp nhận",
+      "current_workflow": "Tiếp nhận",
       "estimated_hours": 9.35,
       "actual_hours": 16.4,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00084_1.jpg",
-        "order_00084_2.jpg"
-      ],
+      "photos": ["order_00084_1.jpg", "order_00084_2.jpg"],
       "created_by": "USER_001",
       "warranty_period": 90,
       "follow_up_required": false,
@@ -11268,15 +10584,12 @@
         }
       ],
       "assigned_staff": "STAFF_019",
-      "current_stage": "Hoàn thành",
+      "current_workflow": "Hoàn thành",
       "estimated_hours": 24.01,
       "actual_hours": 19.93,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00085_1.jpg",
-        "order_00085_2.jpg"
-      ],
+      "photos": ["order_00085_1.jpg", "order_00085_2.jpg"],
       "created_by": "USER_002",
       "warranty_period": 90,
       "follow_up_required": true,
@@ -11340,15 +10653,12 @@
         }
       ],
       "assigned_staff": "STAFF_010",
-      "current_stage": "QC",
+      "current_workflow": "QC",
       "estimated_hours": 30.65,
       "actual_hours": 40.14,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00086_1.jpg",
-        "order_00086_2.jpg"
-      ],
+      "photos": ["order_00086_1.jpg", "order_00086_2.jpg"],
       "created_by": "USER_010",
       "warranty_period": 60,
       "follow_up_required": false,
@@ -11460,15 +10770,12 @@
         }
       ],
       "assigned_staff": "STAFF_006",
-      "current_stage": "Hoàn thành",
+      "current_workflow": "Hoàn thành",
       "estimated_hours": 31.24,
       "actual_hours": 20.02,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00087_1.jpg",
-        "order_00087_2.jpg"
-      ],
+      "photos": ["order_00087_1.jpg", "order_00087_2.jpg"],
       "created_by": "USER_001",
       "warranty_period": 60,
       "follow_up_required": true,
@@ -11548,15 +10855,12 @@
         }
       ],
       "assigned_staff": "STAFF_010",
-      "current_stage": "Trả khách",
+      "current_workflow": "Trả khách",
       "estimated_hours": 7.26,
       "actual_hours": 22.17,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00088_1.jpg",
-        "order_00088_2.jpg"
-      ],
+      "photos": ["order_00088_1.jpg", "order_00088_2.jpg"],
       "created_by": "USER_002",
       "warranty_period": 365,
       "follow_up_required": true,
@@ -11620,15 +10924,12 @@
         }
       ],
       "assigned_staff": "STAFF_010",
-      "current_stage": "QC",
+      "current_workflow": "QC",
       "estimated_hours": 22.15,
       "actual_hours": 43.05,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00089_1.jpg",
-        "order_00089_2.jpg"
-      ],
+      "photos": ["order_00089_1.jpg", "order_00089_2.jpg"],
       "created_by": "USER_007",
       "warranty_period": 30,
       "follow_up_required": true,
@@ -11724,15 +11025,12 @@
         }
       ],
       "assigned_staff": "STAFF_012",
-      "current_stage": "Tiếp nhận",
+      "current_workflow": "Tiếp nhận",
       "estimated_hours": 11.87,
       "actual_hours": 4.13,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00090_1.jpg",
-        "order_00090_2.jpg"
-      ],
+      "photos": ["order_00090_1.jpg", "order_00090_2.jpg"],
       "created_by": "USER_006",
       "warranty_period": 30,
       "follow_up_required": false,
@@ -11844,15 +11142,12 @@
         }
       ],
       "assigned_staff": "STAFF_011",
-      "current_stage": "Hoàn thành",
+      "current_workflow": "Hoàn thành",
       "estimated_hours": 12.48,
       "actual_hours": 42.03,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00091_1.jpg",
-        "order_00091_2.jpg"
-      ],
+      "photos": ["order_00091_1.jpg", "order_00091_2.jpg"],
       "created_by": "USER_002",
       "warranty_period": 30,
       "follow_up_required": false,
@@ -11932,15 +11227,12 @@
         }
       ],
       "assigned_staff": "STAFF_006",
-      "current_stage": "Đánh giá",
+      "current_workflow": "Đánh giá",
       "estimated_hours": 32.85,
       "actual_hours": 31.69,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00092_1.jpg",
-        "order_00092_2.jpg"
-      ],
+      "photos": ["order_00092_1.jpg", "order_00092_2.jpg"],
       "created_by": "USER_002",
       "warranty_period": 90,
       "follow_up_required": true,
@@ -11988,15 +11280,12 @@
         }
       ],
       "assigned_staff": "STAFF_012",
-      "current_stage": "Trả khách",
+      "current_workflow": "Trả khách",
       "estimated_hours": 36.59,
       "actual_hours": 39.44,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00093_1.jpg",
-        "order_00093_2.jpg"
-      ],
+      "photos": ["order_00093_1.jpg", "order_00093_2.jpg"],
       "created_by": "USER_003",
       "warranty_period": 90,
       "follow_up_required": false,
@@ -12060,15 +11349,12 @@
         }
       ],
       "assigned_staff": "STAFF_019",
-      "current_stage": "Hoàn thành",
+      "current_workflow": "Hoàn thành",
       "estimated_hours": 18.4,
       "actual_hours": 41.69,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00094_1.jpg",
-        "order_00094_2.jpg"
-      ],
+      "photos": ["order_00094_1.jpg", "order_00094_2.jpg"],
       "created_by": "USER_005",
       "warranty_period": 365,
       "follow_up_required": false,
@@ -12180,15 +11466,12 @@
         }
       ],
       "assigned_staff": "STAFF_006",
-      "current_stage": "Xử lý",
+      "current_workflow": "Xử lý",
       "estimated_hours": 3.02,
       "actual_hours": 18.37,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00095_1.jpg",
-        "order_00095_2.jpg"
-      ],
+      "photos": ["order_00095_1.jpg", "order_00095_2.jpg"],
       "created_by": "USER_006",
       "warranty_period": 90,
       "follow_up_required": false,
@@ -12252,15 +11535,12 @@
         }
       ],
       "assigned_staff": "STAFF_001",
-      "current_stage": "Tiếp nhận",
+      "current_workflow": "Tiếp nhận",
       "estimated_hours": 17.38,
       "actual_hours": 12.65,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00096_1.jpg",
-        "order_00096_2.jpg"
-      ],
+      "photos": ["order_00096_1.jpg", "order_00096_2.jpg"],
       "created_by": "USER_010",
       "warranty_period": 180,
       "follow_up_required": false,
@@ -12340,15 +11620,12 @@
         }
       ],
       "assigned_staff": "STAFF_009",
-      "current_stage": "Đánh giá",
+      "current_workflow": "Đánh giá",
       "estimated_hours": 38.35,
       "actual_hours": 6.18,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00097_1.jpg",
-        "order_00097_2.jpg"
-      ],
+      "photos": ["order_00097_1.jpg", "order_00097_2.jpg"],
       "created_by": "USER_004",
       "warranty_period": 90,
       "follow_up_required": true,
@@ -12460,15 +11737,12 @@
         }
       ],
       "assigned_staff": "STAFF_017",
-      "current_stage": "Tiếp nhận",
+      "current_workflow": "Tiếp nhận",
       "estimated_hours": 29.08,
       "actual_hours": 28.63,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00098_1.jpg",
-        "order_00098_2.jpg"
-      ],
+      "photos": ["order_00098_1.jpg", "order_00098_2.jpg"],
       "created_by": "USER_006",
       "warranty_period": 180,
       "follow_up_required": false,
@@ -12532,15 +11806,12 @@
         }
       ],
       "assigned_staff": "STAFF_010",
-      "current_stage": "Trả khách",
+      "current_workflow": "Trả khách",
       "estimated_hours": 23.27,
       "actual_hours": 16.86,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00099_1.jpg",
-        "order_00099_2.jpg"
-      ],
+      "photos": ["order_00099_1.jpg", "order_00099_2.jpg"],
       "created_by": "USER_008",
       "warranty_period": 30,
       "follow_up_required": false,
@@ -12604,15 +11875,12 @@
         }
       ],
       "assigned_staff": "STAFF_009",
-      "current_stage": "Đánh giá",
+      "current_workflow": "Đánh giá",
       "estimated_hours": 2.63,
       "actual_hours": 44.48,
       "special_requests": "Yêu cầu hoàn thành sớm, chú ý bảo quản màu sắc",
       "internal_notes": "Khách VIP, cần chăm sóc đặc biệt",
-      "photos": [
-        "order_00100_1.jpg",
-        "order_00100_2.jpg"
-      ],
+      "photos": ["order_00100_1.jpg", "order_00100_2.jpg"],
       "created_by": "USER_002",
       "warranty_period": 90,
       "follow_up_required": true,

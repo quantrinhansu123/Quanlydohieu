@@ -2,8 +2,8 @@
 
 import { useFirebaseApp } from "@/firebase";
 import { useRealtimeList } from "@/firebase/hooks/useRealtime";
-import { createStaff, createStage } from "@/services/workflowService";
-import type { Staff, Stage } from "@/types/workflow";
+import { createStaff, createWorkflow } from "@/services/workflowService";
+import type { Staff, Workflow } from "@/types/workflow";
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
@@ -24,10 +24,10 @@ interface TestResult {
 export default function FirebaseTestPage() {
   const firebaseApp = useFirebaseApp();
   const {
-    data: stages,
-    isLoading: stagesLoading,
-    error: stagesError,
-  } = useRealtimeList<Omit<Stage, "id">>("xoxo/stages");
+    data: workflows,
+    isLoading: workflowsLoading,
+    error: workflowsError,
+  } = useRealtimeList<Omit<Workflow, "id">>("xoxo/workflows");
   const {
     data: staff,
     isLoading: staffLoading,
@@ -97,16 +97,16 @@ export default function FirebaseTestPage() {
     await new Promise((resolve) => setTimeout(resolve, 1000));
   };
 
-  const testCreateStage = async () => {
-    const stageData = {
-      name: `Test Stage ${Date.now()}`,
+  const testCreateWorkflow = async () => {
+    const workflowData = {
+      name: `Test Workflow ${Date.now()}`,
       order: 999,
       defaultStaff: [],
     };
 
-    const stageId = await createStage(firebaseApp, stageData);
-    if (!stageId) {
-      throw new Error("Không tạo được stage");
+    const workflowCode = await createWorkflow(firebaseApp, workflowData);
+    if (!workflowCode) {
+      throw new Error("Không tạo được workflow");
     }
   };
 
@@ -128,18 +128,18 @@ export default function FirebaseTestPage() {
     const startTime = Date.now();
 
     while (Date.now() - startTime < maxWait) {
-      if (!stagesLoading && !staffLoading) {
+      if (!workflowsLoading && !staffLoading) {
         break;
       }
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
 
-    if (stagesLoading || staffLoading) {
+    if (workflowsLoading || staffLoading) {
       throw new Error("Timeout khi đọc dữ liệu realtime");
     }
 
-    if (stagesError) {
-      throw new Error(`Lỗi đọc stages: ${stagesError.message}`);
+    if (workflowsError) {
+      throw new Error(`Lỗi đọc workflows: ${workflowsError.message}`);
     }
 
     if (staffError) {
@@ -155,7 +155,7 @@ export default function FirebaseTestPage() {
 
     await runTest("Firebase Connection", testFirebaseConnection);
     await runTest("Realtime Read", testRealtimeRead);
-    await runTest("Create Stage", testCreateStage);
+    await runTest("Create Workflow", testCreateWorkflow);
     await runTest("Create Staff", testCreateStaff);
 
     setIsRunningTests(false);
@@ -262,15 +262,15 @@ export default function FirebaseTestPage() {
           <Card title="Current Data Status" className="mb-6">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <span>Stages:</span>
-                {stagesLoading ? (
+                <span>Workflows:</span>
+                {workflowsLoading ? (
                   <Spin size="small" />
                 ) : (
                   <span className="font-medium">
-                    {stages?.length || 0} items
-                    {stagesError && (
+                    {workflows?.length || 0} items
+                    {workflowsError && (
                       <span className="text-red-500 ml-2">
-                        Error: {stagesError.message}
+                        Error: {workflowsError.message}
                       </span>
                     )}
                   </span>
@@ -318,16 +318,16 @@ export default function FirebaseTestPage() {
                 Test Connection
               </Button>
               <Button
-                onClick={() => runTest("Create Stage", testCreateStage)}
-                data-testid="create-stage"
+                onClick={() => runTest("Create Workflow", testCreateWorkflow)}
+                data-testid="create-workflow"
               >
-                Create Stage
+                Create Workflow
               </Button>
               <Button
-                onClick={() => runTest("Read Stages", testRealtimeRead)}
-                data-testid="read-stages"
+                onClick={() => runTest("Read Workflows", testRealtimeRead)}
+                data-testid="read-workflows"
               >
-                Read Stages
+                Read Workflows
               </Button>
               <Button
                 onClick={() => runTest("Create Staff", testCreateStaff)}
