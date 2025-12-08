@@ -17,11 +17,11 @@ const UpdateOrderPage: React.FC<UpdateOrderPageProps> = ({ params }) => {
   const orderCode = resolvedParams.code;
 
   const handleSuccess = (updatedorderCode: string) => {
-    router.push("/orders");
+    router.push("/sale/orders");
   };
 
   const handleCancel = () => {
-    router.push("/orders");
+    router.push("/sale/orders");
   };
 
   if (!orderCode) {
@@ -38,7 +38,7 @@ const UpdateOrderPage: React.FC<UpdateOrderPageProps> = ({ params }) => {
     <WrapperContent
       title="Cập nhật đơn hàng"
       header={{
-        buttonBackTo: "/orders",
+        buttonBackTo: "/sale/orders",
       }}
     >
       <OrderForm

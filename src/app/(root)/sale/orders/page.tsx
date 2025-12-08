@@ -36,6 +36,7 @@ const { Text, Title } = Typography;
 const getStatusInfo = (status: OrderStatus) => {
   const info = {
     [OrderStatus.PENDING]: { color: "default", text: "Chờ xử lý" },
+    [OrderStatus.CONFIRMED]: { color: "warning", text: "Đã xác nhận" },
     [OrderStatus.IN_PROGRESS]: { color: "processing", text: "Đang thực hiện" },
     [OrderStatus.COMPLETED]: { color: "success", text: "Hoàn thành" },
     [OrderStatus.CANCELLED]: { color: "error", text: "Đã hủy" },
@@ -97,11 +98,11 @@ export default function OrderListPage() {
   };
 
   const handleEdit = (orderCode: string) => {
-    router.push(`/orders/${orderCode}/update`);
+    router.push(`/sale/orders/${orderCode}/update`);
   };
 
   const handleViewDetails = (orderCode: string) => {
-    router.push(`/orders/${orderCode}`);
+    router.push(`/sale/orders/${orderCode}`);
   };
 
   const columns: TableColumnsType<Order> = [
@@ -165,6 +166,31 @@ export default function OrderListPage() {
       },
     },
     {
+      title: "Lưu ý",
+      dataIndex: "issues",
+      key: "issues",
+      width: 180,
+      render: (issues: string[] | undefined) => {
+        if (!issues || issues.length === 0) {
+          return "-";
+        }
+        return (
+          <Space direction="vertical">
+            {issues.map((issue) => {
+              if (issue === "pending_images") {
+                return (
+                  <Tag color="purple" key={issue}>
+                    Cần hẹn lấy ảnh
+                  </Tag>
+                );
+              }
+              return null;
+            })}
+          </Space>
+        );
+      },
+    },
+    {
       title: "Thao tác",
       key: "action",
       width: 100,
@@ -204,11 +230,12 @@ export default function OrderListPage() {
 
   const stats = useMemo(() => {
     if (!orders || !Array.isArray(orders)) {
-      return { total: 0, pending: 0, in_progress: 0, completed: 0 };
+      return { total: 0, pending: 0, confirmed: 0, in_progress: 0, completed: 0 };
     }
     return {
       total: orders.length,
       pending: orders.filter((o) => o.status === OrderStatus.PENDING).length,
+      confirmed: orders.filter((o) => o.status === OrderStatus.CONFIRMED).length,
       in_progress: orders.filter((o) => o.status === OrderStatus.IN_PROGRESS)
         .length,
       completed: orders.filter((o) => o.status === OrderStatus.COMPLETED)
@@ -231,6 +258,7 @@ export default function OrderListPage() {
               type: "select",
               options: [
                 { value: OrderStatus.PENDING, label: "Chờ xử lý" },
+                { value: OrderStatus.CONFIRMED, label: "Đã xác nhận" },
                 { value: OrderStatus.IN_PROGRESS, label: "Đang thực hiện" },
                 { value: OrderStatus.COMPLETED, label: "Hoàn thành" },
                 { value: OrderStatus.CANCELLED, label: "Đã hủy" },
@@ -246,14 +274,14 @@ export default function OrderListPage() {
             name: "Tạo đơn hàng",
             icon: <PlusOutlined />,
             type: "primary",
-            onClick: () => router.push("/orders/create"),
+            onClick: () => router.push("/sale/orders/create"),
           },
         ],
       }}
     >
       <div className="space-y-4">
         <Row gutter={16}>
-          <Col span={6}>
+          <Col span={4}>
             <Card>
               <Statistic
                 title="Tổng đơn"
@@ -262,7 +290,7 @@ export default function OrderListPage() {
               />
             </Card>
           </Col>
-          <Col span={6}>
+          <Col span={4}>
             <Card>
               <Statistic
                 title="Chờ xử lý"
@@ -271,7 +299,16 @@ export default function OrderListPage() {
               />
             </Card>
           </Col>
-          <Col span={6}>
+          <Col span={4}>
+            <Card>
+              <Statistic
+                title="Đã xác nhận"
+                value={stats.confirmed}
+                styles={{ content: { color: "#fadb14" } }}
+              />
+            </Card>
+          </Col>
+          <Col span={4}>
             <Card>
               <Statistic
                 title="Đang thực hiện"
@@ -280,7 +317,7 @@ export default function OrderListPage() {
               />
             </Card>
           </Col>
-          <Col span={6}>
+          <Col span={4}>
             <Card>
               <Statistic
                 title="Hoàn thành"

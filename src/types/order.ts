@@ -5,6 +5,7 @@ import type { Dayjs } from "dayjs";
 
 export enum OrderStatus {
   PENDING = "pending",
+  CONFIRMED = "confirmed",
   IN_PROGRESS = "in_progress",
   ON_HOLD = "on_hold",
   COMPLETED = "completed",
@@ -37,8 +38,8 @@ export interface FirebaseDepartments {
 // Workflow and Product data structures
 export interface WorkflowData {
   id: string;
-  workflowCode: string;
-  workflowName: string;
+  workflowCode: string[];
+  workflowName: string[];
   members: string[];
   isDone: boolean;
 }
@@ -60,8 +61,8 @@ export enum WorkflowStatus {
 
 // Firebase storage data structures
 export interface FirebaseWorkflowData {
-  workflowCode: string;
-  workflowName: string;
+  workflowCode: string[];
+  workflowName: string[];
   members: string[];
   isDone: boolean;
   updatedAt: number;
@@ -121,10 +122,15 @@ export interface FirebaseOrderData {
   discountType?: "amount" | "percentage";
   shippingFee?: number;
   products: Record<string, FirebaseProductData>;
-    status?: OrderStatus;
-    totalAmount?: number;
-    discountAmount?: number;
-    subtotal?: number;
+  status?: OrderStatus;
+  totalAmount?: number;
+  discountAmount?: number;
+  subtotal?: number;
+  deposit?: number;
+  depositType?: "amount" | "percentage";
+  depositAmount?: number;
+  customerCode?: string;
+  issues?: string[];
 }
 
 // Form related interfaces
@@ -144,8 +150,11 @@ export interface FormValues {
   discount?: number;
   discountType?: DiscountType;
   shippingFee?: number;
-    status?: OrderStatus;
-    totalAmount?: number;
+  status?: OrderStatus;
+  totalAmount?: number;
+  deposit?: number;
+  depositType?: DiscountType;
+  customerCode?: string;
 }
 
 export interface OrderFormProps {

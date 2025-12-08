@@ -16,20 +16,20 @@ const CreateOrderModal: React.FC = () => {
 
   const handleSuccess = (orderCode: string) => {
     // Alternative 1: Use replace to avoid adding to history
-    router.replace("/orders");
+    router.replace("/sale/orders");
     // Optional: Show success message or redirect
   };
 
   const handleCancel = () => {
     // Alternative 1: Use replace to avoid adding to history
-    router.replace("/orders");
+    router.replace("/sale/orders");
   };
 
   return (
     <WrapperContent
       title="Tạo đơn hàng mới"
       header={{
-        buttonBackTo: "/orders",
+        buttonBackTo: "/sale/orders",
         buttonEnds: [
           {
             type: "dashed",

@@ -1,7 +1,9 @@
 import {
   DashboardOutlined,
   DollarOutlined,
+  SettingOutlined,
   ShopOutlined,
+  ShoppingCartOutlined,
   TeamOutlined,
   UserOutlined,
 } from "@ant-design/icons";
@@ -16,9 +18,6 @@ export const allMenuItems: Array<{
     title: string;
     href: string;
     permission?: string;
-    warehouseType?: "NVL" | "THANH_PHAM";
-    warehouseCode?: string;
-    noPrefix?: boolean;
   }>;
 }> = [
   {
@@ -28,61 +27,55 @@ export const allMenuItems: Array<{
     permission: null,
   },
   {
-    title: "Bán hàng",
-    prefix: "",
+    title: "Khách hàng",
+    prefix: "Quản lý",
     Icon: UserOutlined,
     children: [
       {
+        title: "Danh sách khách hàng",
+        href: "/customers",
+      },
+      {
         title: "Quản lý Leads",
-        href: "/leads",
-        noPrefix: true,
+        href: "/customers/leads",
       },
       {
         title: "Chăm sóc khách hàng",
-        href: "/customer-care",
-        noPrefix: true,
-      },
-      {
-        title: "Danh sách đơn hàng",
-        href: "/orders",
-        noPrefix: true,
-      },
-      // {
-      //   title: "Tạo đơn hàng",
-      //   href: "/orders/create",
-      //   noPrefix: true,
-      // },
-      {
-        title: "Lịch sử mua hàng",
-        href: "/orders/history",
-        noPrefix: true,
+        href: "/customers/customer-care",
       },
     ],
   },
   {
-    title: "Vận hành & Sản xuất",
-    prefix: "",
-    Icon: ShopOutlined,
+    title: "Bán hàng",
+    prefix: "Quản lý",
+    Icon: ShoppingCartOutlined,
     children: [
       {
-        title: "Quản lý sản xuất",
-        href: "/workflow-management",
-        noPrefix: true,
+        title: "Danh sách đơn hàng",
+        href: "/sale/orders",
       },
       {
         title: "Kanban dịch vụ",
-        href: "/kanban",
-        noPrefix: true,
+        href: "/sale/kanban",
+      },
+    ],
+  },
+  {
+    title: "Vận hành",
+    prefix: "Quản lý",
+    Icon: ShopOutlined,
+    children: [
+      {
+        title: "Sản xuất",
+        href: "/workflow-management",
       },
       {
         title: "Theo dõi hàng hóa",
         href: "/product-tracking",
-        noPrefix: true,
       },
       {
-        title: "Quản lý kho",
+        title: "Kho",
         href: "/inventory",
-        noPrefix: true,
       },
     ],
   },
@@ -97,7 +90,7 @@ export const allMenuItems: Array<{
       },
       {
         title: "Lương & Hoa hồng",
-        href: "/payroll",
+        href: "/_old/payroll",
       },
     ],
   },
@@ -107,12 +100,31 @@ export const allMenuItems: Array<{
     Icon: TeamOutlined,
     children: [
       {
+        title: "Nhân viên",
+        href: "/hr/members",
+      },
+      {
         title: "Tuyển dụng",
         href: "/hr/recruitment",
       },
       {
         title: "Đào tạo",
         href: "/hr/training",
+      },
+    ],
+  },
+  {
+    title: "Thiết lập",
+    prefix: "Thiết lập",
+    Icon: SettingOutlined,
+    children: [
+      {
+        title: "Kỹ thuật",
+        href: "/technician",
+      },
+      {
+        title: "Quy trình",
+        href: "/workflow-config",
       },
     ],
   },
@@ -147,8 +159,7 @@ function generateBreadcrumbMap(
 
       item.children.forEach((child) => {
         if (child.href) {
-          map[normalizePath(child.href)] =
-            (child.noPrefix ? "" : item.prefix + " ") + child.title;
+          map[normalizePath(child.href)] = item.prefix + " " + child.title;
         }
       });
     }

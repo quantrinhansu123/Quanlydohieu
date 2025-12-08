@@ -49,6 +49,7 @@ import {
   Form,
   Input,
   InputNumber,
+  Radio,
   Row,
   Select,
   Space,
@@ -84,10 +85,27 @@ import React, {
 const { Title, Text } = Typography;
 const { Option } = Select;
 
+interface Customer {
+  code: string;
+  name: string;
+  phone: string;
+  email: string;
+  address: string;
+  customerSource: CustomerSource;
+  createdAt: number;
+  updatedAt: number;
+}
+
+interface FirebaseCustomers {
+  [key: string]: Customer;
+}
+
 const statusOptions = [
   { value: "pending", label: "Chờ xử lý", color: "default" },
+  { value: "confirmed", label: "Đã xác nhận", color: "warning" },
   { value: "in_progress", label: "Đang thực hiện", color: "processing" },
   { value: "completed", label: "Hoàn thành", color: "success" },
+  { value: "cancelled", label: "Đã hủy", color: "error" },
 ];
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -108,6 +126,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
       id: newWorkflowCode,
       members: [],
       isDone: false,
+      workflowCode: [],
+      workflowName: [],
     } as any;
     onUpdate({
       ...product,
@@ -121,12 +141,27 @@ const ProductCard: React.FC<ProductCardProps> = ({
     value: string | string[] | boolean
   ) => {
     const updatedWorkflows = [...product.workflows];
-    if (field === "workflowCode" && typeof value === "string") {
+    const currentWorkflow = updatedWorkflows[workflowIndex];
+
+    if (field === "departmentCode") {
+      updatedWorkflows[workflowIndex] = {
+        ...(currentWorkflow as any),
+        departmentCode: value as string,
+        workflowCode: [], // Reset workflow to an empty array
+        workflowName: [], // Reset workflow names
+        members: [], // Reset members
+      };
+    } else if (field === "workflowCode" && Array.isArray(value)) {
+      const selectedWorkflowCodes = value;
+      const selectedWorkflowNames = selectedWorkflowCodes
+        .map((code) => workflows[code]?.name)
+        .filter(Boolean) as string[];
+
       updatedWorkflows[workflowIndex] = {
         ...updatedWorkflows[workflowIndex],
-        workflowCode: value,
-        workflowName: workflows[value]?.name || "",
-        members: [], // Clear members when workflow changes
+        workflowCode: selectedWorkflowCodes,
+        workflowName: selectedWorkflowNames,
+        members: [], // Clear members when workflows change
       };
     } else {
       updatedWorkflows[workflowIndex] = {
@@ -390,38 +425,92 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   ),
                 },
                 {
+                  title: "Phòng ban",
+                  dataIndex: "departmentCode",
+                  key: "departmentCode",
+                  width: "25%",
+                  render: (value, record, index) => {
+                    // Get departments already used in other rows
+                    const selectedDepartmentCodes = product.workflows
+                      .map((w: any, i) =>
+                        i === index ? null : w.departmentCode
+                      )
+                      .filter(Boolean);
+
+                    const departmentOptions = Object.keys(departments)
+                      .filter((code) => !selectedDepartmentCodes.includes(code))
+                      .map((code) => ({
+                        value: code,
+                        label: departments[code].name,
+                      }));
+
+                    return (
+                      <Select
+                        value={value}
+                        placeholder="Chọn phòng ban"
+                        onChange={(newValue) =>
+                          updateWorkflow(index, "departmentCode", newValue)
+                        }
+                        className="w-full"
+                        size="small"
+                        showSearch
+                        optionFilterProp="children"
+                      >
+                        {departmentOptions.map((opt) => (
+                          <Option key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </Option>
+                        ))}
+                      </Select>
+                    );
+                  },
+                },
+                {
                   title: "Công đoạn",
                   dataIndex: "workflowCode",
                   key: "workflowCode",
                   width: "25%",
-                  render: (value, record, index) => (
-                    <Select
-                      value={value}
-                      placeholder="Chọn công đoạn"
-                      onChange={(newValue) =>
-                        updateWorkflow(index, "workflowCode", newValue)
-                      }
-                      className="w-full"
-                      size="small"
-                    >
-                      {workflowOptions.map(
-                        (option: { value: string; label: string }) => {
-                          const workflow = workflows[option.value];
-                          const departmentCode = workflow?.department || "";
-                          const departmentName =
-                            departments[departmentCode]?.name ||
-                            "Chưa có phòng ban";
+                  render: (value, record, index) => {
+                    const departmentCode = (record as any).departmentCode;
+                    const availableWorkflows = departmentCode
+                      ? Object.entries(workflows)
+                          .filter(
+                            ([, wf]: [string, any]) =>
+                              wf.department === departmentCode
+                          )
+                          .map(([code, wf]: [string, any]) => ({
+                            value: code,
+                            label: wf.name,
+                          }))
+                      : [];
 
-                          return (
-                            <Option key={option.value} value={option.value}>
-                              {option.label}{" "}
-                              {departmentName && `- [${departmentName}]`}
-                            </Option>
-                          );
+                    return (
+                      <Select
+                        mode="multiple"
+                        maxTagCount={1}
+                        value={value}
+                        placeholder={
+                          departmentCode
+                            ? "Chọn công đoạn"
+                            : "Chọn phòng ban trước"
                         }
-                      )}
-                    </Select>
-                  ),
+                        onChange={(newValue: string[]) =>
+                          updateWorkflow(index, "workflowCode", newValue)
+                        }
+                        className="w-full"
+                        size="small"
+                        disabled={!departmentCode}
+                        showSearch
+                        optionFilterProp="children"
+                      >
+                        {availableWorkflows.map((opt) => (
+                          <Option key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </Option>
+                        ))}
+                      </Select>
+                    );
+                  },
                 },
                 {
                   title: "Nhân viên thực hiện",
@@ -429,10 +518,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   key: "members",
                   width: "35%",
                   render: (value, record, index) => {
-                    const selectedWorkflow = workflows[record.workflowCode];
-                    const departmentCode = selectedWorkflow?.department;
+                    const departmentCode = (record as any).departmentCode;
 
-                    // Filter staff by department if workflow is selected
+                    // Filter staff by department if department is selected
                     const filteredStaffOptions = departmentCode
                       ? staffOptions.filter(
                           (option: {
@@ -452,7 +540,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                       <Select
                         mode="multiple"
                         placeholder={
-                          record.workflowCode
+                          record.workflowCode?.length
                             ? "Chọn nhân viên"
                             : "Chọn công đoạn trước"
                         }
@@ -463,7 +551,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                         className="w-full"
                         size="small"
                         maxTagCount={2}
-                        disabled={!record.workflowCode}
+                        disabled={!record.workflowCode?.length}
                       >
                         {filteredStaffOptions.map(
                           (option: { value: string; label: string }) => (
@@ -542,6 +630,8 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
     const [staff, setStaff] = useState<FirebaseStaff>({});
     const [workflows, setWorkflows] = useState<FirebaseWorkflows>({});
     const [departments, setDepartments] = useState<FirebaseDepartments>({});
+    const [customers, setCustomers] = useState<FirebaseCustomers>({});
+    const [customerType, setCustomerType] = useState<"new" | "existing">("new");
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const { user } = useUser();
@@ -612,6 +702,8 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
         shippingFee: orderData.shippingFee || 0,
         status: orderData.status || OrderStatus.PENDING,
         totalAmount: orderData.totalAmount,
+        deposit: orderData.deposit || 0,
+        depositType: orderData.depositType || DiscountType.Percentage,
       });
 
       // Convert products data back to form format
@@ -630,10 +722,10 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
               firebaseUrl: img.url,
             })) || [],
           workflows: Object.entries(productData.workflows || {}).map(
-            ([workflowCode, workflowData]: [string, FirebaseWorkflowData]) => ({
-              id: workflowCode,
-              workflowCode: workflowData.workflowCode,
-              workflowName: workflowData.workflowName,
+            ([workflowId, workflowData]: [string, FirebaseWorkflowData]) => ({
+              id: workflowId,
+              workflowCode: workflowData.workflowCode || [],
+              workflowName: workflowData.workflowName || [],
               members: workflowData.members || [],
               isDone: workflowData.isDone || false,
             })
@@ -694,7 +786,7 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
     };
 
     const onFinish = async (values: FormValues) => {
-      console.log(values, "vvvvvvvvvvvvvv");
+      // --- VALIDATION ---
       if (products.length === 0) {
         message.warning("Vui lòng thêm ít nhất một sản phẩm!");
         return;
@@ -707,45 +799,129 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
         message.warning("Giảm giá theo phần trăm không được vượt quá 100%!");
         return;
       }
+
+      const status = values.status || OrderStatus.PENDING;
+
       // Validate products
       for (const product of products) {
         if (!product.name.trim()) {
-          message.warning("Vui lòng nhập tên cho tất cả sản phẩm!");
+          message.warning(`Vui lòng nhập tên cho sản phẩm ${product.id}!`);
           return;
         }
         if (!product.quantity || product.quantity < 1) {
-          message.warning("Vui lòng nhập số lượng hợp lệ cho tất cả sản phẩm!");
+          message.warning(
+            `Vui lòng nhập số lượng hợp lệ cho sản phẩm ${product.id}!`
+          );
           return;
         }
         if (!product.price || product.price < 0) {
-          message.warning("Vui lòng nhập giá hợp lệ cho tất cả sản phẩm!");
+          message.warning(
+            `Vui lòng nhập giá hợp lệ cho sản phẩm ${product.id}!`
+          );
           return;
         }
-        if (product.images.length === 0) {
-          message.warning("Vui lòng tải lên ít nhất 1 ảnh cho mỗi sản phẩm!");
+        // Image validation based on status
+        if (status !== OrderStatus.PENDING && product.images.length === 0) {
+          message.warning(
+            `Vui lòng tải lên ít nhất 1 ảnh cho sản phẩm ${product.id} vì đơn hàng không ở trạng thái "Chờ xử lý".`
+          );
           return;
         }
         if (product.workflows.length === 0) {
-          message.warning("Mỗi sản phẩm phải có ít nhất một công đoạn!");
+          message.warning(
+            `Sản phẩm ${product.id} phải có ít nhất một công đoạn!`
+          );
           return;
         }
         for (const workflow of product.workflows) {
-          if (!workflow.workflowCode) {
-            message.warning("Vui lòng chọn công đoạn cho tất cả các bước!");
+          if (!workflow.workflowCode || workflow.workflowCode.length === 0) {
+            message.warning(
+              `Vui lòng chọn công đoạn cho tất cả các bước trong sản phẩm ${product.id}!`
+            );
             return;
           }
           if (!workflow.members || workflow.members.length === 0) {
             message.warning(
-              "Vui lòng chọn nhân viên thực hiện cho tất cả công đoạn!"
+              `Vui lòng chọn nhân viên thực hiện cho tất cả công đoạn trong sản phẩm ${product.id}!`
             );
             return;
           }
         }
       }
 
+      // Confirmed status validation
+      const totals = calculateOrderTotals(
+        products,
+        values.discount,
+        values.discountType,
+        values.shippingFee
+      );
+      const depositValue = values.deposit || 0;
+      const depositType = values.depositType || DiscountType.Percentage;
+      const depositAmount =
+        depositType === DiscountType.Percentage
+          ? (totals.total * depositValue) / 100
+          : depositValue;
+
+      if (status === OrderStatus.CONFIRMED && depositAmount <= 0) {
+        message.warning(
+          'Đơn hàng "Đã xác nhận" phải có số tiền cọc lớn hơn 0.'
+        );
+        return;
+      }
+
       setSubmitting(true);
+      const database = getDatabase();
+      let customerCodeToSave = values.customerCode;
 
       try {
+        // New Customer Validation and Creation
+        if (customerType === "new") {
+          const existingCustomerByPhone = Object.values(customers).find(
+            (c) => c.phone === values.phone
+          );
+          if (existingCustomerByPhone) {
+            message.error(
+              `Số điện thoại ${values.phone} đã tồn tại cho khách hàng ${existingCustomerByPhone.name}.`
+            );
+            setSubmitting(false);
+            return;
+          }
+          if (values.email) {
+            const existingCustomerByEmail = Object.values(customers).find(
+              (c) => c.email && c.email === values.email
+            );
+            if (existingCustomerByEmail) {
+              message.error(
+                `Email ${values.email} đã tồn tại cho khách hàng ${existingCustomerByEmail.name}.`
+              );
+              setSubmitting(false);
+              return;
+            }
+          }
+
+          // Create new customer
+          const newCustomerCode = generateRandomCode("CUST_");
+          const now = new Date().getTime();
+          const newCustomer: Customer = {
+            code: newCustomerCode,
+            name: values.customerName,
+            phone: values.phone,
+            email: values.email,
+            address: values.address,
+            customerSource: values.customerSource || CustomerSource.Other,
+            createdAt: now,
+            updatedAt: now,
+          };
+          const customerRef = dbRef(
+            database,
+            `xoxo/customers/${newCustomerCode}`
+          );
+          await set(customerRef, newCustomer);
+          customerCodeToSave = newCustomerCode;
+          message.success(`Đã tạo khách hàng mới: ${newCustomer.name}`);
+        }
+
         const hideLoading = message.loading("Đang tải ảnh lên Firebase...", 0);
 
         // Upload all images to Firebase
@@ -795,19 +971,40 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
 
         hideLoading();
 
+        // --- PREPARE ORDER DATA ---
         const now = new Date().getTime();
-        const discount = values.discount;
-        const discountType = values.discountType || DiscountType.Amount;
-        const shippingFee = values.shippingFee;
+        const {
+          discount,
+          discountType = DiscountType.Amount,
+          shippingFee,
+          deposit,
+          depositType = DiscountType.Percentage,
+        } = values;
+
         const totals = calculateOrderTotals(
           products,
           discount,
           discountType,
           shippingFee
         );
+
+        const orderIssues: string[] = [];
+        if (
+          status === OrderStatus.PENDING &&
+          products.some((p) => p.images.length === 0)
+        ) {
+          orderIssues.push("pending_images");
+        }
+
+        const depositAmount =
+          depositType === DiscountType.Percentage
+            ? (totals.total * (deposit || 0)) / 100
+            : deposit || 0;
+
         const orderData: FirebaseOrderData = {
           code: values.code,
-          status: values.status || OrderStatus.PENDING,
+          status: status,
+          customerCode: customerCodeToSave,
           customerName: values.customerName,
           phone: values.phone,
           email: values.email,
@@ -819,6 +1016,9 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
           totalAmount: totals.total,
           discountAmount: totals.discountAmount,
           subtotal: totals.subtotal,
+          deposit: values.deposit || 0,
+          depositType: depositType,
+          depositAmount: depositAmount,
           deliveryDate: values.deliveryDate
             ? values.deliveryDate.valueOf()
             : new Date().getTime(),
@@ -833,9 +1033,10 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
             consultantName: staff[values.consultantId]?.name || "",
           }),
           notes: values.notes || "",
-          discount: values.discount || 0,
-          discountType: values.discountType || DiscountType.Amount,
-          shippingFee: values.shippingFee || 0,
+          discount: discount || 0,
+          discountType: discountType,
+          shippingFee: shippingFee || 0,
+          issues: orderIssues,
           ...(mode === "create" && { createdAt: now }),
           updatedAt: now,
           products: productsWithUploadedImages.reduce((acc, product) => {
@@ -851,9 +1052,13 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
               })),
               workflows: product.workflows.reduce(
                 (workflowAcc: any, workflow: WorkflowData) => {
+                  const workflowNames = workflow.workflowCode
+                    .map((code) => workflows[code]?.name)
+                    .filter(Boolean) as string[];
+
                   workflowAcc[workflow.id] = {
                     workflowCode: workflow.workflowCode,
-                    workflowName: workflows[workflow.workflowCode]?.name || "",
+                    workflowName: workflowNames,
                     members: workflow.members,
                     isDone: workflow.isDone,
                     updatedAt: now,
@@ -867,13 +1072,10 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
           }, {} as Record<string, FirebaseProductData>),
         };
 
-        const database = getDatabase();
-
+        // --- SAVE TO FIREBASE ---
         if (mode === "create") {
           const orderRef = dbRef(database, `xoxo/orders/${orderData.code}`);
-
           await set(orderRef, orderData);
-
           message.success("Đơn hàng đã được tạo thành công!");
           onSuccess?.(orderData.code);
         } else {
@@ -887,6 +1089,15 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
         if (mode === "create") {
           form.resetFields();
           setProducts([]);
+          setCustomerType("new");
+          form.setFieldsValue({
+            code: generateRandomCode("ORD_"),
+            createdBy: user?.uid,
+            createdByName:
+              user?.displayName || user?.email || "Người dùng hiện tại",
+            orderDate: dayjs(),
+            status: OrderStatus.PENDING,
+          });
         }
       } catch (error) {
         console.error("Error saving order:", error);
@@ -914,6 +1125,7 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
       const staffRef = dbRef(database, "xoxo/members");
       const workflowsRef = dbRef(database, "xoxo/workflows");
       const departmentsRef = dbRef(database, "xoxo/departments");
+      const customersRef = dbRef(database, "xoxo/customers");
 
       const loadData = async () => {
         try {
@@ -930,6 +1142,11 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
           onValue(departmentsRef, (snapshot) => {
             const departmentsData = snapshot.val() || {};
             setDepartments(departmentsData);
+          });
+
+          onValue(customersRef, (snapshot) => {
+            const customersData = snapshot.val() || {};
+            setCustomers(customersData);
           });
 
           // Load existing order data if in update mode
@@ -958,6 +1175,7 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
         off(staffRef);
         off(workflowsRef);
         off(departmentsRef);
+        off(customersRef);
       };
     }, [mode, orderCode]);
 
@@ -980,9 +1198,77 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
           >
             {/* Thông tin khách hàng */}
             <div className="mb-6">
-              <div className="mb-3 pb-2 border-b border-gray-200">
+              <div className="mb-3 pb-2 border-b border-gray-200 flex justify-between items-center">
                 <Text strong>Khách hàng</Text>
+                <Radio.Group
+                  value={customerType}
+                  onChange={(e) => {
+                    setCustomerType(e.target.value);
+                    form.resetFields([
+                      "customerCode",
+                      "customerName",
+                      "phone",
+                      "email",
+                      "address",
+                    ]);
+                  }}
+                  optionType="button"
+                  buttonStyle="solid"
+                  size="small"
+                >
+                  <Radio.Button value="new">Khách mới</Radio.Button>
+                  <Radio.Button value="existing">Khách cũ</Radio.Button>
+                </Radio.Group>
               </div>
+
+              <Form.Item name="customerCode" hidden>
+                <Input />
+              </Form.Item>
+
+              {customerType === "existing" ? (
+                <Form.Item
+                  label="Chọn khách hàng"
+                  name="customerCode"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng chọn một khách hàng!",
+                    },
+                  ]}
+                >
+                  <Select
+                    showSearch
+                    placeholder="Tìm và chọn khách hàng theo tên hoặc SĐT"
+                    onChange={(customerCode) => {
+                      const customer = customers[customerCode];
+                      if (customer) {
+                        form.setFieldsValue({
+                          customerCode: customer.code,
+                          customerName: customer.name,
+                          phone: customer.phone,
+                          email: customer.email,
+                          address: customer.address,
+                          customerSource: customer.customerSource,
+                        });
+                      }
+                    }}
+                    filterOption={(input, option) => {
+                      const customer = customers[option?.value as string];
+                      if (!customer) return false;
+                      const searchableText =
+                        `${customer.name} ${customer.phone}`.toLowerCase();
+                      return searchableText.includes(input.toLowerCase());
+                    }}
+                  >
+                    {Object.values(customers).map((customer) => (
+                      <Option key={customer.code} value={customer.code}>
+                        {customer.name} - {customer.phone} - {customer.email}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              ) : null}
+
               <Row gutter={24}>
                 <Col span={6}>
                   <Form.Item
@@ -1010,7 +1296,10 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
                       },
                     ]}
                   >
-                    <Input placeholder="VD: Nguyễn Thị Lan Anh" />
+                    <Input
+                      placeholder="VD: Nguyễn Thị Lan Anh"
+                      disabled={customerType === "existing"}
+                    />
                   </Form.Item>
                 </Col>
                 <Col span={9}>
@@ -1028,7 +1317,10 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
                       },
                     ]}
                   >
-                    <Input placeholder="VD: 0123456789" />
+                    <Input
+                      placeholder="VD: 0123456789"
+                      disabled={customerType === "existing"}
+                    />
                   </Form.Item>
                 </Col>
               </Row>
@@ -1038,12 +1330,12 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
                   <Form.Item
                     label="Email"
                     name="email"
-                    rules={[
-                      { required: true, message: "Vui lòng nhập email!" },
-                      { type: "email", message: "Email không hợp lệ!" },
-                    ]}
+                    rules={[{ type: "email", message: "Email không hợp lệ!" }]}
                   >
-                    <Input placeholder="VD: khachhang@email.com" />
+                    <Input
+                      placeholder="VD: khachhang@email.com"
+                      disabled={customerType === "existing"}
+                    />
                   </Form.Item>
                 </Col>
                 <Col span={15}>
@@ -1052,6 +1344,7 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
                       placeholder="Chọn nguồn khách hàng"
                       className="w-full"
                       allowClear
+                      disabled={customerType === "existing"}
                       showSearch={{
                         optionFilterProp: "children",
                         filterOption: (input, option) =>
@@ -1080,6 +1373,7 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
                 <Input.TextArea
                   rows={2}
                   placeholder="VD: 123 Đường ABC, Quận XYZ, TP.HN"
+                  disabled={customerType === "existing"}
                 />
               </Form.Item>
             </div>
@@ -1123,6 +1417,24 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
                         current && current < dayjs().endOf("day")
                       }
                     />
+                  </Form.Item>
+                </Col>
+                <Col span={8}>
+                  <Form.Item
+                    label="Trạng thái"
+                    name="status"
+                    initialValue={OrderStatus.PENDING}
+                    rules={[
+                      { required: true, message: "Vui lòng chọn trạng thái!" },
+                    ]}
+                  >
+                    <Select placeholder="Chọn trạng thái">
+                      {statusOptions.map((opt) => (
+                        <Option key={opt.value} value={opt.value}>
+                          <Tag color={opt.color}>{opt.label}</Tag>
+                        </Option>
+                      ))}
+                    </Select>
                   </Form.Item>
                 </Col>
               </Row>
@@ -1290,96 +1602,31 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
                               DiscountType.Amount;
                             const isPercentage =
                               discountType === DiscountType.Percentage;
-
-                            // Rules validation luôn kiểm tra cả 2 trường hợp
-                            const validationRules = [
-                              {
-                                validator: (_: any, value: any) => {
-                                  if (!value || value === 0)
-                                    return Promise.resolve();
-
-                                  // Lấy giá trị discountType hiện tại từ form
-                                  const currentDiscountType =
-                                    form.getFieldValue("discountType") ||
-                                    DiscountType.Amount;
-                                  const currentIsPercentage =
-                                    currentDiscountType ===
-                                    DiscountType.Percentage;
-
-                                  if (currentIsPercentage) {
-                                    if (value <= 0 || value >= 100) {
-                                      return Promise.reject(
-                                        new Error("Chỉ từ 0.1% đến 99.9%")
-                                      );
-                                    }
-                                  } else {
-                                    if (value < 0) {
-                                      return Promise.reject(
-                                        new Error("Giá trị phải lớn hơn 0")
-                                      );
-                                    }
-                                  }
-                                  return Promise.resolve();
-                                },
-                              },
-                            ];
-
                             return (
                               <div>
                                 <div className="mb-2">
                                   <Text>Chiết khấu</Text>
                                 </div>
-                                <Space.Compact>
+                                <Space.Compact className="w-full">
                                   <Form.Item
                                     name="discount"
                                     initialValue={0}
-                                    rules={validationRules}
-                                    style={{
-                                      flex: 1,
-                                      marginRight: 0,
-                                      marginBottom: 0,
-                                    }}
+                                    noStyle
                                   >
                                     <InputNumber
                                       min={0}
                                       max={isPercentage ? 99.9 : undefined}
                                       placeholder="0"
                                       step={isPercentage ? 0.1 : 1000}
-                                      formatter={(value) => {
-                                        if (isPercentage) {
-                                          return `${value}`;
-                                        }
-                                        return `${value}`.replace(
-                                          /\B(?=(\d{3})+(?!\d))/g,
-                                          ","
-                                        );
-                                      }}
-                                      parser={(value) => {
-                                        if (isPercentage) {
-                                          return Number(value || 0) as any;
-                                        }
-                                        const parsed = Number(
-                                          value?.replace(/,/g, "") || 0
-                                        );
-                                        return parsed as any;
-                                      }}
                                       className="w-full"
                                     />
                                   </Form.Item>
                                   <Form.Item
                                     name="discountType"
                                     initialValue={DiscountType.Amount}
-                                    style={{ marginRight: 0, marginBottom: 0 }}
+                                    noStyle
                                   >
-                                    <Select
-                                      style={{ width: 80 }}
-                                      onChange={() => {
-                                        // Trigger validation khi thay đổi loại chiết khấu
-                                        setTimeout(() => {
-                                          form.validateFields(["discount"]);
-                                        }, 0);
-                                      }}
-                                    >
+                                    <Select style={{ width: 80 }}>
                                       <Option value={DiscountType.Amount}>
                                         VNĐ
                                       </Option>
@@ -1397,36 +1644,90 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
 
                       <div className="flex-1">
                         <Form.Item
-                          label="Phí vận chuyển (VNĐ)"
+                          label="Phí vận chuyển"
                           name="shippingFee"
                           initialValue={0}
                         >
                           <InputNumber
                             min={0}
                             placeholder="0"
-                            formatter={(value) =>
-                              `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                            formatter={(v) =>
+                              `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                             }
-                            parser={(value) => {
-                              const parsed = Number(
-                                value?.replace(/,/g, "") || 0
-                              );
-                              return parsed as any;
-                            }}
+                            parser={(v) => v!.replace(/,/g, "")}
                             className="w-full"
                           />
                         </Form.Item>
                       </div>
                     </div>
 
+                    {/* Deposit Field */}
+                    <div className="flex-1">
+                      <Form.Item dependencies={["depositType"]}>
+                        {({ getFieldValue }) => {
+                          const depositType =
+                            getFieldValue("depositType") ||
+                            DiscountType.Percentage;
+                          const isPercentage =
+                            depositType === DiscountType.Percentage;
+                          return (
+                            <div>
+                              <div className="mb-2">
+                                <Text>Tiền cọc</Text>
+                              </div>
+                              <Space.Compact className="w-full">
+                                <Form.Item
+                                  name="deposit"
+                                  initialValue={50}
+                                  noStyle
+                                >
+                                  <InputNumber
+                                    min={0}
+                                    max={isPercentage ? 100 : undefined}
+                                    placeholder="0"
+                                    step={isPercentage ? 10 : 1000}
+                                    className="w-full"
+                                  />
+                                </Form.Item>
+                                <Form.Item
+                                  name="depositType"
+                                  initialValue={DiscountType.Percentage}
+                                  noStyle
+                                >
+                                  <Select style={{ width: 80 }}>
+                                    <Option value={DiscountType.Amount}>
+                                      VNĐ
+                                    </Option>
+                                    <Option value={DiscountType.Percentage}>
+                                      %
+                                    </Option>
+                                  </Select>
+                                </Form.Item>
+                              </Space.Compact>
+                            </div>
+                          );
+                        }}
+                      </Form.Item>
+                    </div>
+
                     <Form.Item
-                      dependencies={["discount", "discountType", "shippingFee"]}
+                      dependencies={[
+                        "discount",
+                        "discountType",
+                        "shippingFee",
+                        "deposit",
+                        "depositType",
+                      ]}
                     >
                       {({ getFieldValue }) => {
                         const discount = getFieldValue("discount") || 0;
                         const discountType =
                           getFieldValue("discountType") || DiscountType.Amount;
                         const shippingFee = getFieldValue("shippingFee") || 0;
+                        const depositValue = getFieldValue("deposit") || 0;
+                        const depositType =
+                          getFieldValue("depositType") ||
+                          DiscountType.Percentage;
 
                         const totals = calculateOrderTotals(
                           products,
@@ -1435,15 +1736,19 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
                           shippingFee
                         );
 
+                        const depositAmount =
+                          depositType === DiscountType.Percentage
+                            ? (totals.total * depositValue) / 100
+                            : depositValue;
+
+                        const remaining = totals.total - depositAmount;
+
                         return (
                           <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
                             <div className="flex justify-between">
                               <Text>Tạm tính:</Text>
                               <Text>
-                                {totals.subtotal
-                                  ? totals.subtotal.toLocaleString("vi-VN")
-                                  : "0"}{" "}
-                                VNĐ
+                                {totals.subtotal.toLocaleString("vi-VN")} VNĐ
                               </Text>
                             </div>
                             <div className="flex justify-between">
@@ -1468,6 +1773,23 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
                               </Text>
                               <Text strong className="text-lg text-primary">
                                 {totals.total.toLocaleString("vi-VN")} VNĐ
+                              </Text>
+                            </div>
+                            <div className="flex justify-between">
+                              <Text>Tiền cọc:</Text>
+                              <Text>
+                                -{depositAmount.toLocaleString("vi-VN")} VNĐ
+                                {depositType === DiscountType.Percentage &&
+                                  depositValue > 0 &&
+                                  ` (${depositValue}%)`}
+                              </Text>
+                            </div>
+                            <div className="flex justify-between pt-2 border-t border-gray-300">
+                              <Text strong className="text-lg">
+                                Còn lại:
+                              </Text>
+                              <Text strong className="text-lg text-red-500">
+                                {remaining.toLocaleString("vi-VN")} VNĐ
                               </Text>
                             </div>
                           </div>
@@ -1513,11 +1835,8 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
             </Button>
           </div>
         </div>
-        <Form.Item name="status">
-          <Input hidden />
-        </Form.Item>
-        <Form.Item name="totalAmount">
-          <Input hidden />
+        <Form.Item name="totalAmount" hidden>
+          <Input />
         </Form.Item>
       </Form>
     );
