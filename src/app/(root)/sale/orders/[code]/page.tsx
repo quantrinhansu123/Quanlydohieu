@@ -18,7 +18,6 @@ import {
   MailOutlined,
   PhoneOutlined,
   SaveOutlined,
-  ShoppingCartOutlined,
   TagOutlined,
   UploadOutlined,
   UserOutlined,
@@ -38,7 +37,6 @@ import {
   Row,
   Select,
   Space,
-  Spin,
   Steps,
   Tag,
   Typography,
@@ -51,6 +49,7 @@ import { ref as dbRef, getDatabase, update } from "firebase/database";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { useParams, useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
+import superjson from "superjson";
 
 const { Text, Title } = Typography;
 
@@ -82,17 +81,14 @@ export default function OrderDetailPage() {
 
   const { data: order, isLoading: orderLoading } =
     useRealtimeDoc<FirebaseOrderData>(`xoxo/orders/${orderCode}`);
-  const { data: membersData, isLoading: membersLoading } =
-    useRealtimeValue<IMembers>("xoxo/members");
+  const { data: membersData, isLoading: membersLoading } = useRealtimeValue<{
+    [key: string]: IMembers;
+  }>("xoxo/members");
 
   const membersMap = useMemo(() => {
-    if (!membersData || !Array.isArray(membersData))
-      return {} as Record<string, IMembers>;
-    const map: Record<string, IMembers> = {};
-    membersData.forEach((emp) => {
-      map[emp.id] = emp;
-    });
-    return map;
+    if (!membersData || !Object.keys(membersData).length)
+      return {} as { [key: string]: IMembers };
+    return membersData;
   }, [membersData]);
 
   const products = useMemo(() => {
@@ -147,37 +143,10 @@ export default function OrderDetailPage() {
     };
   }, [order, products]);
 
-  if (orderLoading || membersLoading) {
-    return (
-      <WrapperContent
-        title="Chi tiết đơn hàng"
-        header={{
-          buttonBackTo: "/orders",
-        }}
-      >
-        <div className="flex items-center justify-center min-h-[400px]">
-          <Spin size="large" />
-        </div>
-      </WrapperContent>
-    );
-  }
-
-  if (!order) {
-    return (
-      <WrapperContent
-        title="Chi tiết đơn hàng"
-        header={{
-          buttonBackTo: "/orders",
-        }}
-      >
-        <div className="flex items-center justify-center min-h-[400px]">
-          <Empty description="Không tìm thấy đơn hàng" />
-        </div>
-      </WrapperContent>
-    );
-  }
-
-  const createdByMember = membersMap?.[order.createdBy];
+  const createdByMember = useMemo(() => {
+    if (!order) return undefined;
+    return membersMap?.[order.createdBy];
+  }, [superjson.stringify(membersMap), order?.createdBy]);
 
   // Handle status update
   async function handleStatusUpdate() {
@@ -293,32 +262,40 @@ export default function OrderDetailPage() {
 
   return (
     <WrapperContent
-      title={`Chi tiết đơn hàng của khách ${order.customerName}`}
+      isEmpty={!order}
+      isLoading={orderLoading}
+      isRefetching={membersLoading}
+      title={`Đơn hàng của khách ${order?.customerName}`}
       header={{
         buttonBackTo: "/sale/orders",
         buttonEnds: [
-          ...(order.phone
+          ...(order?.phone
             ? [
                 {
                   name: "Gọi điện",
                   icon: <PhoneOutlined />,
                   type: "default" as const,
-                  onClick: () => (window.location.href = `tel:${order.phone}`),
+                  onClick: () => (window.location.href = `tel:${order?.phone}`),
                 },
               ]
             : []),
-          {
-            name: "Cập nhật trạng thái",
-            icon: <SaveOutlined />,
-            type: "primary" as const,
-            onClick: () => setStatusModalVisible(true),
-          },
-          {
-            name: "Chỉnh sửa",
-            icon: <EditOutlined />,
-            type: "default" as const,
-            onClick: () => router.push(`/sale/orders/${orderCode}/update`),
-          },
+          ...(order?.status !== OrderStatus.COMPLETED
+            ? [
+                {
+                  name: "Cập nhật trạng thái",
+                  icon: <SaveOutlined />,
+                  type: "primary" as const,
+                  onClick: () => setStatusModalVisible(true),
+                },
+                {
+                  name: "Chỉnh sửa",
+                  icon: <EditOutlined />,
+                  type: "default" as const,
+                  onClick: () =>
+                    router.push(`/sale/orders/${orderCode}/update`),
+                },
+              ]
+            : []),
         ],
       }}
     >
@@ -328,15 +305,27 @@ export default function OrderDetailPage() {
           <div className="flex justify-between items-center">
             <div>
               <Title level={3} className="mb-2!">
-                Mã: {order.code}
+                Mã: {order?.code}
               </Title>
             </div>
-            <Tag
-              color={getStatusInfo(order.status || OrderStatus.PENDING).color}
-              className="text-lg px-4 py-2"
-            >
-              {getStatusInfo(order.status || OrderStatus.PENDING).text}
-            </Tag>
+            <Space vertical size="small">
+              <Space size="middle">
+                <Tag
+                  color={
+                    getStatusInfo(order?.status || OrderStatus.PENDING).color
+                  }
+                  className="text-lg px-4 py-2"
+                >
+                  {getStatusInfo(order?.status || OrderStatus.PENDING).text}
+                </Tag>
+                <Tag
+                  color={order?.isDepositPaid ? "green" : "red"}
+                  className="text-sm px-3 py-1"
+                >
+                  {order?.isDepositPaid ? "Đã đặt cọc" : "Chưa đặt cọc"}
+                </Tag>
+              </Space>
+            </Space>
           </div>
           <div className="mt-2">
             <Text strong className="mb-2 block">
@@ -356,8 +345,8 @@ export default function OrderDetailPage() {
           </div>
         </Card>
 
-        <Row gutter={24}>
-          <Col span={16}>
+        <Row gutter={[24, 24]}>
+          <Col xs={24} sm={24} lg={16}>
             <div className="space-y-6 flex flex-col gap-4">
               {/* Customer Information */}
               <Card
@@ -368,29 +357,33 @@ export default function OrderDetailPage() {
                   </Space>
                 }
               >
-                <Descriptions bordered column={1}>
+                <Descriptions
+                  bordered
+                  column={{ xs: 1, sm: 2, lg: 1 }}
+                  size="middle"
+                >
                   <Descriptions.Item label="Tên khách hàng">
                     <Space>
                       <UserOutlined />
-                      {order.customerName}
+                      {order?.customerName}
                     </Space>
                   </Descriptions.Item>
                   <Descriptions.Item label="Số điện thoại">
                     <Space>
                       <PhoneOutlined />
-                      <Text copyable>{order.phone}</Text>
+                      <Text copyable>{order?.phone}</Text>
                     </Space>
                   </Descriptions.Item>
                   <Descriptions.Item label="Email">
                     <Space>
                       <MailOutlined />
-                      <Text copyable>{order.email}</Text>
+                      <Text copyable>{order?.email}</Text>
                     </Space>
                   </Descriptions.Item>
                   <Descriptions.Item label="Địa chỉ">
                     <Space>
                       <EnvironmentOutlined />
-                      {order.address}
+                      {order?.address}
                     </Space>
                   </Descriptions.Item>
                 </Descriptions>
@@ -400,7 +393,7 @@ export default function OrderDetailPage() {
               <Card
                 title={
                   <Space>
-                    <ShoppingCartOutlined />
+                    <TagOutlined />
                     <Text strong>Danh sách sản phẩm ({products.length})</Text>
                   </Space>
                 }
@@ -411,7 +404,7 @@ export default function OrderDetailPage() {
                       key={product.id}
                       product={product}
                       membersMap={membersMap}
-                      orderStatus={order.status}
+                      orderStatus={order?.status}
                       onImageUpload={handleImageUpload}
                       uploading={uploading}
                       orderCode={orderCode}
@@ -422,7 +415,7 @@ export default function OrderDetailPage() {
             </div>
           </Col>
 
-          <Col span={8}>
+          <Col xs={24} sm={24} lg={8}>
             <div className="space-y-6 flex flex-col gap-4">
               {/* Order Information */}
               <Card
@@ -436,37 +429,37 @@ export default function OrderDetailPage() {
               >
                 <Descriptions bordered column={1} size="small">
                   <Descriptions.Item label="Ngày đặt">
-                    {dayjs(order.orderDate).format("DD/MM/YYYY HH:mm")}
+                    {dayjs(order?.orderDate).format("DD/MM/YYYY HH:mm")}
                   </Descriptions.Item>
                   <Descriptions.Item label="Ngày giao dự kiến">
-                    {dayjs(order.deliveryDate).format("DD/MM/YYYY")}
+                    {dayjs(order?.deliveryDate).format("DD/MM/YYYY")}
                   </Descriptions.Item>
                   <Descriptions.Item label="Ngày tạo">
-                    {dayjs(order.createdAt).format("DD/MM/YYYY HH:mm")}
+                    {dayjs(order?.createdAt).format("DD/MM/YYYY HH:mm")}
                   </Descriptions.Item>
-                  {order.updatedAt && (
+                  {order?.updatedAt && (
                     <Descriptions.Item label="Cập nhật lần cuối">
-                      {dayjs(order.updatedAt).format("DD/MM/YYYY HH:mm")}
+                      {dayjs(order?.updatedAt).format("DD/MM/YYYY HH:mm")}
                     </Descriptions.Item>
                   )}
                   <Descriptions.Item label="Nhân viên tạo">
                     <Space>
                       <Avatar size="small">
                         {createdByMember?.name?.charAt(0) ||
-                          order.createdByName?.charAt(0) ||
+                          order?.createdByName?.charAt(0) ||
                           "?"}
                       </Avatar>
                       {createdByMember?.name ||
-                        order.createdByName ||
+                        order?.createdByName ||
                         "Không rõ"}
                     </Space>
                   </Descriptions.Item>
                 </Descriptions>
-                {order.notes && (
+                {order?.notes && (
                   <div className="mt-4">
                     <Text strong>Ghi chú:</Text>
                     <div className="mt-2 p-3 bg-gray-50 rounded border">
-                      <Text>{order.notes}</Text>
+                      <Text>{order?.notes}</Text>
                     </div>
                   </div>
                 )}
@@ -492,7 +485,7 @@ export default function OrderDetailPage() {
                     <Text>Chiết khấu:</Text>
                     <Text>
                       -{orderSummary.discountAmount.toLocaleString("vi-VN")} VNĐ
-                      {order.discountType === "percentage" &&
+                      {order?.discountType === "percentage" &&
                         (order.discount || 0) > 0 &&
                         ` (${order.discount}%)`}
                     </Text>
@@ -500,7 +493,7 @@ export default function OrderDetailPage() {
                   <div className="flex justify-between">
                     <Text>Phí vận chuyển:</Text>
                     <Text>
-                      +{(order.shippingFee || 0).toLocaleString("vi-VN")} VNĐ
+                      +{(order?.shippingFee || 0).toLocaleString("vi-VN")} VNĐ
                     </Text>
                   </div>
                   <div className="flex justify-between pt-3 border-t border-gray-300">
@@ -511,6 +504,32 @@ export default function OrderDetailPage() {
                       {orderSummary.total.toLocaleString("vi-VN")} VNĐ
                     </Text>
                   </div>
+                  {order && (order.deposit || 0) > 0 && (
+                    <>
+                      <div className="flex justify-between">
+                        <Text>
+                          Tiền cọc (
+                          {(order.deposit || 0).toLocaleString("vi-VN")}
+                          {order.depositType === "percentage" ? "%" : " VNĐ"}) :
+                        </Text>
+                        <Text className="text-red-500">
+                          -{(order.depositAmount || 0).toLocaleString("vi-VN")}{" "}
+                          VNĐ
+                        </Text>
+                      </div>
+                      <div className="flex justify-between pt-3 border-t border-gray-300">
+                        <Text strong className="text-lg">
+                          Còn lại:
+                        </Text>
+                        <Text strong className="text-lg text-red-500">
+                          {(
+                            orderSummary.total - (order.depositAmount || 0)
+                          ).toLocaleString("vi-VN")}{" "}
+                          VNĐ
+                        </Text>
+                      </div>
+                    </>
+                  )}
                 </div>
               </Card>
             </div>
@@ -542,10 +561,10 @@ export default function OrderDetailPage() {
               <div className="mt-2">
                 <Tag
                   color={
-                    getStatusInfo(order.status || OrderStatus.PENDING).color
+                    getStatusInfo(order?.status || OrderStatus.PENDING).color
                   }
                 >
-                  {getStatusInfo(order.status || OrderStatus.PENDING).text}
+                  {getStatusInfo(order?.status || OrderStatus.PENDING).text}
                 </Tag>
               </div>
             </div>
@@ -553,19 +572,19 @@ export default function OrderDetailPage() {
               <Text strong>Chọn trạng thái mới:</Text>
               <Select
                 className="w-full mt-2"
-                defaultValue={order.status}
+                defaultValue={order?.status}
                 onChange={(value) => setSelectedStatus(value)}
                 options={getAvailableStatusOptions(
-                  order.status || OrderStatus.PENDING
+                  order?.status || OrderStatus.PENDING
                 )}
               />
             </div>
-            {selectedStatus && selectedStatus !== order.status && (
+            {selectedStatus && selectedStatus !== order?.status && (
               <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
                 <Text className="text-blue-700 text-sm">
                   Trạng thái sẽ được cập nhật từ{" "}
-                  <Tag color={getStatusInfo(order.status!).color}>
-                    {getStatusInfo(order.status!).text}
+                  <Tag color={getStatusInfo(order?.status!).color}>
+                    {getStatusInfo(order?.status!).text}
                   </Tag>{" "}
                   sang{" "}
                   <Tag color={getStatusInfo(selectedStatus!).color}>
@@ -632,7 +651,6 @@ const ProductDetailCard = ({
 
   const stepsItems = workflows.map((workflow, index) => {
     const isCompleted = workflow.isDone;
-    console.log(membersMap, "sdfsd");
 
     return {
       title: (
@@ -650,22 +668,24 @@ const ProductDetailCard = ({
           )}
         </div>
       ),
-      description: (
+      content: (
         <div className="mt-2 space-y-2">
           {/* Nhân viên thực hiện */}
           <div className="flex items-center gap-2">
             <div className="flex flex-wrap gap-1">
               {workflow.members && workflow.members.length > 0 ? (
-                workflow.members.map((empId: string) => (
-                  <Tag key={empId} className="text-xs">
-                    <Space size={4}>
-                      <Avatar size={14} className="text-xs">
-                        {membersMap?.[empId]?.name?.charAt(0) || "?"}
-                      </Avatar>
-                      <span>{membersMap?.[empId]?.name || empId}</span>
-                    </Space>
-                  </Tag>
-                ))
+                workflow.members.map((empId: string) => {
+                  return (
+                    <Tag key={empId} className="text-xs">
+                      <Space size={4}>
+                        <Avatar size={14} className="text-xs">
+                          {membersMap?.[empId]?.name?.charAt(0) || "?"}
+                        </Avatar>
+                        <span>{membersMap?.[empId]?.name || empId}</span>
+                      </Space>
+                    </Tag>
+                  );
+                })
               ) : (
                 <Tag color="red" className="text-xs">
                   Chưa phân công
@@ -731,9 +751,41 @@ const ProductDetailCard = ({
         </div>
       }
     >
-      <Row gutter={16}>
-        <Col span={10}>
-          <div className="space-y-3 flex flex-col border-r pr-4">
+      <Row gutter={[16, 16]}>
+        <Col xs={24} lg={14}>
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <Text strong className="text-lg">
+                Tiến độ công đoạn
+              </Text>
+            </div>
+
+            <div className="bg-white rounded-lg border p-4 shadow-sm">
+              {workflows.length > 0 ? (
+                <div className="workflow-steps">
+                  <Steps
+                    orientation="vertical"
+                    size="small"
+                    current={
+                      currentWorkflowIndex !== -1
+                        ? currentWorkflowIndex
+                        : workflows.length
+                    }
+                    items={stepsItems as any}
+                  />
+                </div>
+              ) : (
+                <Empty
+                  description="Chưa có công đoạn nào"
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  className="my-4"
+                />
+              )}
+            </div>
+          </div>
+        </Col>
+        <Col xs={24} lg={10}>
+          <div className="space-y-3 flex flex-col lg:border-l lg:pl-4">
             <Text strong>Sản phẩm khi nhận:</Text>
             <div className="flex flex-wrap gap-2">
               {product.images?.map((img: any, index: number) => (
@@ -886,38 +938,6 @@ const ProductDetailCard = ({
                 </Upload>
               </div>
             )}
-          </div>
-        </Col>
-        <Col span={14}>
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <Text strong className="text-lg">
-                Tiến độ công đoạn
-              </Text>
-            </div>
-
-            <div className="bg-white rounded-lg border p-4 shadow-sm">
-              {workflows.length > 0 ? (
-                <div className="workflow-steps">
-                  <Steps
-                    orientation="vertical"
-                    size="small"
-                    current={
-                      currentWorkflowIndex !== -1
-                        ? currentWorkflowIndex
-                        : workflows.length
-                    }
-                    items={stepsItems as any}
-                  />
-                </div>
-              ) : (
-                <Empty
-                  description="Chưa có công đoạn nào"
-                  image={Empty.PRESENTED_IMAGE_SIMPLE}
-                  className="my-4"
-                />
-              )}
-            </div>
           </div>
         </Col>
       </Row>

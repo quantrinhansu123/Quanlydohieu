@@ -4,11 +4,10 @@ import CommonTable from "@/components/CommonTable";
 import WrapperContent from "@/components/WrapperContent";
 import { useRealtimeList } from "@/firebase/hooks/useRealtime";
 import useFilter from "@/hooks/useFilter";
+import { IMembers } from "@/types/members";
+import { FirebaseOrderData, OrderStatus } from "@/types/order";
 import {
-  DeleteOutlined,
-  EditOutlined,
   EyeOutlined,
-  MoreOutlined,
   PlusOutlined,
   ShoppingCartOutlined,
 } from "@ant-design/icons";
@@ -18,7 +17,6 @@ import {
   Button,
   Card,
   Col,
-  Dropdown,
   Row,
   Space,
   Statistic,
@@ -28,8 +26,6 @@ import {
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
-import { OrderStatus, FirebaseOrderData } from "@/types/order";
-import { IMembers } from "@/types/members";
 
 const { Text, Title } = Typography;
 
@@ -83,20 +79,6 @@ export default function OrderListPage() {
     }
     return applyFilter(orders);
   }, [orders, applyFilter]);
-
-  const handleDelete = (orderCode: string) => {
-    modal.confirm({
-      title: "Xác nhận xóa",
-      content: `Bạn có chắc muốn xóa đơn hàng ${orderCode}? Hành động này không thể hoàn tác.`,
-      okText: "Xóa",
-      okType: "danger",
-      cancelText: "Hủy",
-      onOk: () => {
-        // TODO: Implement firebase delete
-        message.success(`Đơn hàng ${orderCode} đã được xóa.`);
-      },
-    });
-  };
 
   const handleEdit = (orderCode: string) => {
     router.push(`/sale/orders/${orderCode}/update`);
@@ -198,51 +180,39 @@ export default function OrderListPage() {
       fixed: "right",
       align: "center",
       render: (_, record) => (
-        <Dropdown
-          menu={{
-            items: [
-              {
-                key: "view",
-                label: "Xem chi tiết",
-                icon: <EyeOutlined />,
-                onClick: () => handleViewDetails(record.code),
-              },
-              {
-                key: "edit",
-                label: "Chỉnh sửa",
-                icon: <EditOutlined />,
-                onClick: () => handleEdit(record.code),
-              },
-              {
-                key: "delete",
-                label: "Xóa",
-                icon: <DeleteOutlined />,
-                danger: true,
-                onClick: () => handleDelete(record.code),
-              },
-            ],
-          }}
-        >
-          <Button type="text" icon={<MoreOutlined />} />
-        </Dropdown>
+        <Button
+          type="text"
+          icon={<EyeOutlined />}
+          onClick={() => handleViewDetails(record.code)}
+        />
       ),
     },
   ];
 
   const stats = useMemo(() => {
     if (!orders || !Array.isArray(orders)) {
-      return { total: 0, pending: 0, confirmed: 0, in_progress: 0, on_hold: 0, completed: 0, cancelled: 0 };
+      return {
+        total: 0,
+        pending: 0,
+        confirmed: 0,
+        in_progress: 0,
+        on_hold: 0,
+        completed: 0,
+        cancelled: 0,
+      };
     }
     return {
       total: orders.length,
       pending: orders.filter((o) => o.status === OrderStatus.PENDING).length,
-      confirmed: orders.filter((o) => o.status === OrderStatus.CONFIRMED).length,
+      confirmed: orders.filter((o) => o.status === OrderStatus.CONFIRMED)
+        .length,
       in_progress: orders.filter((o) => o.status === OrderStatus.IN_PROGRESS)
         .length,
       on_hold: orders.filter((o) => o.status === OrderStatus.ON_HOLD).length,
       completed: orders.filter((o) => o.status === OrderStatus.COMPLETED)
         .length,
-      cancelled: orders.filter((o) => o.status === OrderStatus.CANCELLED).length,
+      cancelled: orders.filter((o) => o.status === OrderStatus.CANCELLED)
+        .length,
     };
   }, [orders]);
 
@@ -285,7 +255,7 @@ export default function OrderListPage() {
       <div className="space-y-4">
         <Row gutter={16}>
           <Col span={3}>
-            <Card style={{ textAlign: 'center' }}>
+            <Card style={{ textAlign: "center" }}>
               <Statistic
                 title="Tổng đơn"
                 value={stats.total}
@@ -294,7 +264,7 @@ export default function OrderListPage() {
             </Card>
           </Col>
           <Col span={3}>
-            <Card style={{ textAlign: 'center' }}>
+            <Card style={{ textAlign: "center" }}>
               <Statistic
                 title="Chờ xác nhận"
                 value={stats.pending}
@@ -303,7 +273,7 @@ export default function OrderListPage() {
             </Card>
           </Col>
           <Col span={3}>
-            <Card style={{ textAlign: 'center' }}>
+            <Card style={{ textAlign: "center" }}>
               <Statistic
                 title="Lên đơn"
                 value={stats.confirmed}
@@ -312,7 +282,7 @@ export default function OrderListPage() {
             </Card>
           </Col>
           <Col span={3}>
-            <Card style={{ textAlign: 'center' }}>
+            <Card style={{ textAlign: "center" }}>
               <Statistic
                 title="Sản xuất"
                 value={stats.in_progress}
@@ -321,7 +291,7 @@ export default function OrderListPage() {
             </Card>
           </Col>
           <Col span={3}>
-            <Card style={{ textAlign: 'center' }}>
+            <Card style={{ textAlign: "center" }}>
               <Statistic
                 title="Thanh toán"
                 value={stats.on_hold}
@@ -330,7 +300,7 @@ export default function OrderListPage() {
             </Card>
           </Col>
           <Col span={3}>
-            <Card style={{ textAlign: 'center' }}>
+            <Card style={{ textAlign: "center" }}>
               <Statistic
                 title="CSKH"
                 value={stats.completed}
@@ -339,7 +309,7 @@ export default function OrderListPage() {
             </Card>
           </Col>
           <Col span={3}>
-            <Card style={{ textAlign: 'center' }}>
+            <Card style={{ textAlign: "center" }}>
               <Statistic
                 title="Đã huỷ"
                 value={stats.cancelled}

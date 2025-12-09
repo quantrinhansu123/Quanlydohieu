@@ -106,7 +106,13 @@ export default function DashboardLayout({
         disabled: item.disable,
         label: (
           <Link href={item.disable ? "#" : item.href}>
-            <span style={item.disable ? { ...ellipsisStyle, ...disabledStyle } : ellipsisStyle}>
+            <span
+              style={
+                item.disable
+                  ? { ...ellipsisStyle, ...disabledStyle }
+                  : ellipsisStyle
+              }
+            >
               {item.title}
             </span>
           </Link>
@@ -120,13 +126,19 @@ export default function DashboardLayout({
       icon: <item.Icon />,
       disabled: item.disable,
       label: (
-        <span style={item.disable ? { ...ellipsisStyle, ...disabledStyle } : ellipsisStyle}>
+        <span
+          style={
+            item.disable
+              ? { ...ellipsisStyle, ...disabledStyle }
+              : ellipsisStyle
+          }
+        >
           {item.title}
         </span>
       ),
       children: item.children?.map((child) => ({
         key: child.href,
-        icon: <child.icon />,
+        // icon: <child.icon />,
         disabled: child.disable,
         label: (
           <Link href={child.disable ? "#" : child.href}>
@@ -134,11 +146,19 @@ export default function DashboardLayout({
               style={{
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "space-between",
                 gap: 8,
+                color: "white",
               }}
             >
-              <span style={child.disable ? { ...ellipsisStyle, ...disabledStyle } : ellipsisStyle}>
+              <child.icon />
+              <span
+                className="text-white"
+                style={
+                  child.disable
+                    ? { ...ellipsisStyle, ...disabledStyle }
+                    : ellipsisStyle
+                }
+              >
                 {child.title}
               </span>
             </div>
@@ -233,7 +253,8 @@ export default function DashboardLayout({
         title: (
           <Link href="/dashboard">
             <span className="flex gap-2 items-center">
-              <DashboardOutlined /> <span>Dashboard</span>
+              <DashboardOutlined />{" "}
+              <span className="text-white">Dashboard</span>
             </span>
           </Link>
         ),
@@ -245,7 +266,9 @@ export default function DashboardLayout({
         title: (
           <Link href={getBreadcrumbTitle(pathname).path}>
             <span className="flex gap-2 items-center">
-              <span>{getBreadcrumbTitle(pathname).title}</span>
+              <span className="text-white">
+                {getBreadcrumbTitle(pathname).title}
+              </span>
             </span>
           </Link>
         ),
@@ -305,6 +328,7 @@ export default function DashboardLayout({
             overflow: "auto",
             height: "100vh",
             position: "fixed",
+            color: "white",
             left: 0,
             top: 0,
             bottom: 0,
@@ -343,6 +367,7 @@ export default function DashboardLayout({
               <Menu
                 style={{
                   backgroundColor: "#000000",
+                  color: "white",
                 }}
                 mode="inline"
                 theme="dark"

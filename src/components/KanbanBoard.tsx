@@ -298,7 +298,7 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
             name: "Tạo đơn hàng",
             icon: <PlusOutlined />,
             type: "primary",
-            onClick: () => router.push("/orders/create"),
+            onClick: () => router.push("/sale/orders/create"),
           },
         ],
         searchInput: {

@@ -40,7 +40,7 @@
     "react": "19.2.1",
     "react-dom": "19.2.1",
     "recharts": "^3.5.0",
-    "superjson": "^2.2.5",
+    "superjson": "^2.2.6",
     "tailwind-merge": "^3.4.0",
     "uuid": "^13.0.0",
     "xlsx": "^0.18.5",

@@ -130,10 +130,15 @@ const CommonTable = <T extends object>({
   }
 
   columns.forEach((col) => {
-    if (!col.sorter && "dataIndex" in col && col.dataIndex && sortable) {
-      col.sorter = (a: T, b: T) => {
-        const aValue = a[col.dataIndex as keyof T];
-        const bValue = b[col.dataIndex as keyof T];
+    // Skip column groups that don't have dataIndex
+    if (!("dataIndex" in col)) return;
+
+    const column = col as any; // Cast to access dataIndex
+
+    if (!column.sorter && column.dataIndex && sortable) {
+      column.sorter = (a: T, b: T) => {
+        const aValue = a[column.dataIndex as keyof T];
+        const bValue = b[column.dataIndex as keyof T];
         if (typeof aValue === "number" && typeof bValue === "number") {
           return aValue - bValue;
         }
@@ -143,8 +148,14 @@ const CommonTable = <T extends object>({
         return 0;
       };
     }
-    if (col.width === undefined) {
-      col.width = 100;
+
+    // Set default sort order for createdAt column (newest first)
+    if (column.dataIndex === "createdAt" && !column.defaultSortOrder) {
+      column.defaultSortOrder = "descend";
+    }
+
+    if (column.width === undefined) {
+      column.width = 100;
     }
   });
   const footerProps = {

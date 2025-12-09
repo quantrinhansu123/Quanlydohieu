@@ -185,6 +185,7 @@ const getAvailableStatusOptions = (currentStatus: OrderStatus) => {
   ];
 };
 
+// StatusStepper Component
 const StatusStepper = ({ form, products, message, modal }: any) => {
   const currentStatus = Form.useWatch("status", form) || OrderStatus.PENDING;
   const isDepositPaid = Form.useWatch("isDepositPaid", form);
@@ -248,8 +249,8 @@ const StatusStepper = ({ form, products, message, modal }: any) => {
           }
         }
 
-        form.setFieldsValue({ status: nextStatus }); // Update form state
-        form.submit(); // Trigger onFinish of the parent form
+        form.setFieldsValue({ status: nextStatus });
+        form.submit();
       },
     });
   };
@@ -259,12 +260,18 @@ const StatusStepper = ({ form, products, message, modal }: any) => {
     statusOptions[0];
 
   return (
-    <div className="space-y-2 flex items-center gap-4">
-      <Tag color={currentStatusInfo.color} className="text-sm px-2 py-1">
-        {currentStatusInfo.name}
-      </Tag>
+    <div className="space-y-3">
+      <div className="flex items-center gap-2">
+        <Tag color={currentStatusInfo.color} className="text-sm px-2 py-1">
+          {currentStatusInfo.name}
+        </Tag>
+        {isDepositPaid && (
+          <Tag color="green" className="text-sm px-2 py-1">
+            Đã đặt cọc
+          </Tag>
+        )}
+      </div>
 
-      {/* Deposit Paid Switch */}
       <div className="flex items-center gap-2">
         {(currentStatus === OrderStatus.PENDING ||
           currentStatus === OrderStatus.CONFIRMED) && (
@@ -284,7 +291,7 @@ const StatusStepper = ({ form, products, message, modal }: any) => {
 
         {nextStatus && (
           <Button
-            onClick={handleAdvanceStatus} // No htmlType="submit" here
+            onClick={handleAdvanceStatus}
             size="small"
             type="primary"
           >
@@ -292,6 +299,362 @@ const StatusStepper = ({ form, products, message, modal }: any) => {
           </Button>
         )}
       </div>
+    </div>
+  );
+};
+
+// Customer Information Section Component
+const CustomerInformationSection = ({
+  mode,
+  customerType,
+  setCustomerType,
+  form,
+  customers,
+}: {
+  mode: string;
+  customerType: "new" | "existing";
+  setCustomerType: (type: "new" | "existing") => void;
+  form: any;
+  customers: FirebaseCustomers;
+}) => {
+  return (
+    <div className="mb-6">
+      <div className="mb-3 pb-2 border-b border-gray-200 flex justify-between items-center">
+        <Text strong>Khách hàng</Text>
+        {mode === "create" && (
+          <Radio.Group
+            value={customerType}
+            onChange={(e) => {
+              setCustomerType(e.target.value);
+              form.resetFields([
+                "customerCode",
+                "customerName",
+                "phone",
+                "email",
+                "address",
+              ]);
+            }}
+            optionType="button"
+            buttonStyle="solid"
+            size="small"
+          >
+            <Radio.Button value="new">Khách mới</Radio.Button>
+            <Radio.Button value="existing">Khách cũ</Radio.Button>
+          </Radio.Group>
+        )}
+      </div>
+
+      <Form.Item name="customerCode" hidden>
+        <Input />
+      </Form.Item>
+
+      {mode === "create" && customerType === "existing" ? (
+        <Form.Item
+          label="Chọn khách hàng"
+          name="customerCode"
+          rules={[
+            {
+              required: true,
+              message: "Vui lòng chọn một khách hàng!",
+            },
+          ]}
+        >
+          <Select
+            showSearch
+            placeholder="Tìm và chọn khách hàng theo tên hoặc SĐT"
+            onChange={(customerCode) => {
+              const customer = customers[customerCode];
+              if (customer) {
+                form.setFieldsValue({
+                  customerCode: customer.code,
+                  customerName: customer.name,
+                  phone: customer.phone,
+                  email: customer.email,
+                  address: customer.address,
+                  customerSource: customer.customerSource,
+                });
+              }
+            }}
+            filterOption={(input, option) => {
+              const customer = customers[option?.value as string];
+              if (!customer) return false;
+              const searchableText =
+                `${customer.name} ${customer.phone}`.toLowerCase();
+              return searchableText.includes(input.toLowerCase());
+            }}
+          >
+            {Object.values(customers).map((customer) => (
+              <Option key={customer.code} value={customer.code}>
+                {customer.name} - {customer.phone} - {customer.email}
+              </Option>
+            ))}
+          </Select>
+        </Form.Item>
+      ) : null}
+
+      <Row gutter={16}>
+        <Col xs={24} sm={12} md={8}>
+          <Form.Item
+            label={
+              mode === "create"
+                ? "Mã đơn hàng (tự động)"
+                : "Mã đơn hàng"
+            }
+            name="code"
+            rules={[
+              { required: true, message: "Vui lòng nhập mã đơn hàng!" },
+            ]}
+          >
+            <Input disabled placeholder="VD: ORD_AD2342" />
+          </Form.Item>
+        </Col>
+        <Col xs={24} sm={12} md={8}>
+          <Form.Item
+            label="Tên khách hàng"
+            name="customerName"
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng nhập tên khách hàng!",
+              },
+            ]}
+          >
+            <Input
+              placeholder="VD: Nguyễn Thị Lan Anh"
+              disabled={
+                mode === "update" || customerType === "existing"
+              }
+            />
+          </Form.Item>
+        </Col>
+        <Col xs={24} sm={24} md={8}>
+          <Form.Item
+            label="Số điện thoại"
+            name="phone"
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng nhập số điện thoại!",
+              },
+              {
+                pattern: /^[0-9]{10,11}$/,
+                message: "Số điện thoại không hợp lệ!",
+              },
+            ]}
+          >
+            <Input
+              placeholder="VD: 0123456789"
+              disabled={
+                mode === "update" || customerType === "existing"
+              }
+            />
+          </Form.Item>
+        </Col>
+      </Row>
+
+      <Row gutter={16}>
+        <Col xs={24} sm={12}>
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[{ type: "email", message: "Email không hợp lệ!" }]}
+          >
+            <Input
+              placeholder="VD: khachhang@email.com"
+              disabled={
+                mode === "update" || customerType === "existing"
+              }
+            />
+          </Form.Item>
+        </Col>
+        <Col xs={24} sm={12}>
+          <Form.Item label="Nguồn khách hàng" name="customerSource">
+            <Select
+              placeholder="Chọn nguồn khách hàng"
+              className="w-full"
+              allowClear
+              disabled={
+                mode === "update" || customerType === "existing"
+              }
+              showSearch={{
+                optionFilterProp: "children",
+                filterOption: (input, option) =>
+                  String(option?.label || "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase()),
+              }}
+            >
+              {CustomerSourceOptions.map((option) => (
+                <Option key={option.value} value={option.value}>
+                  {option.label}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Col>
+      </Row>
+
+      <Form.Item
+        label="Địa chỉ"
+        name="address"
+        rules={[{ required: true, message: "Vui lòng nhập địa chỉ!" }]}
+      >
+        <Input.TextArea
+          rows={2}
+          placeholder="VD: 123 Đường ABC, Quận XYZ, TP.HN"
+          disabled={mode === "update" || customerType === "existing"}
+        />
+      </Form.Item>
+    </div>
+  );
+};
+
+// Order Timing Information Section Component
+const OrderTimingSection = ({
+  mode,
+  form,
+  products,
+  message,
+  modal,
+}: {
+  mode: string;
+  form: any;
+  products: ProductData[];
+  message: any;
+  modal: any;
+}) => {
+  return (
+    <div className="mb-6">
+      <div className="mb-3 pb-2 border-b border-gray-200">
+        <Text strong>Thời gian</Text>
+      </div>
+      <Row gutter={16}>
+        <Col xs={24} sm={12} lg={8}>
+          <Form.Item
+            label="Ngày đặt"
+            name="orderDate"
+            initialValue={mode === "create" ? dayjs() : undefined}
+            rules={[
+              { required: true, message: "Vui lòng chọn ngày đặt!" },
+            ]}
+          >
+            <DatePicker
+              disabled
+              className="w-full"
+              format="DD/MM/YYYY"
+              placeholder="Chọn ngày đặt"
+            />
+          </Form.Item>
+        </Col>
+        <Col xs={24} sm={12} lg={8}>
+          <Form.Item
+            label="Ngày giao dự kiến"
+            name="deliveryDate"
+            rules={[
+              { required: true, message: "Vui lòng chọn ngày giao!" },
+            ]}
+          >
+            <DatePicker
+              className="w-full"
+              format="DD/MM/YYYY"
+              placeholder="Chọn ngày giao"
+              disabledDate={(current) =>
+                current && current < dayjs().endOf("day")
+              }
+            />
+          </Form.Item>
+        </Col>
+        {mode === "update" && (
+          <Col xs={24} lg={8}>
+            <Form.Item label="Trạng thái" required>
+              <StatusStepper
+                form={form}
+                products={products}
+                message={message}
+                modal={modal}
+              />
+            </Form.Item>
+            <Form.Item name="status" hidden>
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="isDepositPaid"
+              valuePropName="checked"
+              hidden
+            >
+              <Switch />
+            </Form.Item>
+          </Col>
+        )}
+      </Row>
+    </div>
+  );
+};
+
+// Staff Information Section Component
+const StaffInformationSection = ({
+  memberOptions,
+}: {
+  memberOptions: any;
+}) => {
+  return (
+    <div className="">
+      <div className="mb-3 pb-2 border-b border-gray-200">
+        <Text strong>Nhân viên</Text>
+      </div>
+      <Row gutter={16}>
+        <Col xs={24} sm={24} md={12}>
+          <Form.Item
+            required
+            label="Nhân viên tạo đơn"
+            name="createdByName"
+          >
+            <Input
+              disabled
+              placeholder="Đang tải thông tin người dùng..."
+              prefix={<UserOutlined className="text-gray-400" />}
+              className="bg-gray-50"
+            />
+          </Form.Item>
+          <Form.Item name="createdBy" className="absolute">
+            <Input disabled hidden />
+          </Form.Item>
+        </Col>
+        <Col xs={24} sm={24} md={12}>
+          <Form.Item
+            required
+            label="Nhân viên tư vấn"
+            name="consultantId"
+          >
+            <Select
+              placeholder="Chọn nhân viên tư vấn"
+              className="w-full"
+              allowClear
+              showSearch={{
+                optionFilterProp: "children",
+                filterOption: (input, option) =>
+                  String(option?.label || "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase()),
+              }}
+            >
+              {memberOptions[ROLES.sales].map((option: any) => (
+                <Option key={option.value} value={option.value}>
+                  {option.label}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Col>
+      </Row>
+      <Form.Item label="Ghi chú đơn hàng" name="notes">
+        <Input.TextArea
+          rows={3}
+          placeholder="Ghi chú chung về đơn hàng..."
+          maxLength={500}
+          showCount
+        />
+      </Form.Item>
     </div>
   );
 };
@@ -399,7 +762,7 @@ const ProductCard: React.FC<ProductCardProps & { status: OrderStatus }> = ({
       <div className="space-y-4">
         {/* Product Basic Info */}
         <Row gutter={16}>
-          <Col span={10}>
+          <Col xs={24} sm={12} lg={10}>
             <div className="space-y-2 flex flex-col">
               <Text strong className="text-gray-700">
                 Tên sản phẩm <Text type="danger">*</Text>
@@ -418,7 +781,7 @@ const ProductCard: React.FC<ProductCardProps & { status: OrderStatus }> = ({
               )}
             </div>
           </Col>
-          <Col span={4}>
+          <Col xs={12} sm={6} lg={4}>
             <div className="space-y-2 flex flex-col">
               <Text strong className="text-gray-700">
                 Số lượng <Text type="danger">*</Text>
@@ -440,7 +803,7 @@ const ProductCard: React.FC<ProductCardProps & { status: OrderStatus }> = ({
               )}
             </div>
           </Col>
-          <Col span={5}>
+          <Col xs={12} sm={6} lg={5}>
             <div className="space-y-2 flex flex-col">
               <Text strong className="text-gray-700">
                 Giá (VNĐ) <Text type="danger">*</Text>
@@ -467,7 +830,7 @@ const ProductCard: React.FC<ProductCardProps & { status: OrderStatus }> = ({
               )}
             </div>
           </Col>
-          <Col span={5}>
+          <Col xs={24} md={12} lg={5}>
             <div className="space-y-2 flex flex-col">
               <Text strong className="text-gray-700">
                 Hoa hồng (%){" "}
@@ -1483,323 +1846,21 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
             }
             className="bg-white shadow-sm"
           >
-            {/* Thông tin khách hàng */}
-            <div className="mb-6">
-              <div className="mb-3 pb-2 border-b border-gray-200 flex justify-between items-center">
-                <Text strong>Khách hàng</Text>
-                {mode === "create" && (
-                  <Radio.Group
-                    value={customerType}
-                    onChange={(e) => {
-                      setCustomerType(e.target.value);
-                      form.resetFields([
-                        "customerCode",
-                        "customerName",
-                        "phone",
-                        "email",
-                        "address",
-                      ]);
-                    }}
-                    optionType="button"
-                    buttonStyle="solid"
-                    size="small"
-                  >
-                    <Radio.Button value="new">Khách mới</Radio.Button>
-                    <Radio.Button value="existing">Khách cũ</Radio.Button>
-                  </Radio.Group>
-                )}
-              </div>
-
-              <Form.Item name="customerCode" hidden>
-                <Input />
-              </Form.Item>
-
-              {mode === "create" && customerType === "existing" ? (
-                <Form.Item
-                  label="Chọn khách hàng"
-                  name="customerCode"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Vui lòng chọn một khách hàng!",
-                    },
-                  ]}
-                >
-                  <Select
-                    showSearch
-                    placeholder="Tìm và chọn khách hàng theo tên hoặc SĐT"
-                    onChange={(customerCode) => {
-                      const customer = customers[customerCode];
-                      if (customer) {
-                        form.setFieldsValue({
-                          customerCode: customer.code,
-                          customerName: customer.name,
-                          phone: customer.phone,
-                          email: customer.email,
-                          address: customer.address,
-                          customerSource: customer.customerSource,
-                        });
-                      }
-                    }}
-                    filterOption={(input, option) => {
-                      const customer = customers[option?.value as string];
-                      if (!customer) return false;
-                      const searchableText =
-                        `${customer.name} ${customer.phone}`.toLowerCase();
-                      return searchableText.includes(input.toLowerCase());
-                    }}
-                  >
-                    {Object.values(customers).map((customer) => (
-                      <Option key={customer.code} value={customer.code}>
-                        {customer.name} - {customer.phone} - {customer.email}
-                      </Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              ) : null}
-
-              <Row gutter={24}>
-                <Col span={6}>
-                  <Form.Item
-                    label={
-                      mode === "create"
-                        ? "Mã đơn hàng (tự động)"
-                        : "Mã đơn hàng"
-                    }
-                    name="code"
-                    rules={[
-                      { required: true, message: "Vui lòng nhập mã đơn hàng!" },
-                    ]}
-                  >
-                    <Input disabled placeholder="VD: ORD_AD2342" />
-                  </Form.Item>
-                </Col>
-                <Col span={9}>
-                  <Form.Item
-                    label="Tên khách hàng"
-                    name="customerName"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Vui lòng nhập tên khách hàng!",
-                      },
-                    ]}
-                  >
-                    <Input
-                      placeholder="VD: Nguyễn Thị Lan Anh"
-                      disabled={
-                        mode === "update" || customerType === "existing"
-                      }
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={9}>
-                  <Form.Item
-                    label="Số điện thoại"
-                    name="phone"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Vui lòng nhập số điện thoại!",
-                      },
-                      {
-                        pattern: /^[0-9]{10,11}$/,
-                        message: "Số điện thoại không hợp lệ!",
-                      },
-                    ]}
-                  >
-                    <Input
-                      placeholder="VD: 0123456789"
-                      disabled={
-                        mode === "update" || customerType === "existing"
-                      }
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-
-              <Row gutter={24}>
-                <Col span={9}>
-                  <Form.Item
-                    label="Email"
-                    name="email"
-                    rules={[{ type: "email", message: "Email không hợp lệ!" }]}
-                  >
-                    <Input
-                      placeholder="VD: khachhang@email.com"
-                      disabled={
-                        mode === "update" || customerType === "existing"
-                      }
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={15}>
-                  <Form.Item label="Nguồn khách hàng" name="customerSource">
-                    <Select
-                      placeholder="Chọn nguồn khách hàng"
-                      className="w-full"
-                      allowClear
-                      disabled={
-                        mode === "update" || customerType === "existing"
-                      }
-                      showSearch={{
-                        optionFilterProp: "children",
-                        filterOption: (input, option) =>
-                          String(option?.label || "")
-                            .toLowerCase()
-                            .includes(input.toLowerCase()),
-                      }}
-                    >
-                      {CustomerSourceOptions.map((option) => (
-                        <Option key={option.value} value={option.value}>
-                          {option.label}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                </Col>
-                {/* <Col span={6}> */}
-
-                {/* </Col> */}
-              </Row>
-              <Form.Item
-                label="Địa chỉ"
-                name="address"
-                rules={[{ required: true, message: "Vui lòng nhập địa chỉ!" }]}
-              >
-                <Input.TextArea
-                  rows={2}
-                  placeholder="VD: 123 Đường ABC, Quận XYZ, TP.HN"
-                  disabled={mode === "update" || customerType === "existing"}
-                />
-              </Form.Item>
-            </div>
-
-            {/* Thông tin đơn hàng */}
-            <div className="mb-6">
-              <div className="mb-3 pb-2 border-b border-gray-200">
-                <Text strong>Thời gian</Text>
-              </div>
-              <Row gutter={24}>
-                <Col span={8}>
-                  <Form.Item
-                    label="Ngày đặt"
-                    name="orderDate"
-                    initialValue={mode === "create" ? dayjs() : undefined}
-                    rules={[
-                      { required: true, message: "Vui lòng chọn ngày đặt!" },
-                    ]}
-                  >
-                    <DatePicker
-                      disabled
-                      className="w-full"
-                      format="DD/MM/YYYY"
-                      placeholder="Chọn ngày đặt"
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={8}>
-                  <Form.Item
-                    label="Ngày giao dự kiến"
-                    name="deliveryDate"
-                    rules={[
-                      { required: true, message: "Vui lòng chọn ngày giao!" },
-                    ]}
-                  >
-                    <DatePicker
-                      className="w-full"
-                      format="DD/MM/YYYY"
-                      placeholder="Chọn ngày giao"
-                      disabledDate={(current) =>
-                        current && current < dayjs().endOf("day")
-                      }
-                    />
-                  </Form.Item>
-                </Col>
-                {mode === "update" && (
-                  <Col span={8}>
-                    <Form.Item label="Trạng thái" required>
-                      <StatusStepper
-                        form={form}
-                        products={products}
-                        message={message}
-                        modal={modal}
-                      />
-                    </Form.Item>{" "}
-                    <Form.Item name="status" hidden>
-                      <Input />
-                    </Form.Item>
-                    <Form.Item
-                      name="isDepositPaid"
-                      valuePropName="checked"
-                      hidden
-                    >
-                      <Switch />
-                    </Form.Item>
-                  </Col>
-                )}
-              </Row>
-            </div>
-
-            {/* Thông tin nhân viên */}
-            <div className="">
-              <div className="mb-3 pb-2 border-b border-gray-200">
-                <Text strong>Nhân viên</Text>
-              </div>
-              <Row gutter={24}>
-                <Col span={12}>
-                  <Form.Item
-                    required
-                    label="Nhân viên tạo đơn"
-                    name="createdByName"
-                  >
-                    <Input
-                      disabled
-                      placeholder="Đang tải thông tin người dùng..."
-                      prefix={<UserOutlined className="text-gray-400" />}
-                      className="bg-gray-50"
-                    />
-                  </Form.Item>
-                  <Form.Item name="createdBy" className="absolute">
-                    <Input disabled hidden />
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item
-                    required
-                    label="Nhân viên tư vấn"
-                    name="consultantId"
-                  >
-                    <Select
-                      placeholder="Chọn nhân viên tư vấn"
-                      className="w-full"
-                      allowClear
-                      showSearch={{
-                        optionFilterProp: "children",
-                        filterOption: (input, option) =>
-                          String(option?.label || "")
-                            .toLowerCase()
-                            .includes(input.toLowerCase()),
-                      }}
-                    >
-                      {memberOptions[ROLES.sales].map((option) => (
-                        <Option key={option.value} value={option.value}>
-                          {option.label}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Form.Item label="Ghi chú đơn hàng" name="notes">
-                <Input.TextArea
-                  rows={3}
-                  placeholder="Ghi chú chung về đơn hàng..."
-                  maxLength={500}
-                  showCount
-                />
-              </Form.Item>
-            </div>
+            <CustomerInformationSection
+              mode={mode}
+              customerType={customerType}
+              setCustomerType={setCustomerType}
+              form={form}
+              customers={customers}
+            />
+            <OrderTimingSection
+              mode={mode}
+              form={form}
+              products={products}
+              message={message}
+              modal={modal}
+            />
+            <StaffInformationSection memberOptions={memberOptions} />
           </Card>
 
           {/* Products Section */}
@@ -1818,7 +1879,7 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
                   onClick={addProduct}
                   className="bg-primary hover:bg-primary"
                 >
-                  Thêm sản phẩm
+                  Thêm
                 </Button>
               </div>
             }
@@ -2110,7 +2171,7 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
           )}
 
           {/* Submit Button */}
-          <div className="flex justify-end gap-4 py-4 sticky bottom-0 mt-4 border-t bg-white border-gray-200">
+          <div className="flex justify-end gap-4 py-4 sticky bottom-0 mt-4 z-40 border-t bg-white border-gray-200">
             <Button
               disabled={submitting}
               icon={<CloseOutlined />}
