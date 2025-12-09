@@ -1,5 +1,6 @@
 import {
-  AppstoreOutlined,
+  BookOutlined,
+  CalculatorOutlined,
   ContactsOutlined,
   CustomerServiceOutlined,
   DashboardOutlined,
@@ -7,16 +8,15 @@ import {
   DollarOutlined,
   EnvironmentOutlined,
   ExperimentOutlined,
+  IdcardOutlined,
+  InboxOutlined,
   LayoutOutlined,
   MoneyCollectOutlined,
-  CalculatorOutlined,
-  BookOutlined,
-  UserAddOutlined,
-  IdcardOutlined,
   ShopOutlined,
   ShoppingCartOutlined,
   TeamOutlined,
   ToolOutlined,
+  UserAddOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 
@@ -76,7 +76,7 @@ export const allMenuItems: Array<{
     Icon: ShoppingCartOutlined,
     children: [
       {
-        icon: ShoppingCartOutlined,
+        icon: InboxOutlined,
         title: "Đơn hàng",
         href: "/sale/orders",
       },
@@ -187,7 +187,9 @@ function generateBreadcrumbMap(
 
       item.children.forEach((child) => {
         if (child.href) {
-          map[normalizePath(child.href)] = child.nonPrefix ? child.title : item.prefix + " " + child.title;
+          map[normalizePath(child.href)] = child.nonPrefix
+            ? child.title
+            : item.prefix + " " + child.title;
         }
       });
     }
