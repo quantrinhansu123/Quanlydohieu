@@ -9,11 +9,11 @@ import { useRealtimeList } from "@/firebase/hooks/useRealtimeList";
 import useFilter from "@/hooks/useFilter";
 import { IMembers } from "@/types/members";
 import {
+  FirebaseDepartments,
   FirebaseOrderData,
   FirebaseProductData,
   FirebaseStaff,
   FirebaseWorkflowData,
-  FirebaseDepartments,
   OrderStatus,
 } from "@/types/order";
 import { PlusOutlined } from "@ant-design/icons";
@@ -152,7 +152,10 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
     if (!workflowsData || workflowsData.length === 0) return {};
     const workflowMap: Record<string, Workflow> = {};
     workflowsData.forEach((item: any) => {
-      workflowMap[item.id] = { name: item.data?.name || item.name, department: item.data?.department || item.department };
+      workflowMap[item.id] = {
+        name: item.data?.name || item.name,
+        department: item.data?.department || item.department,
+      };
     });
     return workflowMap;
   }, [workflowsData]);
@@ -235,6 +238,12 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
       return;
     }
 
+    // Prevent dragging from or to PENDING status
+    if (source.droppableId === OrderStatus.PENDING || destination.droppableId === OrderStatus.PENDING) {
+      message.warning("Đơn hàng này chưa thanh toán cọc!");
+      return;
+    }
+
     const newStatus = destination.droppableId as OrderStatus;
 
     try {
@@ -248,11 +257,12 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
       console.error("❌ Failed to update order:", error);
       // Could show error message to user here
     }
-  }, []);
+  }, [message]);
 
   const handleEditOrder = (
     order: (FirebaseOrderData & { id: string }) | null
   ) => {
+    console.log("handleEditOrder order:", order, ordersData);
     setEditingOrder(order);
   };
 
@@ -275,7 +285,12 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
 
   return (
     <WrapperContent<FirebaseOrderData>
-      isLoading={ordersLoading || membersLoading || workflowsLoading || departmentsLoading}
+      isLoading={
+        ordersLoading ||
+        membersLoading ||
+        workflowsLoading ||
+        departmentsLoading
+      }
       isEmpty={workingOrders.length === 0}
       header={{
         buttonEnds: [
@@ -325,11 +340,12 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
               label: "Trạng thái",
               options: [
                 { value: "all", label: "Tất cả trạng thái" },
-                { value: OrderStatus.PENDING, label: "Chờ xử lý" },
-                { value: OrderStatus.IN_PROGRESS, label: "Đang thực hiện" },
-                { value: OrderStatus.ON_HOLD, label: "Tạm dừng" },
-                { value: OrderStatus.COMPLETED, label: "Hoàn thành" },
-                { value: OrderStatus.CANCELLED, label: "Đã hủy" },
+                { value: OrderStatus.PENDING, label: "Chờ xác nhận" },
+                { value: OrderStatus.CONFIRMED, label: "Lên đơn" },
+                { value: OrderStatus.IN_PROGRESS, label: "Sản xuất" },
+                { value: OrderStatus.ON_HOLD, label: "Thanh toán" },
+                { value: OrderStatus.COMPLETED, label: "CSKH" },
+                { value: OrderStatus.CANCELLED, label: "Huỷ" },
               ],
             },
           ],

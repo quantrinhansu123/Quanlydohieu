@@ -245,7 +245,7 @@ const DepartmentPage = () => {
   return (
     <div>
       <div className="mb-4 flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Quản lý Phòng ban</h2>
+        <h2 className="text-xl font-semibold">Danh sách phòng kỹ thuật</h2>
         <Button
           type="primary"
           icon={<PlusOutlined />}

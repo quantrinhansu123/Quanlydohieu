@@ -322,7 +322,6 @@ export default function CustomersPage() {
 
   return (
     <WrapperContent
-      title="Quản lý khách hàng"
       header={{
         searchInput: {
           placeholder: "Tìm kiếm theo tên, SĐT, email...",

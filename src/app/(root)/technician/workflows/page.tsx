@@ -295,9 +295,9 @@ const WorkflowPage = () => {
     <div>
       <div className="mb-4 flex justify-between items-center">
         <div>
-          <h2 className="text-xl font-semibold">Quản lý Công đoạn</h2>
+          <h2 className="text-xl font-semibold">Danh sách quy trình</h2>
           <p className="text-gray-500 text-sm mt-1">
-            Hiển thị: {filteredWorkflows.length} / {workflows.length} công đoạn
+            Hiển thị: {filteredWorkflows.length} / {workflows.length} quy trình
           </p>
         </div>
         <div className="flex gap-2">

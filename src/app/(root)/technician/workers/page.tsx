@@ -220,7 +220,7 @@ const WorkersPage = () => {
     <div>
       <div className="mb-4 flex justify-between items-center">
         <div>
-          <h2 className="text-xl font-semibold">Danh sách Thợ nghề</h2>
+          <h2 className="text-xl font-semibold">Danh sách nhân viên kỹ thuật</h2>
           <p className="text-gray-500 text-sm mt-1">
             Hiển thị: {filteredWorkers.length} / {workers.length} thợ nghề
           </p>

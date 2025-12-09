@@ -80,23 +80,7 @@ export default function DashboardLayout({
     return { title: "Trang chủ", path: "/dashboard" };
   };
 
-  const menuItems = allMenuItems
-    .map((item) => {
-      // if (item.children) {
-      //   const filteredChildren = item.children.filter(
-      //     (child) => !child.permission || can(child.permission, "view")
-      //   );
-
-      //   if (filteredChildren.length === 0) return null;
-
-      //   return { ...item, children: filteredChildren };
-      // }
-
-      // if (item.permission) return null;
-
-      return item;
-    })
-    .filter((item): item is NonNullable<typeof item> => item !== null);
+  const menuItems = allMenuItems;
 
   const antdMenuItems: MenuProps["items"] = menuItems.map((item, idx) => {
     // Use href path as the stable key for both root items and children
@@ -110,13 +94,21 @@ export default function DashboardLayout({
       color: "white",
     };
 
+    const disabledStyle: React.CSSProperties = {
+      opacity: 0.5,
+      cursor: "not-allowed",
+    };
+
     if (item.href) {
       return {
         key: item.href,
         icon: <item.Icon />,
+        disabled: item.disable,
         label: (
-          <Link href={item.href}>
-            <span style={ellipsisStyle}>{item.title}</span>
+          <Link href={item.disable ? "#" : item.href}>
+            <span style={item.disable ? { ...ellipsisStyle, ...disabledStyle } : ellipsisStyle}>
+              {item.title}
+            </span>
           </Link>
         ),
       };
@@ -126,11 +118,18 @@ export default function DashboardLayout({
     return {
       key: `group-${idx}`,
       icon: <item.Icon />,
-      label: <span style={ellipsisStyle}>{item.title}</span>,
+      disabled: item.disable,
+      label: (
+        <span style={item.disable ? { ...ellipsisStyle, ...disabledStyle } : ellipsisStyle}>
+          {item.title}
+        </span>
+      ),
       children: item.children?.map((child) => ({
         key: child.href,
+        icon: <child.icon />,
+        disabled: child.disable,
         label: (
-          <Link href={child.href}>
+          <Link href={child.disable ? "#" : child.href}>
             <div
               style={{
                 display: "flex",
@@ -139,7 +138,9 @@ export default function DashboardLayout({
                 gap: 8,
               }}
             >
-              <span style={ellipsisStyle}>{child.title}</span>
+              <span style={child.disable ? { ...ellipsisStyle, ...disabledStyle } : ellipsisStyle}>
+                {child.title}
+              </span>
             </div>
           </Link>
         ),

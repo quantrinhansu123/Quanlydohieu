@@ -1,10 +1,22 @@
 import {
+  AppstoreOutlined,
+  ContactsOutlined,
+  CustomerServiceOutlined,
   DashboardOutlined,
+  DatabaseOutlined,
   DollarOutlined,
-  SettingOutlined,
+  EnvironmentOutlined,
+  ExperimentOutlined,
+  LayoutOutlined,
+  MoneyCollectOutlined,
+  CalculatorOutlined,
+  BookOutlined,
+  UserAddOutlined,
+  IdcardOutlined,
   ShopOutlined,
   ShoppingCartOutlined,
   TeamOutlined,
+  ToolOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 
@@ -14,12 +26,22 @@ export const allMenuItems: Array<{
   href?: string;
   permission?: string | null;
   prefix?: string;
+  disable?: boolean;
   children?: Array<{
+    icon: React.ComponentType;
     title: string;
+    nonPrefix?: boolean;
     href: string;
     permission?: string;
+    disable?: boolean;
   }>;
 }> = [
+  // {
+  //   title: "Tổng quan",
+  //   href: "/center",
+  //   Icon: AppstoreOutlined,
+  //   permission: null,
+  // },
   {
     title: "Thống kê",
     href: "/dashboard",
@@ -32,15 +54,18 @@ export const allMenuItems: Array<{
     Icon: UserOutlined,
     children: [
       {
-        title: "Danh sách khách hàng",
+        icon: IdcardOutlined,
+        title: "Khách hàng",
         href: "/customers",
       },
       {
-        title: "Quản lý Leads",
+        icon: ContactsOutlined,
+        title: "Leads",
         href: "/customers/leads",
       },
       {
-        title: "Chăm sóc khách hàng",
+        icon: CustomerServiceOutlined,
+        title: "CSKH",
         href: "/customers/customer-care",
       },
     ],
@@ -51,11 +76,14 @@ export const allMenuItems: Array<{
     Icon: ShoppingCartOutlined,
     children: [
       {
-        title: "Danh sách đơn hàng",
+        icon: ShoppingCartOutlined,
+        title: "Đơn hàng",
         href: "/sale/orders",
       },
       {
-        title: "Kanban dịch vụ",
+        icon: LayoutOutlined,
+        nonPrefix: true,
+        title: "Kanban",
         href: "/sale/kanban",
       },
     ],
@@ -66,14 +94,17 @@ export const allMenuItems: Array<{
     Icon: ShopOutlined,
     children: [
       {
+        icon: ExperimentOutlined,
         title: "Sản xuất",
         href: "/workflow-management",
       },
       {
+        icon: EnvironmentOutlined,
         title: "Theo dõi hàng hóa",
         href: "/product-tracking",
       },
       {
+        icon: DatabaseOutlined,
         title: "Kho",
         href: "/inventory",
       },
@@ -85,10 +116,14 @@ export const allMenuItems: Array<{
     Icon: DollarOutlined,
     children: [
       {
+        icon: MoneyCollectOutlined,
         title: "Thu Chi",
         href: "/finance",
       },
       {
+        icon: CalculatorOutlined,
+        disable: true,
+
         title: "Lương & Hoa hồng",
         href: "/_old/payroll",
       },
@@ -100,33 +135,26 @@ export const allMenuItems: Array<{
     Icon: TeamOutlined,
     children: [
       {
+        icon: IdcardOutlined,
         title: "Nhân viên",
         href: "/hr/members",
       },
       {
+        icon: UserAddOutlined,
         title: "Tuyển dụng",
         href: "/hr/recruitment",
       },
       {
+        icon: BookOutlined,
         title: "Đào tạo",
         href: "/hr/training",
       },
     ],
   },
   {
-    title: "Thiết lập",
-    prefix: "Thiết lập",
-    Icon: SettingOutlined,
-    children: [
-      {
-        title: "Kỹ thuật",
-        href: "/technician",
-      },
-      {
-        title: "Quy trình",
-        href: "/workflow-config",
-      },
-    ],
+    title: "Kỹ thuật",
+    Icon: ToolOutlined,
+    href: "/technician",
   },
 ];
 
@@ -159,7 +187,7 @@ function generateBreadcrumbMap(
 
       item.children.forEach((child) => {
         if (child.href) {
-          map[normalizePath(child.href)] = item.prefix + " " + child.title;
+          map[normalizePath(child.href)] = child.nonPrefix ? child.title : item.prefix + " " + child.title;
         }
       });
     }

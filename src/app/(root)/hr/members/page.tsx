@@ -475,7 +475,6 @@ const MembersPage = () => {
 
   return (
     <WrapperContent
-      title="Quản lý Nhân viên"
       header={{
         searchInput: {
           placeholder: "Tìm kiếm nhân viên...",

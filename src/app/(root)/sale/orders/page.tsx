@@ -231,7 +231,7 @@ export default function OrderListPage() {
 
   const stats = useMemo(() => {
     if (!orders || !Array.isArray(orders)) {
-      return { total: 0, pending: 0, confirmed: 0, in_progress: 0, completed: 0 };
+      return { total: 0, pending: 0, confirmed: 0, in_progress: 0, on_hold: 0, completed: 0, cancelled: 0 };
     }
     return {
       total: orders.length,
@@ -239,8 +239,10 @@ export default function OrderListPage() {
       confirmed: orders.filter((o) => o.status === OrderStatus.CONFIRMED).length,
       in_progress: orders.filter((o) => o.status === OrderStatus.IN_PROGRESS)
         .length,
+      on_hold: orders.filter((o) => o.status === OrderStatus.ON_HOLD).length,
       completed: orders.filter((o) => o.status === OrderStatus.COMPLETED)
         .length,
+      cancelled: orders.filter((o) => o.status === OrderStatus.CANCELLED).length,
     };
   }, [orders]);
 
@@ -282,8 +284,8 @@ export default function OrderListPage() {
     >
       <div className="space-y-4">
         <Row gutter={16}>
-          <Col span={4}>
-            <Card>
+          <Col span={3}>
+            <Card style={{ textAlign: 'center' }}>
               <Statistic
                 title="Tổng đơn"
                 value={stats.total}
@@ -291,39 +293,57 @@ export default function OrderListPage() {
               />
             </Card>
           </Col>
-          <Col span={4}>
-            <Card>
+          <Col span={3}>
+            <Card style={{ textAlign: 'center' }}>
               <Statistic
-                title="Chờ xử lý"
+                title="Chờ xác nhận"
                 value={stats.pending}
-                styles={{ content: { color: "#faad14" } }}
+                styles={{ content: { color: "#d9d9d9" } }}
               />
             </Card>
           </Col>
-          <Col span={4}>
-            <Card>
+          <Col span={3}>
+            <Card style={{ textAlign: 'center' }}>
               <Statistic
-                title="Đã xác nhận"
+                title="Lên đơn"
                 value={stats.confirmed}
-                styles={{ content: { color: "#fadb14" } }}
+                styles={{ content: { color: "#fa8c16" } }}
               />
             </Card>
           </Col>
-          <Col span={4}>
-            <Card>
+          <Col span={3}>
+            <Card style={{ textAlign: 'center' }}>
               <Statistic
-                title="Đang thực hiện"
+                title="Sản xuất"
                 value={stats.in_progress}
                 styles={{ content: { color: "#1890ff" } }}
               />
             </Card>
           </Col>
-          <Col span={4}>
-            <Card>
+          <Col span={3}>
+            <Card style={{ textAlign: 'center' }}>
               <Statistic
-                title="Hoàn thành"
+                title="Thanh toán"
+                value={stats.on_hold}
+                styles={{ content: { color: "#722ed1" } }}
+              />
+            </Card>
+          </Col>
+          <Col span={3}>
+            <Card style={{ textAlign: 'center' }}>
+              <Statistic
+                title="CSKH"
                 value={stats.completed}
                 styles={{ content: { color: "#52c41a" } }}
+              />
+            </Card>
+          </Col>
+          <Col span={3}>
+            <Card style={{ textAlign: 'center' }}>
+              <Statistic
+                title="Đã huỷ"
+                value={stats.cancelled}
+                styles={{ content: { color: "#ff4d4f" } }}
               />
             </Card>
           </Col>

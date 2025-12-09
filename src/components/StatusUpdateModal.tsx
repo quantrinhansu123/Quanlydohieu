@@ -11,7 +11,7 @@ import {
 import { App, Button, Modal, Space, Switch, Tag, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import { calculateOrderTotals } from "@/utils/calcultateOrderTotals"; // Assuming this utility exists
-import { ProductCard } from "./OrderForm"; // Re-using ProductCard from OrderForm
+import ProductCard from "./OrderForm"; // Re-using ProductCard from OrderForm
 
 const { Text } = Typography;
 
@@ -60,13 +60,13 @@ export const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({
   const { message } = App.useApp();
   const [isDepositPaid, setIsDepositPaid] = useState(order?.isDepositPaid || false);
   const [deposit, setDeposit] = useState(order?.deposit || 0); // Raw deposit value
-  const [depositType, setDepositType] = useState(order?.depositType || DiscountType.Percentage);
+  const [depositType, setDepositType] = useState<DiscountType>(order?.depositType === DiscountType.Amount ? DiscountType.Amount : DiscountType.Percentage);
 
   useEffect(() => {
     if (order) {
       setIsDepositPaid(order.isDepositPaid || false);
       setDeposit(order.deposit || 0);
-      setDepositType(order.depositType || DiscountType.Percentage);
+      setDepositType(order.depositType === DiscountType.Amount ? DiscountType.Amount : DiscountType.Percentage);
     }
   }, [order]);
 

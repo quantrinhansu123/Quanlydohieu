@@ -1,4 +1,5 @@
 import { CustomerSource, DiscountType } from "@/types/enum";
+export { DiscountType } from "@/types/enum";
 import { IMembers } from "@/types/members";
 import type { UploadFile } from "antd/es/upload/interface";
 import type { Dayjs } from "dayjs";
