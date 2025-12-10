@@ -3,35 +3,33 @@
 import ButtonCall from "@/components/ButtonCall";
 import { IMembers } from "@/types/members";
 import {
+  FirebaseDepartments,
   FirebaseOrderData,
   FirebaseWorkflowData,
-  FirebaseDepartments,
   Workflow,
 } from "@/types/order";
 import { formatCurrency } from "@/utils/formatCurrency";
-import { CheckOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EyeOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   App,
   Button,
-  Card,
   Checkbox,
   Col,
   Collapse,
   DatePicker,
-  Empty,
   Form,
   Input,
   Modal,
   Progress,
   Row,
   Select,
-  Space,
   Table,
   Tag,
   Typography,
 } from "antd";
 import dayjs from "dayjs";
 import "dayjs/locale/vi";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const { Text, Title } = Typography;
@@ -57,6 +55,7 @@ export const WorkflowUpdateModal: React.FC<WorkflowUpdateModalProps> = ({
   departments,
 }) => {
   const [form] = Form.useForm();
+  const router = useRouter();
   const [localOrder, setLocalOrder] = useState<
     (FirebaseOrderData & { id: string }) | null
   >(null);
@@ -76,40 +75,42 @@ export const WorkflowUpdateModal: React.FC<WorkflowUpdateModalProps> = ({
     }
   }, [order, form]);
 
-      const membersOptions = Object.entries(members).map(([id, membersMember]) => ({
-      value: id,
-      label: `${membersMember.name} (${membersMember.role})`,
-    }));
-  
-    const workflowOptions = Object.entries(workflows).map(([id, workflow]) => ({
-      value: id,
-      label: workflow.name,
-    }));
+  const membersOptions = Object.entries(members).map(([id, membersMember]) => ({
+    value: id,
+    label: `${membersMember.name} (${membersMember.role})`,
+  }));
 
-    // Custom tag render for displaying member names in Select
-    const customTagRender = (props: any) => {
-      const { label, value, closable, onClose } = props;
-      const memberData = members[value];
-      const memberName = memberData ? memberData.name : value; // Fallback to ID if name not found
-      return (
-        <Tag closable={closable} onClose={onClose} style={{ marginRight: 3 }}>
-          {memberName}
-        </Tag>
-      );
-    };
+  const workflowOptions = Object.entries(workflows).map(([id, workflow]) => ({
+    value: id,
+    label: workflow.name,
+  }));
 
-    // Custom tag render for displaying workflow fullLabel in Select
-    const customWorkflowTagRender = (props: any) => {
-      const { label, value, closable, onClose } = props;
-      const workflowData = workflows[value];
-      const workflowLabel = workflowData ? `${workflowData.name} (${value})` : value;
-      return (
-        <Tag closable={closable} onClose={onClose} style={{ marginRight: 3 }}>
-          {workflowLabel}
-        </Tag>
-      );
-    };
-  
+  // Custom tag render for displaying member names in Select
+  const customTagRender = (props: any) => {
+    const { label, value, closable, onClose } = props;
+    const memberData = members[value];
+    const memberName = memberData ? memberData.name : value; // Fallback to ID if name not found
+    return (
+      <Tag closable={closable} onClose={onClose} style={{ marginRight: 3 }}>
+        {memberName}
+      </Tag>
+    );
+  };
+
+  // Custom tag render for displaying workflow fullLabel in Select
+  const customWorkflowTagRender = (props: any) => {
+    const { label, value, closable, onClose } = props;
+    const workflowData = workflows[value];
+    const workflowLabel = workflowData
+      ? `${workflowData.name} (${value})`
+      : value;
+    return (
+      <Tag closable={closable} onClose={onClose} style={{ marginRight: 3 }}>
+        {workflowLabel}
+      </Tag>
+    );
+  };
+
   const addWorkflow = (productId: string) => {
     if (!localOrder || !localOrder.products) return;
 
@@ -260,6 +261,13 @@ export const WorkflowUpdateModal: React.FC<WorkflowUpdateModalProps> = ({
             </Text>
           </div>
           <div className="flex items-center gap-2">
+            <Button
+              type="default"
+              icon={<EyeOutlined />}
+              onClick={() => router.push(`/sale/orders/${localOrder.code}`)}
+            >
+              Xem chi tiết
+            </Button>
             {localOrder.phone && <ButtonCall phone={localOrder.phone} />}
           </div>
         </div>
@@ -380,14 +388,17 @@ export const WorkflowUpdateModal: React.FC<WorkflowUpdateModalProps> = ({
                           {Object.keys(product.workflows || {}).length > 0 ? (
                             <div className="overflow-hidden rounded-lg border border-gray-200 mb-4">
                               <Table
-                                dataSource={Object.entries(product.workflows || {}).map(
-                                  ([workflowId, workflow]) => ({
-                                    ...workflow,
-                                    key: workflowId,
-                                    id: workflowId,
-                                    stt: Object.keys(product.workflows || {}).findIndex(k => k === workflowId) + 1,
-                                  })
-                                )}
+                                dataSource={Object.entries(
+                                  product.workflows || {}
+                                ).map(([workflowId, workflow]) => ({
+                                  ...workflow,
+                                  key: workflowId,
+                                  id: workflowId,
+                                  stt:
+                                    Object.keys(
+                                      product.workflows || {}
+                                    ).findIndex((k) => k === workflowId) + 1,
+                                }))}
                                 pagination={false}
                                 size="small"
                                 className="workflows-table"
@@ -410,25 +421,43 @@ export const WorkflowUpdateModal: React.FC<WorkflowUpdateModalProps> = ({
                                     key: "departmentCode",
                                     width: "20%",
                                     render: (value, record, index) => {
-                                      console.log("Phòng ban - record.departmentCode:", record.departmentCode);
-                                      console.log("Phòng ban - departments prop:", departments);
+                                      console.log(
+                                        "Phòng ban - record.departmentCode:",
+                                        record.departmentCode
+                                      );
+                                      console.log(
+                                        "Phòng ban - departments prop:",
+                                        departments
+                                      );
 
                                       // Get departments already used in other rows
-                                      const selectedDepartmentCodes = Object.entries(product.workflows || {})
-                                        .filter(([_, wf], i) => i !== index)
-                                        .map(([_, wf]: [string, any]) => wf.departmentCode)
-                                        .filter(Boolean);
+                                      const selectedDepartmentCodes =
+                                        Object.entries(product.workflows || {})
+                                          .filter(([_, wf], i) => i !== index)
+                                          .map(
+                                            ([_, wf]: [string, any]) =>
+                                              wf.departmentCode
+                                          )
+                                          .filter(Boolean);
 
                                       const departmentOptions = departments
                                         ? Object.keys(departments)
-                                            .filter((code) => !selectedDepartmentCodes.includes(code))
+                                            .filter(
+                                              (code) =>
+                                                !selectedDepartmentCodes.includes(
+                                                  code
+                                                )
+                                            )
                                             .map((code) => ({
                                               value: code,
                                               label: departments[code].name,
                                             }))
                                         : [];
 
-                                      console.log("Phòng ban - departmentOptions:", departmentOptions);
+                                      console.log(
+                                        "Phòng ban - departmentOptions:",
+                                        departmentOptions
+                                      );
 
                                       return (
                                         <Select
@@ -446,7 +475,10 @@ export const WorkflowUpdateModal: React.FC<WorkflowUpdateModalProps> = ({
                                           size="small"
                                         >
                                           {departmentOptions.map((opt) => (
-                                            <Select.Option key={opt.value} value={opt.value}>
+                                            <Select.Option
+                                              key={opt.value}
+                                              value={opt.value}
+                                            >
                                               {opt.label}
                                             </Select.Option>
                                           ))}
@@ -459,58 +491,76 @@ export const WorkflowUpdateModal: React.FC<WorkflowUpdateModalProps> = ({
                                     dataIndex: "workflowCode",
                                     key: "workflowCode",
                                     width: "30%",
-                  render: (value, record, index) => {
-                    console.log("Công đoạn - record.workflowCode:", record.workflowCode);
+                                    render: (value, record, index) => {
+                                      console.log(
+                                        "Công đoạn - record.workflowCode:",
+                                        record.workflowCode
+                                      );
 
-                    const departmentCode = record.departmentCode;
-                    const availableWorkflows = departmentCode && workflows
-                      ? Object.entries(workflows)
-                          .filter(
-                            ([_, wf]: [string, any]) =>
-                              wf.department === departmentCode
-                          )
-                          .map(([code, wf]: [string, any]) => ({
-                            value: code,
-                            label: wf.name,
-                            fullLabel: `${wf.name} (${code})`,
-                          }))
-                      : [];
+                                      const departmentCode =
+                                        record.departmentCode;
+                                      const availableWorkflows =
+                                        departmentCode && workflows
+                                          ? Object.entries(workflows)
+                                              .filter(
+                                                ([_, wf]: [string, any]) =>
+                                                  wf.department ===
+                                                  departmentCode
+                                              )
+                                              .map(
+                                                ([code, wf]: [
+                                                  string,
+                                                  any
+                                                ]) => ({
+                                                  value: code,
+                                                  label: wf.name,
+                                                  fullLabel: `${wf.name}`,
+                                                })
+                                              )
+                                          : [];
 
-                    console.log("Công đoạn - availableWorkflows:", availableWorkflows);
+                                      console.log(
+                                        "Công đoạn - availableWorkflows:",
+                                        availableWorkflows
+                                      );
 
-                    return (
-                      <Select
-                        mode="multiple"
-                        maxTagCount={2}
-                        value={value}
-                        placeholder={
-                          departmentCode
-                            ? "Chọn công đoạn"
-                            : "Chọn phòng ban trước"
-                        }
-                        onChange={(newValue: string[]) =>
-                          updateWorkflow(
-                            productId,
-                            record.key,
-                            "workflowCode",
-                            newValue
-                          )
-                        }
-                        className="w-full"
-                        size="small"
-                        disabled={!departmentCode}
-                        showSearch
-                        optionFilterProp="children"
-                        tagRender={customWorkflowTagRender}
-                      >
-                        {availableWorkflows.map((opt) => (
-                          <Select.Option key={opt.value} value={opt.value}>
-                            {opt.fullLabel}
-                          </Select.Option>
-                        ))}
-                      </Select>
-                    );
-                  },
+                                      return (
+                                        <Select
+                                          mode="multiple"
+                                          maxTagCount={2}
+                                          value={value}
+                                          placeholder={
+                                            departmentCode
+                                              ? "Chọn công đoạn"
+                                              : "Chọn phòng ban trước"
+                                          }
+                                          onChange={(newValue: string[]) =>
+                                            updateWorkflow(
+                                              productId,
+                                              record.key,
+                                              "workflowCode",
+                                              newValue
+                                            )
+                                          }
+                                          className="w-full"
+                                          size="small"
+                                          disabled={!departmentCode}
+                                          showSearch={{
+                                            optionFilterProp: "children",
+                                          }}
+                                          tagRender={customWorkflowTagRender}
+                                        >
+                                          {availableWorkflows.map((opt) => (
+                                            <Select.Option
+                                              key={opt.value}
+                                              value={opt.value}
+                                            >
+                                              {opt.fullLabel}
+                                            </Select.Option>
+                                          ))}
+                                        </Select>
+                                      );
+                                    },
                                   },
                                   {
                                     title: "Nhân viên thực hiện",
@@ -518,19 +568,25 @@ export const WorkflowUpdateModal: React.FC<WorkflowUpdateModalProps> = ({
                                     key: "members",
                                     width: "35%",
                                     render: (value: string[], record) => {
-                                      const departmentCode = record.departmentCode;
+                                      const departmentCode =
+                                        record.departmentCode;
 
                                       // Filter staff by department if department is selected
-                                      const filteredStaffOptions = departmentCode
-                                        ? Object.entries(members)
-                                            .filter(([id]) =>
-                                              members[id]?.departments?.includes(departmentCode)
-                                            )
-                                            .map(([id, memberData]) => ({
-                                              value: id,
-                                              label: `${memberData.name} (${memberData.role})`,
-                                            }))
-                                        : [];
+                                      const filteredStaffOptions =
+                                        departmentCode
+                                          ? Object.entries(members)
+                                              .filter(([id]) =>
+                                                members[
+                                                  id
+                                                ]?.departments?.includes(
+                                                  departmentCode
+                                                )
+                                              )
+                                              .map(([id, memberData]) => ({
+                                                value: id,
+                                                label: `${memberData.name} (${memberData.role})`,
+                                              }))
+                                          : [];
 
                                       return (
                                         <Select
@@ -552,14 +608,21 @@ export const WorkflowUpdateModal: React.FC<WorkflowUpdateModalProps> = ({
                                           className="w-full"
                                           size="small"
                                           maxTagCount={2}
-                                          disabled={!record.workflowCode?.length}
+                                          disabled={
+                                            !record.workflowCode?.length
+                                          }
                                           tagRender={customTagRender}
                                         >
-                                          {filteredStaffOptions.map((option) => (
-                                            <Select.Option key={option.value} value={option.value}>
-                                              {option.label}
-                                            </Select.Option>
-                                          ))}
+                                          {filteredStaffOptions.map(
+                                            (option) => (
+                                              <Select.Option
+                                                key={option.value}
+                                                value={option.value}
+                                              >
+                                                {option.label}
+                                              </Select.Option>
+                                            )
+                                          )}
                                         </Select>
                                       );
                                     },
@@ -594,7 +657,9 @@ export const WorkflowUpdateModal: React.FC<WorkflowUpdateModalProps> = ({
                                         danger
                                         size="small"
                                         icon={<DeleteOutlined />}
-                                        onClick={() => removeWorkflow(productId, record.key)}
+                                        onClick={() =>
+                                          removeWorkflow(productId, record.key)
+                                        }
                                         className="hover:bg-red-50"
                                       />
                                     ),
@@ -605,11 +670,11 @@ export const WorkflowUpdateModal: React.FC<WorkflowUpdateModalProps> = ({
                           ) : (
                             <div className="text-center py-6 border border-dashed border-red-300 rounded-lg bg-red-50 mb-4">
                               <Text type="danger">
-                                Chưa có công đoạn nào. Nhấn "Thêm công đoạn" để bắt đầu.
+                                Chưa có công đoạn nào. Nhấn "Thêm công đoạn" để
+                                bắt đầu.
                               </Text>
                             </div>
                           )}
-
                         </div>
                       ),
                     };

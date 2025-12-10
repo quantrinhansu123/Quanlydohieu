@@ -1,0 +1,252 @@
+"use client";
+
+import CommonTable from "@/components/CommonTable";
+import WrapperContent from "@/components/WrapperContent";
+import { useRealtimeList } from "@/firebase/hooks/useRealtime";
+import useFilter from "@/hooks/useFilter";
+import { FilterField } from "@/types";
+import { FirebaseOrderData, OrderStatus } from "@/types/order";
+import { Button, Tag, Typography } from "antd";
+import { ColumnsType } from "antd/es/table";
+import dayjs from "dayjs";
+import "dayjs/locale/vi";
+import { useRouter } from "next/navigation";
+import { useMemo } from "react";
+
+const { Text } = Typography;
+
+type OrderWithId = FirebaseOrderData & { id: string };
+
+type TodoRow = {
+  key: string;
+  orderCode: string;
+  productCode: string;
+  productName: string;
+  customerName: string;
+  quantity: number;
+  status: string;
+  progressText: string;
+  deliveryDate: number;
+};
+
+export default function TechnicianTodoPage() {
+  const router = useRouter();
+  const { data: ordersData, isLoading } =
+    useRealtimeList<OrderWithId>("xoxo/orders");
+  const {
+    query,
+    updateQuery,
+    applyFilter,
+    reset,
+    pagination,
+    handlePageChange,
+  } = useFilter();
+
+  const rows: TodoRow[] = useMemo(() => {
+    if (!ordersData || ordersData.length === 0) return [];
+
+    const list: TodoRow[] = [];
+    ordersData.forEach((order) => {
+      if (!order.products) return;
+      Object.entries(order.products).forEach(([productCode, product]) => {
+        const workflows = product.workflows || {};
+        const total = Object.keys(workflows).length;
+        const completed = Object.values(workflows).filter(
+          (wf) => wf.isDone
+        ).length;
+        const progressText = total ? `${completed}/${total}` : "0/0";
+
+        list.push({
+          key: `${order.code}_${productCode}`,
+          orderCode: order.code,
+          productCode,
+          productName: product.name || "",
+          customerName: order.customerName || "",
+          quantity: product.quantity,
+          status: order.status || "pending",
+          progressText,
+          deliveryDate: order.deliveryDate || 0,
+        });
+      });
+    });
+    return list;
+  }, [ordersData]);
+
+  console.log(rows, query);
+
+  // Filter data
+  const filteredData = useMemo(() => {
+    return applyFilter(rows);
+  }, [rows, query]);
+
+  const columns: ColumnsType<TodoRow> = [
+    {
+      title: "Mã đơn",
+      dataIndex: "orderCode",
+      key: "orderCode",
+      width: 150,
+      render: (value) => <Text strong>{value}</Text>,
+    },
+    {
+      title: "Khách hàng",
+      dataIndex: "customerName",
+      key: "customerName",
+      width: 200,
+      render: (value) => <Text>{value}</Text>,
+    },
+    {
+      title: "Sản phẩm",
+      dataIndex: "productName",
+      key: "productName",
+      width: 250,
+      render: (text, record) => (
+        <div>
+          <Text strong>{text}</Text>
+          <div className="text-xs text-gray-500">
+            Code: {record.productCode}
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: "Số lượng",
+      dataIndex: "quantity",
+      key: "quantity",
+      width: 100,
+      render: (value) => <Text>{value}</Text>,
+    },
+    {
+      title: "Tiến độ",
+      dataIndex: "progressText",
+      key: "progressText",
+      width: 120,
+      render: (text) => <Tag color="processing">{text}</Tag>,
+    },
+    {
+      title: "Trạng thái đơn",
+      dataIndex: "status",
+      key: "status",
+      width: 140,
+      render: (value) => {
+        const statusColors: Record<string, string> = {
+          pending: "default",
+          confirmed: "warning",
+          in_progress: "processing",
+          on_hold: "orange",
+          completed: "success",
+          cancelled: "error",
+        };
+        const statusName: Record<string, string> = {
+          pending: "Chờ xử lý",
+          confirmed: "Đã xác nhận",
+          in_progress: "Đang thực hiện",
+          on_hold: "Chờ thanh toán",
+          completed: "Hoàn thành",
+          cancelled: "Đã hủy",
+        };
+        return (
+          <Tag color={statusColors[value] || "default"}>
+            {statusName[value] || value}
+          </Tag>
+        );
+      },
+    },
+    {
+      title: "Ngày hẹn",
+      dataIndex: "deliveryDate",
+      key: "deliveryDate",
+      width: 150,
+      render: (value: number) => (
+        <Text type="secondary">
+          {value ? dayjs(value).format("DD/MM/YYYY") : "-"}
+        </Text>
+      ),
+    },
+    {
+      title: "Thao tác",
+      key: "action",
+      width: 150,
+      fixed: "right" as const,
+      render: (_, record) => (
+        <Button
+          type="primary"
+          size="small"
+          onClick={() =>
+            router.push(
+              `/technician/todo/${record.orderCode}/${record.productCode}`
+            )
+          }
+        >
+          Xem chi tiết
+        </Button>
+      ),
+    },
+  ];
+
+  // Filter fields
+  const filterFields: FilterField[] = [
+    {
+      name: "orderCode",
+      label: "Mã đơn",
+      type: "input",
+    },
+    {
+      name: "status",
+      label: "Trạng thái đơn",
+      type: "select",
+      options: [
+        { label: "Chờ xử lý", value: OrderStatus.PENDING },
+        { label: "Đã xác nhận", value: OrderStatus.CONFIRMED },
+        { label: "Đang thực hiện", value: OrderStatus.IN_PROGRESS },
+        { label: "Tạm giữ", value: OrderStatus.ON_HOLD },
+        { label: "Hoàn thành", value: OrderStatus.COMPLETED },
+        { label: "Đã hủy", value: OrderStatus.CANCELLED },
+      ],
+    },
+    {
+      name: "customerName",
+      label: "Khách hàng",
+      type: "input",
+    },
+  ];
+
+  return (
+    <WrapperContent
+      isEmpty={filteredData.length === 0 && !isLoading}
+      isLoading={isLoading}
+      header={{
+        buttonBackTo: "/dashboard",
+        searchInput: {
+          placeholder: "Tìm kiếm theo mã đơn, khách hàng, sản phẩm...",
+          filterKeys: [
+            "orderCode",
+            "customerName",
+            "productName",
+            "productCode",
+          ],
+        },
+        filters: {
+          fields: filterFields,
+          query: query,
+          onApplyFilter: (filters) => {
+            filters.forEach(({ key, value }) => updateQuery(key, value));
+          },
+          onReset: reset,
+        },
+      }}
+    >
+      <CommonTable
+        columns={columns}
+        dataSource={filteredData}
+        loading={isLoading}
+        pagination={{
+          ...pagination,
+          onChange: handlePageChange,
+        }}
+        paging={true}
+        rank={true}
+        rowKey="key"
+      />
+    </WrapperContent>
+  );
+}

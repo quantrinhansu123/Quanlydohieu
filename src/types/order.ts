@@ -1,8 +1,8 @@
 import { CustomerSource, DiscountType } from "@/types/enum";
-export { DiscountType } from "@/types/enum";
 import { IMembers } from "@/types/members";
 import type { UploadFile } from "antd/es/upload/interface";
 import type { Dayjs } from "dayjs";
+export { DiscountType } from "@/types/enum";
 
 export enum OrderStatus {
   PENDING = "pending",
@@ -161,6 +161,7 @@ export interface FormValues {
   depositType?: DiscountType;
   isDepositPaid?: boolean;
   customerCode?: string;
+  issues?: string[];
 }
 
 export interface OrderFormProps {

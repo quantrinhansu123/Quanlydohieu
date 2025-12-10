@@ -65,19 +65,24 @@ export default function DashboardLayout({
       return {
         title: breadcrumbMap[path],
         path: path,
+        parent:
+          allMenuItems.find((item) =>
+            item.children?.some((child) => child.href === path)
+          )?.title || null,
       };
 
-    // Kiểm tra dynamic routes (có /[id]/)
-    for (const [key, value] of Object.entries(breadcrumbMap)) {
-      if (path.startsWith(key + "/")) {
-        return {
-          title: value,
-          path: key,
-        };
-      }
-    }
+    // // Kiểm tra dynamic routes (có /[id]/)
+    // for (const [key, value] of Object.entries(breadcrumbMap)) {
+    //   if (path.startsWith(key + "/")) {
+    //     return {
+    //       title: value,
+    //       path: key,
+    //       parent: value,
+    //     };
+    //   }
+    // }
 
-    return { title: "Trang chủ", path: "/dashboard" };
+    return { title: "Trang chủ", path: "/dashboard", parent: null };
   };
 
   const menuItems = allMenuItems;
@@ -259,7 +264,7 @@ export default function DashboardLayout({
                   pathname === "/dashboard" ? "font-bold text-primary" : ""
                 }
               >
-                Dashboard
+                Trang chủ
               </span>
             </span>
           </Link>
@@ -268,6 +273,16 @@ export default function DashboardLayout({
     ];
 
     if (pathname !== "/dashboard") {
+      const parent = getBreadcrumbTitle(pathname).parent;
+      if (parent) {
+        items.push({
+          title: (
+            <span className="flex gap-2 items-center">
+              <span className="">{parent}</span>
+            </span>
+          ),
+        });
+      }
       items.push({
         title: (
           <Link href={getBreadcrumbTitle(pathname).path}>

@@ -152,22 +152,20 @@ export default function OrderListPage() {
       title: "Lưu ý",
       dataIndex: "issues",
       key: "issues",
-      width: 180,
+      width: 120,
+      fixed: "right",
       render: (issues: string[] | undefined) => {
         if (!issues || issues.length === 0) {
           return "-";
         }
         return (
-          <Space direction="vertical">
+          <Space vertical>
             {issues.map((issue) => {
-              if (issue === "pending_images") {
-                return (
-                  <Tag color="purple" key={issue}>
-                    Cần hẹn lấy ảnh
-                  </Tag>
-                );
-              }
-              return null;
+              return (
+                <Tag color="purple" key={issue}>
+                  {issue}
+                </Tag>
+              );
             })}
           </Space>
         );

@@ -49,6 +49,7 @@ import {
   Form,
   Input,
   InputNumber,
+  InputRef,
   Radio,
   Row,
   Select,
@@ -106,25 +107,25 @@ const statusOptions = [
   {
     value: "confirmed",
     label: "Xác nhận",
-name: "Đã xác nhận",
+    name: "Đã xác nhận",
     color: "warning",
   },
   {
     value: "in_progress",
     label: "Thực hiện",
-name: "Đang thực hiện",
+    name: "Đang thực hiện",
     color: "processing",
   },
   {
     value: "on_hold",
     label: "Thanh toán",
-name: "Chờ thanh toán",
+    name: "Chờ thanh toán",
     color: "warning",
   },
   {
     value: "completed",
     label: "Hoàn thành",
-name: "Đã thanh toán",
+    name: "Đã thanh toán",
     color: "success",
   },
   { value: "cancelled", label: "Đã hủy", color: "error" },
@@ -146,35 +147,35 @@ const getAvailableStatusOptions = (currentStatus: OrderStatus) => {
       label: "Chờ xử lý",
       name: "Chờ xử lý",
       color: "default",
-      disabled: currentStatus !== OrderStatus.PENDING
+      disabled: currentStatus !== OrderStatus.PENDING,
     },
     {
       value: OrderStatus.CONFIRMED,
       label: "Đã xác nhận",
       name: "Đã xác nhận",
       color: "warning",
-      disabled: statusSequence.indexOf(currentStatus) >= 1
+      disabled: statusSequence.indexOf(currentStatus) >= 1,
     },
     {
       value: OrderStatus.IN_PROGRESS,
       label: "Đang thực hiện",
       name: "Đang thực hiện",
       color: "processing",
-      disabled: statusSequence.indexOf(currentStatus) >= 2
+      disabled: statusSequence.indexOf(currentStatus) >= 2,
     },
     {
       value: OrderStatus.ON_HOLD,
       label: "Tạm giữ",
       name: "Chờ thanh toán",
       color: "warning",
-      disabled: statusSequence.indexOf(currentStatus) >= 3
+      disabled: statusSequence.indexOf(currentStatus) >= 3,
     },
     {
       value: OrderStatus.COMPLETED,
       label: "Hoàn thành",
       name: "Đã thanh toán",
       color: "success",
-      disabled: statusSequence.indexOf(currentStatus) >= 4
+      disabled: statusSequence.indexOf(currentStatus) >= 4,
     },
     {
       value: OrderStatus.CANCELLED,
@@ -186,7 +187,17 @@ const getAvailableStatusOptions = (currentStatus: OrderStatus) => {
 };
 
 // StatusStepper Component
-const StatusStepper = ({ form, products, message, modal }: any) => {
+const StatusStepper = ({
+  form,
+  products,
+  message,
+  modal,
+}: {
+  form: any;
+  products: ProductData[];
+  message: any;
+  modal: any;
+}) => {
   const currentStatus = Form.useWatch("status", form) || OrderStatus.PENDING;
   const isDepositPaid = Form.useWatch("isDepositPaid", form);
 
@@ -241,11 +252,13 @@ const StatusStepper = ({ form, products, message, modal }: any) => {
         // Validation before moving to ON_HOLD
         if (nextStatus === OrderStatus.ON_HOLD) {
           const allWorkflowsDone = products.every((product: ProductData) =>
-              Object.values(product.workflows || {}).every((workflow: any) => workflow.isDone)
+            Object.values(product.workflows || {}).every(
+              (workflow: any) => workflow.isDone
+            )
           );
           if (!allWorkflowsDone) {
-              message.error("Đội kỹ thuật chưa làm xong!");
-              return;
+            message.error("Đội kỹ thuật chưa làm xong!");
+            return;
           }
         }
 
@@ -260,7 +273,7 @@ const StatusStepper = ({ form, products, message, modal }: any) => {
     statusOptions[0];
 
   return (
-    <div className="space-y-3">
+    <div>
       <div className="flex items-center gap-2">
         <Tag color={currentStatusInfo.color} className="text-sm px-2 py-1">
           {currentStatusInfo.name}
@@ -281,20 +294,12 @@ const StatusStepper = ({ form, products, message, modal }: any) => {
             className="mb-0"
             noStyle
           >
-            <Switch
-              size="small"
-              checkedChildren="Đã cọc"
-              unCheckedChildren="Chưa cọc"
-            />
+            <Switch checkedChildren="Đã cọc" unCheckedChildren="Chưa cọc" />
           </Form.Item>
         )}
 
         {nextStatus && (
-          <Button
-            onClick={handleAdvanceStatus}
-            size="small"
-            type="primary"
-          >
+          <Button onClick={handleAdvanceStatus} size="small" type="primary">
             {statusOptions.find((opt) => opt.value === nextStatus)?.label}
           </Button>
         )}
@@ -395,15 +400,9 @@ const CustomerInformationSection = ({
       <Row gutter={16}>
         <Col xs={24} sm={12} md={8}>
           <Form.Item
-            label={
-              mode === "create"
-                ? "Mã đơn hàng (tự động)"
-                : "Mã đơn hàng"
-            }
+            label={mode === "create" ? "Mã đơn hàng (tự động)" : "Mã đơn hàng"}
             name="code"
-            rules={[
-              { required: true, message: "Vui lòng nhập mã đơn hàng!" },
-            ]}
+            rules={[{ required: true, message: "Vui lòng nhập mã đơn hàng!" }]}
           >
             <Input disabled placeholder="VD: ORD_AD2342" />
           </Form.Item>
@@ -421,9 +420,7 @@ const CustomerInformationSection = ({
           >
             <Input
               placeholder="VD: Nguyễn Thị Lan Anh"
-              disabled={
-                mode === "update" || customerType === "existing"
-              }
+              disabled={mode === "update" || customerType === "existing"}
             />
           </Form.Item>
         </Col>
@@ -444,9 +441,7 @@ const CustomerInformationSection = ({
           >
             <Input
               placeholder="VD: 0123456789"
-              disabled={
-                mode === "update" || customerType === "existing"
-              }
+              disabled={mode === "update" || customerType === "existing"}
             />
           </Form.Item>
         </Col>
@@ -461,9 +456,7 @@ const CustomerInformationSection = ({
           >
             <Input
               placeholder="VD: khachhang@email.com"
-              disabled={
-                mode === "update" || customerType === "existing"
-              }
+              disabled={mode === "update" || customerType === "existing"}
             />
           </Form.Item>
         </Col>
@@ -473,9 +466,7 @@ const CustomerInformationSection = ({
               placeholder="Chọn nguồn khách hàng"
               className="w-full"
               allowClear
-              disabled={
-                mode === "update" || customerType === "existing"
-              }
+              disabled={mode === "update" || customerType === "existing"}
               showSearch={{
                 optionFilterProp: "children",
                 filterOption: (input, option) =>
@@ -534,9 +525,7 @@ const OrderTimingSection = ({
             label="Ngày đặt"
             name="orderDate"
             initialValue={mode === "create" ? dayjs() : undefined}
-            rules={[
-              { required: true, message: "Vui lòng chọn ngày đặt!" },
-            ]}
+            rules={[{ required: true, message: "Vui lòng chọn ngày đặt!" }]}
           >
             <DatePicker
               disabled
@@ -550,9 +539,7 @@ const OrderTimingSection = ({
           <Form.Item
             label="Ngày giao dự kiến"
             name="deliveryDate"
-            rules={[
-              { required: true, message: "Vui lòng chọn ngày giao!" },
-            ]}
+            rules={[{ required: true, message: "Vui lòng chọn ngày giao!" }]}
           >
             <DatePicker
               className="w-full"
@@ -575,14 +562,10 @@ const OrderTimingSection = ({
               />
             </Form.Item>
             <Form.Item name="status" hidden>
-              <Input />
+              <Input disabled hidden className="fixed" />
             </Form.Item>
-            <Form.Item
-              name="isDepositPaid"
-              valuePropName="checked"
-              hidden
-            >
-              <Switch />
+            <Form.Item name="isDepositPaid" valuePropName="checked" hidden>
+              <Switch disabled className="fixed hidden" />
             </Form.Item>
           </Col>
         )}
@@ -591,11 +574,267 @@ const OrderTimingSection = ({
   );
 };
 
+// Issue Input Item Component (memoized to prevent unnecessary re-renders)
+const IssueInputItem = React.memo(
+  ({
+    issue,
+    index,
+    onChange,
+    onKeyDown,
+    onRemove,
+    inputRef,
+    canRemove,
+  }: {
+    issue: string;
+    index: number;
+    onChange: (value: string) => void;
+    onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+    onRemove: () => void;
+    inputRef: (el: InputRef | null) => void;
+    canRemove: boolean;
+  }) => {
+    return (
+      <div className="flex items-center gap-2">
+        <Input
+          ref={inputRef}
+          value={issue}
+          onChange={(e) => onChange(e.target.value)}
+          onKeyDown={onKeyDown}
+          placeholder={`Vấn đề ${index + 1}...`}
+          className="flex-1"
+          onPressEnter={(e) => {
+            e.preventDefault();
+            onKeyDown(e as any);
+          }}
+        />
+        {canRemove && (
+          <Button
+            type="text"
+            size="small"
+            icon={<DeleteOutlined />}
+            onClick={onRemove}
+            className="text-red-500 hover:text-red-700 shrink-0"
+          />
+        )}
+      </div>
+    );
+  }
+);
+
+IssueInputItem.displayName = "IssueInputItem";
+
+// Issues List Component
+const IssuesList = ({ form }: { form: any }) => {
+  const [issues, setIssues] = useState<string[]>([""]);
+  const inputRefs = useRef<(InputRef | null)[]>([]);
+  const isInitialMount = useRef(true);
+  const updateFormTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const editingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const formRef = useRef(form);
+  const isUserEditing = useRef(false);
+  const lastSyncedFormIssues = useRef<string>("");
+  const issueIdsRef = useRef<string[]>([]);
+
+  // Watch form issues field to sync when form is populated from Firebase
+  const formIssues = Form.useWatch("issues", form);
+
+  // Keep form ref updated
+  useEffect(() => {
+    formRef.current = form;
+  }, [form]);
+
+  // Initialize issue IDs on mount
+  useEffect(() => {
+    if (issueIdsRef.current.length === 0) {
+      issueIdsRef.current = ["issue-0"];
+    }
+  }, []);
+
+  // Sync issues from form when form is populated (e.g., from Firebase in update mode)
+  useEffect(() => {
+    // Skip if user is currently editing
+    if (isUserEditing.current) {
+      return;
+    }
+
+    const formIssuesArray = Array.isArray(formIssues) ? formIssues : [];
+    const formIssuesString = JSON.stringify(formIssuesArray);
+
+    // Only sync if formIssues actually changed (not just a re-render)
+    if (formIssuesString !== lastSyncedFormIssues.current) {
+      if (formIssuesArray.length > 0) {
+        // Generate stable IDs for issues
+        const newIssueIds = formIssuesArray.map((_, idx) => `issue-${idx}`);
+        newIssueIds.push(`issue-${formIssuesArray.length}`);
+        issueIdsRef.current = newIssueIds;
+        setIssues([...formIssuesArray, ""]);
+      } else if (isInitialMount.current) {
+        // Initial mount with no issues
+        issueIdsRef.current = ["issue-0"];
+        setIssues([""]);
+      }
+      lastSyncedFormIssues.current = formIssuesString;
+      isInitialMount.current = false;
+    } else if (isInitialMount.current) {
+      // Initial mount - ensure we have at least one empty field
+      issueIdsRef.current = ["issue-0"];
+      setIssues([""]);
+      lastSyncedFormIssues.current = formIssuesString;
+      isInitialMount.current = false;
+    }
+  }, [formIssues]);
+
+  // Update form when issues change (debounced to avoid focus loss)
+  useEffect(() => {
+    if (!isInitialMount.current && isUserEditing.current) {
+      // Clear previous timeout
+      if (updateFormTimeoutRef.current) {
+        clearTimeout(updateFormTimeoutRef.current);
+      }
+
+      // Debounce form update with longer delay to avoid focus loss
+      updateFormTimeoutRef.current = setTimeout(() => {
+        const issuesToSave = issues.filter((issue) => issue.trim() !== "");
+        const issuesToSaveString = JSON.stringify(issuesToSave);
+        formRef.current.setFieldsValue({ issues: issuesToSave });
+        // Update last synced to prevent re-sync
+        lastSyncedFormIssues.current = issuesToSaveString;
+      }, 500);
+    }
+
+    return () => {
+      if (updateFormTimeoutRef.current) {
+        clearTimeout(updateFormTimeoutRef.current);
+      }
+    };
+  }, [issues]);
+
+  const handleIssueChange = React.useCallback(
+    (index: number, value: string) => {
+      // Set editing flag immediately and keep it for longer
+      isUserEditing.current = true;
+
+      // Clear any existing timeout
+      if (editingTimeoutRef.current) {
+        clearTimeout(editingTimeoutRef.current);
+      }
+
+      setIssues((prevIssues) => {
+        const newIssues = [...prevIssues];
+        newIssues[index] = value;
+        return newIssues;
+      });
+
+      // Reset editing flag after a longer delay to prevent sync during typing
+      editingTimeoutRef.current = setTimeout(() => {
+        isUserEditing.current = false;
+      }, 1000);
+    },
+    []
+  );
+
+  const handleIssueKeyDown = React.useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        isUserEditing.current = true;
+        if (editingTimeoutRef.current) {
+          clearTimeout(editingTimeoutRef.current);
+        }
+
+        setIssues((prevIssues) => {
+          const newIssues = [...prevIssues];
+
+          // Always add new field when Enter is pressed at the last field
+          if (index === prevIssues.length - 1) {
+            newIssues.push("");
+            // Generate new ID for the new field
+            const newId = `issue-${issueIdsRef.current.length}`;
+            issueIdsRef.current.push(newId);
+            // Focus the new field after state update
+            setTimeout(() => {
+              const newIndex = newIssues.length - 1;
+              inputRefs.current[newIndex]?.input?.focus();
+            }, 10);
+            return newIssues;
+          } else {
+            // Focus next field if it exists
+            setTimeout(() => {
+              inputRefs.current[index + 1]?.input?.focus();
+            }, 10);
+            return prevIssues;
+          }
+        });
+
+        editingTimeoutRef.current = setTimeout(() => {
+          isUserEditing.current = false;
+        }, 1000);
+      }
+    },
+    []
+  );
+
+  const handleIssueRemove = React.useCallback((index: number) => {
+    isUserEditing.current = true;
+    if (editingTimeoutRef.current) {
+      clearTimeout(editingTimeoutRef.current);
+    }
+
+    setIssues((prevIssues) => {
+      if (prevIssues.length <= 1) {
+        issueIdsRef.current = ["issue-0"];
+        return [""];
+      }
+      // Remove the corresponding ID
+      issueIdsRef.current = issueIdsRef.current.filter((_, i) => i !== index);
+      return prevIssues.filter((_, i) => i !== index);
+    });
+
+    editingTimeoutRef.current = setTimeout(() => {
+      isUserEditing.current = false;
+    }, 1000);
+  }, []);
+
+  return (
+    <div className="space-y-2">
+      <Text strong className="text-gray-700 block mb-2">
+        Vấn đề khách hàng gặp phải
+      </Text>
+      <div className="space-y-2">
+        {issues.map((issue, index) => (
+          <IssueInputItem
+            key={
+              issueIdsRef.current[index] ||
+              `issue-${index}-${generateRandomCode("REACTKEY")}`
+            }
+            issue={issue}
+            index={index}
+            onChange={(value) => handleIssueChange(index, value)}
+            onKeyDown={(e) => handleIssueKeyDown(e, index)}
+            onRemove={() => handleIssueRemove(index)}
+            inputRef={(el) => {
+              inputRefs.current[index] = el;
+            }}
+            canRemove={issues.length > 1 && issue.trim() !== ""}
+          />
+        ))}
+      </div>
+      <Text type="secondary" className="text-xs">
+        Nhấn Enter để thêm vấn đề mới
+      </Text>
+    </div>
+  );
+};
+
 // Staff Information Section Component
 const StaffInformationSection = ({
   memberOptions,
+  form,
 }: {
   memberOptions: any;
+  form: any;
 }) => {
   return (
     <div className="">
@@ -604,11 +843,7 @@ const StaffInformationSection = ({
       </div>
       <Row gutter={16}>
         <Col xs={24} sm={24} md={12}>
-          <Form.Item
-            required
-            label="Nhân viên tạo đơn"
-            name="createdByName"
-          >
+          <Form.Item required label="Nhân viên tạo đơn" name="createdByName">
             <Input
               disabled
               placeholder="Đang tải thông tin người dùng..."
@@ -621,11 +856,7 @@ const StaffInformationSection = ({
           </Form.Item>
         </Col>
         <Col xs={24} sm={24} md={12}>
-          <Form.Item
-            required
-            label="Nhân viên tư vấn"
-            name="consultantId"
-          >
+          <Form.Item required label="Nhân viên tư vấn" name="consultantId">
             <Select
               placeholder="Chọn nhân viên tư vấn"
               className="w-full"
@@ -655,6 +886,10 @@ const StaffInformationSection = ({
           showCount
         />
       </Form.Item>
+      <Form.Item name="issues" hidden>
+        <Input />
+      </Form.Item>
+      <IssuesList form={form} />
     </div>
   );
 };
@@ -1102,7 +1337,6 @@ const ProductCard: React.FC<ProductCardProps & { status: OrderStatus }> = ({
                         size="small"
                         disabled={!departmentCode}
                         showSearch
-                        optionFilterProp="children"
                       >
                         {availableWorkflows.map((opt) => (
                           <Option key={opt.value} value={opt.value}>
@@ -1152,7 +1386,7 @@ const ProductCard: React.FC<ProductCardProps & { status: OrderStatus }> = ({
                         className="w-full"
                         size="small"
                         maxTagCount={2}
-                        disabled={!record.workflowCode?.length}
+                        disabled={!departmentCode}
                       >
                         {filteredStaffOptions.map(
                           (option: { value: string; label: string }) => (
@@ -1312,6 +1546,7 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
         deposit: orderData.deposit || 0,
         depositType: orderData.depositType || DiscountType.Percentage,
         isDepositPaid: orderData.isDepositPaid || false,
+        issues: orderData.issues || [],
       });
 
       // Convert products data back to form format
@@ -1362,7 +1597,7 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
     const orderDataRef = useRef<any>(null);
 
     const addProduct = () => {
-      const newProductId = `PRODUCT_${new Date().getTime()}`;
+      const newProductId = generateRandomCode("PRO_");
       const newProduct: ProductData = {
         id: newProductId,
         name: "",
@@ -1630,12 +1865,20 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
           shippingFee
         );
 
-        const orderIssues: string[] = [];
+        // Get issues from form
+        const formIssues = values.issues || [];
+        const orderIssues: string[] = Array.isArray(formIssues)
+          ? formIssues.filter((issue: string) => issue && issue.trim() !== "")
+          : [];
+
+        // Add automatic issues if needed
         if (
           status === OrderStatus.PENDING &&
           products.some((p) => p.images.length === 0)
         ) {
-          orderIssues.push("pending_images");
+          if (!orderIssues.includes("pending_images")) {
+            orderIssues.push("pending_images");
+          }
         }
 
         const depositAmount =
@@ -1860,7 +2103,10 @@ const OrderForm = forwardRef<ChildHandle, OrderFormProps>(
               message={message}
               modal={modal}
             />
-            <StaffInformationSection memberOptions={memberOptions} />
+            <StaffInformationSection
+              memberOptions={memberOptions}
+              form={form}
+            />
           </Card>
 
           {/* Products Section */}

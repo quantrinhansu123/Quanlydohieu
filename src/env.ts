@@ -15,6 +15,7 @@ export const env = createEnv({
     FIREBASE_CLIENT_X509_CERT_URL: z.string(),
   },
   client: {
+    NEXT_PUBLIC_APP_URL: z.string(),
     NEXT_PUBLIC_FIREBASE_API_KEY: z.string(),
     NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: z.string(),
     NEXT_PUBLIC_FIREBASE_PROJECT_ID: z.string(),
@@ -24,6 +25,7 @@ export const env = createEnv({
     NEXT_PUBLIC_FIREBASE_DATABASE_URL: z.string(),
   },
   runtimeEnv: {
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,
     FIREBASE_PRIVATE_KEY_ID: process.env.FIREBASE_PRIVATE_KEY_ID,
     FIREBASE_PRIVATE_KEY: process.env.FIREBASE_PRIVATE_KEY,

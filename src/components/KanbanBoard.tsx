@@ -227,37 +227,43 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
   };
 
   // Handle drag end with Firebase update
-  const onDragEnd = useCallback(async (result: DropResult) => {
-    const { destination, source, draggableId } = result;
+  const onDragEnd = useCallback(
+    async (result: DropResult) => {
+      const { destination, source, draggableId } = result;
 
-    if (
-      !destination ||
-      (destination.droppableId === source.droppableId &&
-        destination.index === source.index)
-    ) {
-      return;
-    }
+      if (
+        !destination ||
+        (destination.droppableId === source.droppableId &&
+          destination.index === source.index)
+      ) {
+        return;
+      }
 
-    // Prevent dragging from or to PENDING status
-    if (source.droppableId === OrderStatus.PENDING || destination.droppableId === OrderStatus.PENDING) {
-      message.warning("Đơn hàng này chưa thanh toán cọc!");
-      return;
-    }
+      // Prevent dragging from or to PENDING status
+      if (
+        source.droppableId === OrderStatus.PENDING ||
+        destination.droppableId === OrderStatus.PENDING
+      ) {
+        message.warning("Đơn hàng này chưa thanh toán cọc!");
+        return;
+      }
 
-    const newStatus = destination.droppableId as OrderStatus;
+      const newStatus = destination.droppableId as OrderStatus;
 
-    try {
-      // Update in Firebase immediately
-      await updateOrderInFirebase(draggableId, {
-        status: newStatus,
-      });
-      console.log("✅ Successfully moved order to", newStatus);
-    } catch (error) {
-      message.error("Không thể di chuyển đơn hàng. Vui lòng thử lại.");
-      console.error("❌ Failed to update order:", error);
-      // Could show error message to user here
-    }
-  }, [message]);
+      try {
+        // Update in Firebase immediately
+        await updateOrderInFirebase(draggableId, {
+          status: newStatus,
+        });
+        console.log("✅ Successfully moved order to", newStatus);
+      } catch (error) {
+        message.error("Không thể di chuyển đơn hàng. Vui lòng thử lại.");
+        console.error("❌ Failed to update order:", error);
+        // Could show error message to user here
+      }
+    },
+    [message]
+  );
 
   const handleEditOrder = (
     order: (FirebaseOrderData & { id: string }) | null
@@ -322,18 +328,6 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
                 })),
               ],
             },
-            // {
-            //   name: "priority",
-            //   type: "select",
-            //   label: "Độ ưu tiên",
-            //   options: [
-            //     { value: "all", label: "Tất cả mức độ" },
-            //     { value: "urgent", label: "Khẩn cấp" },
-            //     { value: "high", label: "Cao" },
-            //     { value: "normal", label: "Bình thường" },
-            //     { value: "low", label: "Thấp" },
-            //   ],
-            // },
             {
               name: "status",
               type: "select",

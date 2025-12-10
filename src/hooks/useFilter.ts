@@ -111,15 +111,20 @@ const useFilter =(initQuery: IParams = {}) => {
 
                 // If filter value is an array -> treat as multiple acceptable tokens
                 if (Array.isArray(value)) {
+
                     if (isSearchKey) {
                         const searchFields = key.split(',').slice(1);
-                        return searchFields.some(field =>
-                            value.some(v =>
-                                String(get(item, field) ?? '')
-                                    .toLowerCase()
-                                    .includes(String(v).toLowerCase())
-                            )
-                        );
+                        return searchFields.some(field => {
+                            const trimmedField = field.trim();
+                            // Try direct property access first, then fallback to lodash get
+                            const fieldValue = (item as any)[trimmedField] ?? get(item, trimmedField);
+                            const fieldStr = fieldValue != null ? String(fieldValue) : '';
+                            return value.some(v => {
+                                const searchStr = v != null ? String(v).toLowerCase().trim() : '';
+                                if (!searchStr) return true;
+                                return fieldStr.toLowerCase().includes(searchStr);
+                            });
+                        });
                     }
 
                     const fieldVal = get(item, key);
@@ -137,11 +142,20 @@ const useFilter =(initQuery: IParams = {}) => {
 
                 if (isSearchKey) {
                     const searchFields = key.split(',').slice(1);
-                    return searchFields.some(field =>
-                        String(get(item, field) ?? '')
-                            .toLowerCase()
-                            .includes(String(value).toLowerCase())
-                    );
+                    // Normalize search value: convert to string, trim, and handle empty
+                    const searchValue = value != null ? String(value).trim() : '';
+                    if (!searchValue) return true; // Empty search matches all
+                    const normalizedSearch = searchValue.toLowerCase();
+
+                    return searchFields.some(field => {
+                        const trimmedField = field.trim();
+                        // Try direct property access first, then fallback to lodash get
+                        const fieldValue = (item as any)[trimmedField] ?? get(item, trimmedField);
+                        // Convert to string - handle null, undefined, numbers, strings
+                        if (fieldValue == null) return false;
+                        const fieldStr = String(fieldValue).toLowerCase();
+                        return fieldStr.includes(normalizedSearch);
+                    });
                 }
 
                 return String(get(item, key) ?? '')

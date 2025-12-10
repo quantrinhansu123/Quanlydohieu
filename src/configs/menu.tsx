@@ -154,7 +154,23 @@ export const allMenuItems: Array<{
   {
     title: "Kỹ thuật",
     Icon: ToolOutlined,
-    href: "/technician",
+    children: [
+      {
+        icon: IdcardOutlined,
+        title: "Phòng ban",
+        href: "/technician/departments",
+      },
+      {
+        icon: ExperimentOutlined,
+        title: "Quy trình",
+        href: "/technician/workflows",
+      },
+      {
+        icon: InboxOutlined,
+        title: "Công việc",
+        href: "/technician/todo",
+      },
+    ],
   },
 ];
 
@@ -189,7 +205,9 @@ function generateBreadcrumbMap(
         if (child.href) {
           map[normalizePath(child.href)] = child.nonPrefix
             ? child.title
-            : item.prefix + " " + child.title;
+            : item.prefix
+            ? item.prefix + " " + child.title
+            : child.title;
         }
       });
     }
@@ -197,6 +215,7 @@ function generateBreadcrumbMap(
 
   return map;
 }
+
 
 export const breadcrumbMap: Record<string, string> = {
   ...generateBreadcrumbMap(allMenuItems),

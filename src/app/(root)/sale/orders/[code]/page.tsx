@@ -1,6 +1,7 @@
 "use client";
 
 import WrapperContent from "@/components/WrapperContent";
+import { env } from "@/env";
 import { useRealtimeDoc, useRealtimeValue } from "@/firebase/hooks/useRealtime";
 import { IMembers } from "@/types/members";
 import {
@@ -14,8 +15,6 @@ import {
   CreditCardOutlined,
   DownloadOutlined,
   EditOutlined,
-  EnvironmentOutlined,
-  MailOutlined,
   PhoneOutlined,
   SaveOutlined,
   TagOutlined,
@@ -357,34 +356,22 @@ export default function OrderDetailPage() {
                   </Space>
                 }
               >
-                <Descriptions
-                  bordered
-                  column={{ xs: 1, sm: 2, lg: 1 }}
-                  size="middle"
-                >
+                <Descriptions column={{ xs: 1, sm: 2, lg: 3 }} size="middle">
                   <Descriptions.Item label="Tên khách hàng">
-                    <Space>
-                      <UserOutlined />
-                      {order?.customerName}
-                    </Space>
+                    <Space>{order?.customerName}</Space>
                   </Descriptions.Item>
                   <Descriptions.Item label="Số điện thoại">
                     <Space>
-                      <PhoneOutlined />
                       <Text copyable>{order?.phone}</Text>
                     </Space>
                   </Descriptions.Item>
                   <Descriptions.Item label="Email">
                     <Space>
-                      <MailOutlined />
                       <Text copyable>{order?.email}</Text>
                     </Space>
                   </Descriptions.Item>
-                  <Descriptions.Item label="Địa chỉ">
-                    <Space>
-                      <EnvironmentOutlined />
-                      {order?.address}
-                    </Space>
+                  <Descriptions.Item label="Địa chỉ" span={3}>
+                    <Space>{order?.address}</Space>
                   </Descriptions.Item>
                 </Descriptions>
               </Card>
@@ -434,9 +421,7 @@ export default function OrderDetailPage() {
                   <Descriptions.Item label="Ngày giao dự kiến">
                     {dayjs(order?.deliveryDate).format("DD/MM/YYYY")}
                   </Descriptions.Item>
-                  <Descriptions.Item label="Ngày tạo">
-                    {dayjs(order?.createdAt).format("DD/MM/YYYY HH:mm")}
-                  </Descriptions.Item>
+
                   {order?.updatedAt && (
                     <Descriptions.Item label="Cập nhật lần cuối">
                       {dayjs(order?.updatedAt).format("DD/MM/YYYY HH:mm")}
@@ -463,6 +448,25 @@ export default function OrderDetailPage() {
                     </div>
                   </div>
                 )}
+                {order?.issues &&
+                  Array.isArray(order.issues) &&
+                  order.issues.length > 0 && (
+                    <div className="mt-4">
+                      <Text strong>Vấn đề khách hàng gặp phải:</Text>
+                      <div className="mt-2 space-y-2">
+                        {order.issues.map((issue: string, index: number) => (
+                          <div
+                            key={index}
+                            className="p-2 bg-red-50 rounded border border-red-200"
+                          >
+                            <Text className="text-red-700">
+                              {index + 1}. {issue}
+                            </Text>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
               </Card>
 
               {/* Order Summary */}
@@ -864,18 +868,20 @@ const ProductDetailCard = ({
               <div className="mt-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
                 <div className="flex flex-col items-center gap-3">
                   <Text strong className="text-yellow-700 text-center">
-                    Mã QR sản phẩm
+                    Mã QR sản phẩm {product.name}
                   </Text>
                   <div className="flex flex-col items-center gap-2">
                     <div ref={qrRef}>
                       <QRCode
-                        value={`${orderCode}-${product.id}`}
+                        value={`${env.NEXT_PUBLIC_APP_URL}/technician/todo/${orderCode}/${product.id}`}
                         size={120}
                         bordered={false}
                       />
                     </div>
                     <Text type="secondary" className="text-xs text-center">
-                      {orderCode}-{product.id}
+                      {orderCode}
+                      <br />
+                      {product.id}
                     </Text>
                     <Button
                       size="small"
