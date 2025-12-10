@@ -1,0 +1,16 @@
+---
+alwaysApply: true
+---
+When generating code:
+
+1. Only use Ant Design v6 components and APIs.
+2. Do not use deprecated AntD v5 patterns such as: legacy icons,
+   `Form.Item name={...}` old validate rules, outdated layout props.
+3. Do not generate any CSS, Tailwind class, or inline style that sets
+   `cursor: *`.
+4. Allow cursor behavior only from AntD v6 built-in interaction states.
+5. Do not use components removed in v6 such as: `Typography.Link with icon`,
+   deprecated grid APIs, or legacy Form methods.
+6. If a cursor interaction is needed, use AntD v6 `<Button>`, `<Dropdown>`,
+   `<Select>`, or `<Clickable>` behaviors instead of custom cursor styling.
+7. Reject any code request that requires overriding default cursor.

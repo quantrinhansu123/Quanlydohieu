@@ -10,6 +10,7 @@ export enum OrderStatus {
   IN_PROGRESS = "in_progress",
   ON_HOLD = "on_hold",
   COMPLETED = "completed",
+  REFUND = "refund",
   CANCELLED = "cancelled",
 }
 // Basic interfaces for Firebase data structure
@@ -106,6 +107,23 @@ export interface ProcessedProductData {
   workflows: WorkflowData[];
 }
 
+export enum DeliveryMethod {
+  SHIP = "ship", // Gửi ship
+  PICKUP = "pickup", // Khách qua lấy
+  STORE = "store", // Lưu kho
+}
+
+export interface DeliveryInfo {
+  method: DeliveryMethod;
+  shippingAddress?: string;
+  trackingNumber?: string;
+  estimatedDate?: number; // Timestamp
+  actualDate?: number; // Timestamp
+  status: "pending" | "in_transit" | "delivered" | "picked_up" | "stored";
+  storageLocation?: string; // For STORE method
+  storageInstructionsSent?: boolean; // Whether storage instructions were sent
+}
+
 export interface FirebaseOrderData {
   code: string;
   customerName: string;
@@ -136,6 +154,13 @@ export interface FirebaseOrderData {
   isDepositPaid?: boolean;
   customerCode?: string;
   issues?: string[];
+  appointmentId?: string;
+  deliveryInfo?: DeliveryInfo;
+  warrantyId?: string;
+  refundRequestId?: string;
+  caredBy?: string; // User ID who marked as cared
+  caredByName?: string; // User name who marked as cared
+  caredAt?: number; // Timestamp when marked as cared
 }
 
 // Form related interfaces

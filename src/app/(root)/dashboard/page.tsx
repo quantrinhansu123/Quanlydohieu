@@ -1,5 +1,6 @@
 "use client";
 
+import FollowUpReminder from "@/components/FollowUpReminder";
 import {
   CheckCircleOutlined,
   ClockCircleOutlined,
@@ -1007,6 +1008,28 @@ export default function DashboardPage() {
                             </div>
                           ))}
                       </Space>
+                    </Card>
+                  </Col>
+                </Row>
+              ),
+            },
+            {
+              key: "followup",
+              label: (
+                <span>
+                  <ClockCircleOutlined /> Follow-up
+                </span>
+              ),
+              children: (
+                <Row gutter={[16, 16]}>
+                  <Col xs={24} lg={12}>
+                    <Card title="Follow-up cần thực hiện" className="mb-4">
+                      <FollowUpReminder limit={20} showCompleted={false} />
+                    </Card>
+                  </Col>
+                  <Col xs={24} lg={12}>
+                    <Card title="Follow-up đã hoàn thành">
+                      <FollowUpReminder limit={10} showCompleted={true} />
                     </Card>
                   </Col>
                 </Row>

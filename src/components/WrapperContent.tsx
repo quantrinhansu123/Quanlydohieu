@@ -103,7 +103,7 @@ const LeftControls: React.FC<LeftControlsProps> = ({
             disabled={isLoading || isRefetching}
             type="default"
             icon={<ArrowLeftOutlined />}
-            onClick={() => router.push(header.buttonBackTo!)}
+            onClick={() => router.back()}
           />
         )}
       </div>
@@ -118,7 +118,7 @@ const LeftControls: React.FC<LeftControlsProps> = ({
             disabled={isLoading || isRefetching}
             type="default"
             icon={<ArrowLeftOutlined />}
-            onClick={() => router.push(header.buttonBackTo!)}
+            onClick={() => router.back()}
           >
             Quay lại
           </Button>

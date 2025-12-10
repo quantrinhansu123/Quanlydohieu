@@ -6,6 +6,7 @@ import { useRealtimeList } from "@/firebase/hooks/useRealtime";
 import useFilter from "@/hooks/useFilter";
 import { IMembers } from "@/types/members";
 import { FirebaseOrderData, OrderStatus } from "@/types/order";
+import { generateRandomCode } from "@/utils/generateRandomCode";
 import {
   EyeOutlined,
   PlusOutlined,
@@ -36,6 +37,7 @@ const getStatusInfo = (status: OrderStatus) => {
     [OrderStatus.IN_PROGRESS]: { color: "processing", text: "Đang thực hiện" },
     [OrderStatus.ON_HOLD]: { color: "orange", text: "Tạm giữ" },
     [OrderStatus.COMPLETED]: { color: "success", text: "Hoàn thành" },
+    [OrderStatus.REFUND]: { color: "magenta", text: "Hoàn tiền" },
     [OrderStatus.CANCELLED]: { color: "error", text: "Đã hủy" },
   };
   return info[status] || info[OrderStatus.PENDING];
@@ -72,6 +74,15 @@ export default function OrderListPage() {
     applyFilter,
     handlePageChange,
   } = useFilter({ search: "" });
+
+  const staffOptions = useMemo(
+    () =>
+      (staff || []).map((s) => ({
+        label: s.name,
+        value: s.id,
+      })),
+    [staff]
+  );
 
   const filteredOrders = useMemo(() => {
     if (!orders || !Array.isArray(orders)) {
@@ -125,6 +136,16 @@ export default function OrderListPage() {
       },
     },
     {
+      title: "NV tư vấn",
+      dataIndex: "consultantId",
+      key: "consultantId",
+      width: 180,
+      render: (consultantId: string) => {
+        const consultant = staffMap[consultantId];
+        return consultant ? consultant.name : consultantId || "-";
+      },
+    },
+    {
       title: "Số sản phẩm",
       key: "products",
       width: 120,
@@ -162,7 +183,10 @@ export default function OrderListPage() {
           <Space vertical>
             {issues.map((issue) => {
               return (
-                <Tag color="purple" key={issue}>
+                <Tag
+                  color="purple"
+                  key={`issue-${issue}-${generateRandomCode("REACTKEY")}`}
+                >
                   {issue}
                 </Tag>
               );
@@ -188,31 +212,22 @@ export default function OrderListPage() {
   ];
 
   const stats = useMemo(() => {
-    if (!orders || !Array.isArray(orders)) {
-      return {
-        total: 0,
-        pending: 0,
-        confirmed: 0,
-        in_progress: 0,
-        on_hold: 0,
-        completed: 0,
-        cancelled: 0,
-      };
-    }
+    const source = Array.isArray(filteredOrders) ? filteredOrders : [];
     return {
-      total: orders.length,
-      pending: orders.filter((o) => o.status === OrderStatus.PENDING).length,
-      confirmed: orders.filter((o) => o.status === OrderStatus.CONFIRMED)
+      total: source.length,
+      pending: source.filter((o) => o.status === OrderStatus.PENDING).length,
+      confirmed: source.filter((o) => o.status === OrderStatus.CONFIRMED)
         .length,
-      in_progress: orders.filter((o) => o.status === OrderStatus.IN_PROGRESS)
+      in_progress: source.filter((o) => o.status === OrderStatus.IN_PROGRESS)
         .length,
-      on_hold: orders.filter((o) => o.status === OrderStatus.ON_HOLD).length,
-      completed: orders.filter((o) => o.status === OrderStatus.COMPLETED)
+      on_hold: source.filter((o) => o.status === OrderStatus.ON_HOLD).length,
+      completed: source.filter((o) => o.status === OrderStatus.COMPLETED)
         .length,
-      cancelled: orders.filter((o) => o.status === OrderStatus.CANCELLED)
+      refund: source.filter((o) => o.status === OrderStatus.REFUND).length,
+      cancelled: source.filter((o) => o.status === OrderStatus.CANCELLED)
         .length,
     };
-  }, [orders]);
+  }, [filteredOrders]);
 
   return (
     <WrapperContent
@@ -232,8 +247,32 @@ export default function OrderListPage() {
                 { value: OrderStatus.CONFIRMED, label: "Đã xác nhận" },
                 { value: OrderStatus.IN_PROGRESS, label: "Đang thực hiện" },
                 { value: OrderStatus.COMPLETED, label: "Hoàn thành" },
+                { value: OrderStatus.REFUND, label: "Hoàn tiền" },
                 { value: OrderStatus.CANCELLED, label: "Đã hủy" },
               ],
+            },
+            {
+              name: "createdAt",
+              label: "Ngày tạo",
+              type: "dateRange",
+            },
+            {
+              name: "customerName",
+              label: "Khách hàng",
+              type: "input",
+              placeholder: "Tên khách hàng",
+            },
+            {
+              name: "consultantId",
+              label: "NV tư vấn",
+              type: "select",
+              options: staffOptions,
+            },
+            {
+              name: "createdBy",
+              label: "Người tạo",
+              type: "select",
+              options: staffOptions,
             },
           ],
           query,
@@ -303,6 +342,15 @@ export default function OrderListPage() {
                 title="CSKH"
                 value={stats.completed}
                 styles={{ content: { color: "#52c41a" } }}
+              />
+            </Card>
+          </Col>
+          <Col span={3}>
+            <Card style={{ textAlign: "center" }}>
+              <Statistic
+                title="Hoàn tiền"
+                value={stats.refund}
+                styles={{ content: { color: "#eb2f96" } }}
               />
             </Card>
           </Col>

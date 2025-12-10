@@ -251,20 +251,29 @@ export const WorkflowUpdateModal: React.FC<WorkflowUpdateModalProps> = ({
 
   if (!localOrder) return null;
 
+  // Check if this is a warranty claim
+  const isWarrantyClaim = (localOrder as any)?.type === "warranty_claim";
+  const detailUrl = isWarrantyClaim
+    ? `/sale/warranty/${localOrder.code}`
+    : `/sale/orders/${localOrder.code}`;
+
   return (
     <Modal
       title={
         <div className="flex items-center gap-4">
           <div>
             <Text strong className="text-lg">
-              Cập nhật đơn hàng: {localOrder.code}
+              {isWarrantyClaim
+                ? "Cập nhật phiếu bảo hành"
+                : "Cập nhật đơn hàng"}
+              : {localOrder.code}
             </Text>
           </div>
           <div className="flex items-center gap-2">
             <Button
               type="default"
               icon={<EyeOutlined />}
-              onClick={() => router.push(`/sale/orders/${localOrder.code}`)}
+              onClick={() => router.push(detailUrl)}
             >
               Xem chi tiết
             </Button>

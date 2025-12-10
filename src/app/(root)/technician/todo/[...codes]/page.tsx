@@ -9,6 +9,7 @@ import {
   FirebaseOrderData,
   FirebaseWorkflowData,
 } from "@/types/order";
+import { type WarrantyClaim } from "@/types/warrantyClaim";
 import {
   CheckCircleOutlined,
   ClockCircleOutlined,
@@ -66,14 +67,51 @@ const ProductWorkflowDetailsPage = () => {
     return [codesParam];
   }, [params.codes]);
 
-  const orderCode = codes[0];
-  const productCode = codes[1];
+  // Check if this is a warranty claim (path contains "warranty")
+  const isWarrantyClaim = codes[0] === "warranty";
+  const orderCode = isWarrantyClaim ? codes[1] : codes[0];
+  const productCode = isWarrantyClaim ? codes[2] : codes[1];
 
-  // Fetch order data
+  // Fetch order or warranty claim data
   const { data: order, isLoading: orderLoading } =
     useRealtimeDoc<FirebaseOrderData>(
-      orderCode ? `xoxo/orders/${orderCode}` : null
+      orderCode && !isWarrantyClaim ? `xoxo/orders/${orderCode}` : null
     );
+
+  const { data: warrantyClaim, isLoading: warrantyClaimLoading } =
+    useRealtimeDoc<WarrantyClaim>(
+      orderCode && isWarrantyClaim ? `xoxo/warranty_claims/${orderCode}` : null
+    );
+
+  // Convert warranty claim to order-like format for compatibility
+  const orderData = useMemo(() => {
+    if (isWarrantyClaim && warrantyClaim) {
+      const claim = warrantyClaim;
+      return {
+        code: claim.code,
+        customerName: claim.customerName,
+        phone: claim.phone,
+        email: claim.email,
+        address: claim.address,
+        customerSource: claim.customerSource,
+        customerCode: claim.customerCode,
+        orderDate: claim.orderDate,
+        deliveryDate: claim.deliveryDate,
+        createdAt: claim.createdAt,
+        updatedAt: claim.updatedAt,
+        createdBy: claim.createdBy,
+        createdByName: claim.createdByName,
+        consultantId: claim.consultantId,
+        consultantName: claim.consultantName,
+        notes: claim.notes,
+        issues: claim.issues,
+        products: claim.products || {},
+        status: claim.status,
+        totalAmount: claim.totalAmount || 0,
+      } as any as FirebaseOrderData;
+    }
+    return order;
+  }, [isWarrantyClaim, warrantyClaim, order]);
 
   // Fetch members data
   const { data: membersData } = useRealtimeValue<{
@@ -98,9 +136,9 @@ const ProductWorkflowDetailsPage = () => {
 
   // Get product data
   const product = useMemo(() => {
-    if (!order?.products || !productCode) return null;
-    return order.products[productCode];
-  }, [order?.products, productCode]);
+    if (!orderData?.products || !productCode) return null;
+    return orderData.products[productCode];
+  }, [orderData?.products, productCode]);
 
   // Get workflows with checklist
   const workflows = useMemo(() => {
@@ -155,7 +193,7 @@ const ProductWorkflowDetailsPage = () => {
 
       // Get user name from membersMap
       const checkedByName = user?.uid
-        ? user.displayName || user?.email || "Không rõ"
+        ? user.displayName || user.email || "Không rõ"
         : undefined;
 
       // Update checklist
@@ -175,9 +213,11 @@ const ProductWorkflowDetailsPage = () => {
       const allTasksCompleted =
         updatedChecklist?.every((task) => task.checked) ?? false;
 
-      // Update workflow in Firebase
-      const workflowPath = `xoxo/orders/${orderCode}/products/${productCode}/workflows/${workflowId}`;
-      const workflowRef = ref(db, workflowPath);
+      // Update workflow in Firebase - use correct path based on type
+      const basePath = isWarrantyClaim
+        ? `xoxo/warranty_claims/${orderCode}/products/${productCode}/workflows/${workflowId}`
+        : `xoxo/orders/${orderCode}/products/${productCode}/workflows/${workflowId}`;
+      const workflowRef = ref(db, basePath);
 
       await update(workflowRef, {
         checklist: updatedChecklist,
@@ -203,7 +243,7 @@ const ProductWorkflowDetailsPage = () => {
     return Math.round((completed / workflows.length) * 100);
   }, [workflows]);
 
-  if (orderLoading) {
+  if (orderLoading || warrantyClaimLoading) {
     return (
       <WrapperContent
         isEmpty={false}
@@ -216,7 +256,7 @@ const ProductWorkflowDetailsPage = () => {
     );
   }
 
-  if (!order || !product) {
+  if (!orderData || !product) {
     return (
       <WrapperContent
         isEmpty={true}
@@ -233,7 +273,9 @@ const ProductWorkflowDetailsPage = () => {
     <WrapperContent
       isEmpty={false}
       isLoading={false}
-      title={`Quy trình: ${product.name}`}
+      title={`Quy trình: ${product.name}${
+        isWarrantyClaim ? " (Bảo hành)" : ""
+      }`}
       header={{
         buttonBackTo: `/technician/todo`,
       }}
@@ -469,7 +511,8 @@ const ProductWorkflowDetailsPage = () => {
                                                     color="success"
                                                     className="text-xs"
                                                   >
-                                                   Người thực hiên: {task.checkedByName}
+                                                    Người thực hiên:{" "}
+                                                    {task.checkedByName}
                                                   </Tag>
                                                 )}
                                             </div>

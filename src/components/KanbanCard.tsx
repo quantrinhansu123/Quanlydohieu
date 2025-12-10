@@ -118,9 +118,16 @@ export const KanbanCard: React.FC<KanbanCardProps> = ({
               {/* Header - Compact Info */}
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <Text strong className="text-sm text-gray-900">
-                    {order.code}
-                  </Text>
+                  <div className="flex items-center gap-1">
+                    <Text strong className="text-sm text-gray-900">
+                      {order.code}
+                    </Text>
+                    {(order as any).type === "warranty_claim" && (
+                      <Tag color="purple" className="text-xs">
+                        Bảo hành
+                      </Tag>
+                    )}
+                  </div>
                   <Tag
                     color={
                       metrics.urgencyLevel === "urgent"

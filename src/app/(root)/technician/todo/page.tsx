@@ -6,6 +6,7 @@ import { useRealtimeList } from "@/firebase/hooks/useRealtime";
 import useFilter from "@/hooks/useFilter";
 import { FilterField } from "@/types";
 import { FirebaseOrderData, OrderStatus } from "@/types/order";
+import { WarrantyClaimStatus, type WarrantyClaim } from "@/types/warrantyClaim";
 import { Button, Tag, Typography } from "antd";
 import { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
@@ -27,12 +28,16 @@ type TodoRow = {
   status: string;
   progressText: string;
   deliveryDate: number;
+  type?: "order" | "warranty_claim";
+  originalOrderCode?: string;
 };
 
 export default function TechnicianTodoPage() {
   const router = useRouter();
-  const { data: ordersData, isLoading } =
+  const { data: ordersData, isLoading: ordersLoading } =
     useRealtimeList<OrderWithId>("xoxo/orders");
+  const { data: warrantyClaimsData, isLoading: warrantyClaimsLoading } =
+    useRealtimeList<WarrantyClaim>("xoxo/warranty_claims");
   const {
     query,
     updateQuery,
@@ -43,34 +48,84 @@ export default function TechnicianTodoPage() {
   } = useFilter();
 
   const rows: TodoRow[] = useMemo(() => {
-    if (!ordersData || ordersData.length === 0) return [];
-
     const list: TodoRow[] = [];
-    ordersData.forEach((order) => {
-      if (!order.products) return;
-      Object.entries(order.products).forEach(([productCode, product]) => {
-        const workflows = product.workflows || {};
-        const total = Object.keys(workflows).length;
-        const completed = Object.values(workflows).filter(
-          (wf) => wf.isDone
-        ).length;
-        const progressText = total ? `${completed}/${total}` : "0/0";
 
-        list.push({
-          key: `${order.code}_${productCode}`,
-          orderCode: order.code,
-          productCode,
-          productName: product.name || "",
-          customerName: order.customerName || "",
-          quantity: product.quantity,
-          status: order.status || "pending",
-          progressText,
-          deliveryDate: order.deliveryDate || 0,
+    // Process orders
+    if (ordersData && ordersData.length > 0) {
+      ordersData.forEach((order) => {
+        if (!order.products) return;
+        Object.entries(order.products).forEach(([productCode, product]) => {
+          const workflows = product.workflows || {};
+          const total = Object.keys(workflows).length;
+          const completed = Object.values(workflows).filter(
+            (wf) => wf.isDone
+          ).length;
+          const progressText = total ? `${completed}/${total}` : "0/0";
+
+          list.push({
+            key: `order_${order.code}_${productCode}`,
+            orderCode: order.code,
+            productCode,
+            productName: product.name || "",
+            customerName: order.customerName || "",
+            quantity: product.quantity,
+            status: order.status || "pending",
+            progressText,
+            deliveryDate: order.deliveryDate || 0,
+            type: "order",
+          });
         });
       });
-    });
+    }
+
+    // Process warranty claims
+    if (warrantyClaimsData && warrantyClaimsData.length > 0) {
+      warrantyClaimsData.forEach((claimItem) => {
+        // Handle both WithId format and direct WarrantyClaim format
+        const claim: WarrantyClaim =
+          (claimItem as any).data || (claimItem as WarrantyClaim);
+        if (!claim.products) return;
+        Object.entries(claim.products).forEach(
+          ([productCode, product]: [string, any]) => {
+            const workflows = product.workflows || {};
+            const total = Object.keys(workflows).length;
+            const completed = Object.values(workflows).filter(
+              (wf: any) => wf.isDone
+            ).length;
+            const progressText = total ? `${completed}/${total}` : "0/0";
+
+            // Map warranty claim status to order status for display
+            const statusMap: Record<WarrantyClaimStatus, string> = {
+              [WarrantyClaimStatus.PENDING]: "pending",
+              [WarrantyClaimStatus.CONFIRMED]: "confirmed",
+              [WarrantyClaimStatus.IN_PROGRESS]: "in_progress",
+              [WarrantyClaimStatus.ON_HOLD]: "on_hold",
+              [WarrantyClaimStatus.COMPLETED]: "completed",
+              [WarrantyClaimStatus.CANCELLED]: "cancelled",
+            };
+
+            const claimStatus = claim.status as WarrantyClaimStatus;
+
+            list.push({
+              key: `warranty_${claim.code}_${productCode}`,
+              orderCode: claim.code,
+              productCode,
+              productName: product.name || "",
+              customerName: claim.customerName || "",
+              quantity: product.quantity,
+              status: statusMap[claimStatus] || "pending",
+              progressText,
+              deliveryDate: claim.deliveryDate || 0,
+              type: "warranty_claim",
+              originalOrderCode: claim.originalOrderCode,
+            });
+          }
+        );
+      });
+    }
+
     return list;
-  }, [ordersData]);
+  }, [ordersData, warrantyClaimsData]);
 
   console.log(rows, query);
 
@@ -84,8 +139,17 @@ export default function TechnicianTodoPage() {
       title: "Mã đơn",
       dataIndex: "orderCode",
       key: "orderCode",
-      width: 150,
-      render: (value) => <Text strong>{value}</Text>,
+      width: 170,
+      render: (value, record) => (
+        <div className="flex items-center gap-1">
+          <Text strong>{value}</Text>
+          {record.type === "warranty_claim" && (
+            <Tag color="purple" className="text-xs">
+              BH
+            </Tag>
+          )}
+        </div>
+      ),
     },
     {
       title: "Khách hàng",
@@ -135,6 +199,7 @@ export default function TechnicianTodoPage() {
           on_hold: "orange",
           completed: "success",
           cancelled: "error",
+          refund: "magenta",
         };
         const statusName: Record<string, string> = {
           pending: "Chờ xử lý",
@@ -143,6 +208,7 @@ export default function TechnicianTodoPage() {
           on_hold: "Chờ thanh toán",
           completed: "Hoàn thành",
           cancelled: "Đã hủy",
+          refund: "Hoàn trả",
         };
         return (
           <Tag color={statusColors[value] || "default"}>
@@ -171,11 +237,17 @@ export default function TechnicianTodoPage() {
         <Button
           type="primary"
           size="small"
-          onClick={() =>
-            router.push(
-              `/technician/todo/${record.orderCode}/${record.productCode}`
-            )
-          }
+          onClick={() => {
+            if (record.type === "warranty_claim") {
+              router.push(
+                `/technician/todo/warranty/${record.orderCode}/${record.productCode}`
+              );
+            } else {
+              router.push(
+                `/technician/todo/${record.orderCode}/${record.productCode}`
+              );
+            }
+          }}
         >
           Xem chi tiết
         </Button>
@@ -189,6 +261,7 @@ export default function TechnicianTodoPage() {
       name: "orderCode",
       label: "Mã đơn",
       type: "input",
+
     },
     {
       name: "status",
@@ -212,8 +285,10 @@ export default function TechnicianTodoPage() {
 
   return (
     <WrapperContent
-      isEmpty={filteredData.length === 0 && !isLoading}
-      isLoading={isLoading}
+      isEmpty={
+        filteredData.length === 0 && !ordersLoading && !warrantyClaimsLoading
+      }
+      isLoading={ordersLoading || warrantyClaimsLoading}
       header={{
         buttonBackTo: "/dashboard",
         searchInput: {
@@ -238,7 +313,7 @@ export default function TechnicianTodoPage() {
       <CommonTable
         columns={columns}
         dataSource={filteredData}
-        loading={isLoading}
+        loading={ordersLoading || warrantyClaimsLoading}
         pagination={{
           ...pagination,
           onChange: handlePageChange,

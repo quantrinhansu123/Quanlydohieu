@@ -1,18 +1,18 @@
 import {
   BookOutlined,
   CalculatorOutlined,
-  ContactsOutlined,
+  CalendarOutlined,
+  CommentOutlined,
   CustomerServiceOutlined,
   DashboardOutlined,
   DatabaseOutlined,
   DollarOutlined,
-  EnvironmentOutlined,
   ExperimentOutlined,
   IdcardOutlined,
   InboxOutlined,
   LayoutOutlined,
   MoneyCollectOutlined,
-  ShopOutlined,
+  SafetyCertificateOutlined,
   ShoppingCartOutlined,
   TeamOutlined,
   ToolOutlined,
@@ -58,15 +58,32 @@ export const allMenuItems: Array<{
         title: "Khách hàng",
         href: "/customers",
       },
-      {
-        icon: ContactsOutlined,
-        title: "Leads",
-        href: "/customers/leads",
-      },
+      // {
+      //   icon: ContactsOutlined,
+      //   title: "Leads",
+      //   href: "/customers/leads",
+      // },
       {
         icon: CustomerServiceOutlined,
+        nonPrefix: true,
         title: "CSKH",
         href: "/customers/customer-care",
+      },
+      {
+        icon: CommentOutlined,
+        title: "Feedback",
+        href: "/customers/feedback",
+      },
+      {
+        icon: CalendarOutlined,
+        title: "Lịch hẹn",
+        href: "/customers/appointments",
+      },
+
+      {
+        icon: DollarOutlined,
+        title: "Hoàn tiền",
+        href: "/customers/refunds",
       },
     ],
   },
@@ -80,6 +97,12 @@ export const allMenuItems: Array<{
         title: "Đơn hàng",
         href: "/sale/orders",
       },
+
+      {
+        icon: SafetyCertificateOutlined,
+        title: "Bảo hành",
+        href: "/sale/warranty",
+      },
       {
         icon: LayoutOutlined,
         nonPrefix: true,
@@ -89,24 +112,19 @@ export const allMenuItems: Array<{
     ],
   },
   {
-    title: "Vận hành",
+    title: "Kho",
     prefix: "Quản lý",
-    Icon: ShopOutlined,
+    Icon: DatabaseOutlined,
     children: [
       {
-        icon: ExperimentOutlined,
-        title: "Sản xuất",
-        href: "/workflow-management",
-      },
-      {
-        icon: EnvironmentOutlined,
-        title: "Theo dõi hàng hóa",
-        href: "/product-tracking",
+        icon: DatabaseOutlined,
+        title: "Tồn kho",
+        href: "/inventory",
       },
       {
         icon: DatabaseOutlined,
-        title: "Kho",
-        href: "/inventory",
+        title: "Lịch sử",
+        href: "/inventory/history",
       },
     ],
   },
@@ -139,16 +157,16 @@ export const allMenuItems: Array<{
         title: "Nhân viên",
         href: "/hr/members",
       },
-      {
-        icon: UserAddOutlined,
-        title: "Tuyển dụng",
-        href: "/hr/recruitment",
-      },
-      {
-        icon: BookOutlined,
-        title: "Đào tạo",
-        href: "/hr/training",
-      },
+      // {
+      //   icon: UserAddOutlined,
+      //   title: "Tuyển dụng",
+      //   href: "/hr/recruitment",
+      // },
+      // {
+      //   icon: BookOutlined,
+      //   title: "Đào tạo",
+      //   href: "/hr/training",
+      // },
     ],
   },
   {
@@ -215,7 +233,6 @@ function generateBreadcrumbMap(
 
   return map;
 }
-
 
 export const breadcrumbMap: Record<string, string> = {
   ...generateBreadcrumbMap(allMenuItems),

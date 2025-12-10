@@ -1,10 +1,31 @@
 "use client";
 
+import DeliveryManager from "@/components/DeliveryManager";
+import FeedbackForm from "@/components/FeedbackForm";
+import RefundManager from "@/components/RefundManager";
 import WrapperContent from "@/components/WrapperContent";
 import { env } from "@/env";
 import { useRealtimeDoc, useRealtimeValue } from "@/firebase/hooks/useRealtime";
+import { useUser } from "@/firebase/provider";
+import { AppointmentService } from "@/services/appointmentService";
+import { FeedbackService } from "@/services/feedbackService";
+import { FollowUpService } from "@/services/followUpService";
+import { MessageService } from "@/services/messageService";
+import { RefundService } from "@/services/refundService";
+import { WarrantyService } from "@/services/warrantyService";
+import {
+  AppointmentStatus,
+  AppointmentStatusLabels,
+  type Appointment,
+} from "@/types/appointment";
+import {
+  FeedbackType,
+  FeedbackTypeLabels,
+  type CustomerFeedback,
+} from "@/types/feedback";
 import { IMembers } from "@/types/members";
 import {
+  DeliveryMethod,
   FirebaseOrderData,
   FirebaseWorkflowData,
   OrderStatus,
@@ -22,6 +43,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import {
+  Alert,
   App,
   Avatar,
   Button,
@@ -47,7 +69,7 @@ import dayjs from "dayjs";
 import { ref as dbRef, getDatabase, update } from "firebase/database";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { useParams, useRouter } from "next/navigation";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import superjson from "superjson";
 
 const { Text, Title } = Typography;
@@ -59,6 +81,7 @@ const getStatusInfo = (status: OrderStatus) => {
     [OrderStatus.IN_PROGRESS]: { color: "processing", text: "Đang thực hiện" },
     [OrderStatus.ON_HOLD]: { color: "orange", text: "Tạm giữ" },
     [OrderStatus.COMPLETED]: { color: "success", text: "Hoàn thành" },
+    [OrderStatus.REFUND]: { color: "magenta", text: "Hoàn tiền" },
     [OrderStatus.CANCELLED]: { color: "error", text: "Đã hủy" },
   };
   return info[status] || info[OrderStatus.PENDING];
@@ -76,6 +99,13 @@ export default function OrderDetailPage() {
     {}
   );
   const [uploading, setUploading] = useState(false);
+  const [feedbacks, setFeedbacks] = useState<CustomerFeedback[]>([]);
+  const [refunds, setRefunds] = useState<any[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [feedbackModalVisible, setFeedbackModalVisible] = useState(false);
+  const [deliveryModalVisible, setDeliveryModalVisible] = useState(false);
+  const [refundModalVisible, setRefundModalVisible] = useState(false);
+  const { user } = useUser();
   const { message: antdMessage } = App.useApp();
 
   const { data: order, isLoading: orderLoading } =
@@ -83,6 +113,45 @@ export default function OrderDetailPage() {
   const { data: membersData, isLoading: membersLoading } = useRealtimeValue<{
     [key: string]: IMembers;
   }>("xoxo/members");
+
+  // Load feedbacks for this order
+  useEffect(() => {
+    if (orderCode) {
+      const unsubscribe = FeedbackService.onSnapshot((allFeedbacks) => {
+        const orderFeedbacks = allFeedbacks.filter(
+          (f) => f.orderCode === orderCode
+        );
+        setFeedbacks(orderFeedbacks);
+      });
+      return () => unsubscribe();
+    }
+  }, [orderCode]);
+
+  // Load refunds for this order
+  useEffect(() => {
+    if (orderCode) {
+      const unsubscribe = RefundService.onSnapshot((allRefunds) => {
+        const orderRefunds = allRefunds.filter(
+          (r) => r.orderCode === orderCode
+        );
+        setRefunds(orderRefunds);
+      });
+      return () => unsubscribe();
+    }
+  }, [orderCode]);
+
+  // Load appointments for this order
+  useEffect(() => {
+    if (orderCode) {
+      const unsubscribe = AppointmentService.onSnapshot((allAppointments) => {
+        const orderAppointments = allAppointments.filter(
+          (a) => a.orderCode === orderCode
+        );
+        setAppointments(orderAppointments);
+      });
+      return () => unsubscribe();
+    }
+  }, [orderCode]);
 
   const membersMap = useMemo(() => {
     if (!membersData || !Object.keys(membersData).length)
@@ -142,6 +211,92 @@ export default function OrderDetailPage() {
     };
   }, [order, products]);
 
+  // Check if order can be confirmed (must have deposit paid and product images)
+  const canConfirmOrder = useMemo(() => {
+    if (!order) return { canConfirm: false, reasons: [] };
+    const reasons: string[] = [];
+
+    // Check deposit payment - only if order has deposit
+    if ((order.deposit || 0) > 0 && !order.isDepositPaid) {
+      reasons.push("Chưa thanh toán tiền cọc");
+    }
+
+    // Check if all products have images
+    if (!order.products || Object.keys(order.products).length === 0) {
+      reasons.push("Chưa có sản phẩm nào");
+    } else {
+      const productsWithoutImages = Object.entries(order.products).filter(
+        ([_, product]) => !product.images || product.images.length === 0
+      );
+      if (productsWithoutImages.length > 0) {
+        reasons.push(
+          `Có ${
+            productsWithoutImages.length
+          } sản phẩm chưa có ảnh: ${productsWithoutImages
+            .map(([_, p]) => p.name)
+            .join(", ")}`
+        );
+      }
+    }
+
+    return {
+      canConfirm: reasons.length === 0,
+      reasons,
+    };
+  }, [order]);
+
+  // Check if order can be moved to ON_HOLD (must have all workflows completed)
+  const canMoveToOnHold = useMemo(() => {
+    if (!order) return { canMove: false, reasons: [] };
+    const reasons: string[] = [];
+
+    // Check if all workflows in all products are completed
+    if (!order.products || Object.keys(order.products).length === 0) {
+      reasons.push("Chưa có sản phẩm nào");
+    } else {
+      const incompleteWorkflows: Array<{
+        productName: string;
+        workflowName: string;
+      }> = [];
+
+      for (const [productId, product] of Object.entries(order.products)) {
+        if (!product.workflows || Object.keys(product.workflows).length === 0) {
+          continue; // No workflows in this product
+        }
+
+        // Check if all workflows in this product are done
+        for (const [workflowId, workflow] of Object.entries(
+          product.workflows
+        )) {
+          const workflowData = workflow as FirebaseWorkflowData;
+          if (!workflowData.isDone) {
+            incompleteWorkflows.push({
+              productName: product.name,
+              workflowName:
+                workflowData.workflowName?.join(", ") ||
+                `Công đoạn ${workflowId}`,
+            });
+          }
+        }
+      }
+
+      if (incompleteWorkflows.length > 0) {
+        reasons.push(
+          `Có ${
+            incompleteWorkflows.length
+          } công đoạn chưa hoàn thành: ${incompleteWorkflows
+            .map((w) => `${w.workflowName} (${w.productName})`)
+            .join(", ")}`
+        );
+      }
+    }
+
+    return {
+      canMove: reasons.length === 0,
+      reasons,
+    };
+  }, [order]);
+
   const createdByMember = useMemo(() => {
     if (!order) return undefined;
     return membersMap?.[order.createdBy];
@@ -151,12 +306,96 @@ export default function OrderDetailPage() {
   async function handleStatusUpdate() {
     if (!order || !selectedStatus) return;
 
+    // Validate before confirming order
+    if (selectedStatus === OrderStatus.CONFIRMED) {
+      if (!canConfirmOrder.canConfirm) {
+        antdMessage.warning(
+          `Không thể xác nhận đơn hàng. ${canConfirmOrder.reasons.join(". ")}`
+        );
+        return;
+      }
+    }
+
+    // Validate before moving to ON_HOLD
+    if (selectedStatus === OrderStatus.ON_HOLD) {
+      if (!canMoveToOnHold.canMove) {
+        antdMessage.warning(
+          `Không thể chuyển sang trạng thái Thanh toán. ${canMoveToOnHold.reasons.join(
+            ". "
+          )}`
+        );
+        return;
+      }
+    }
+
     try {
       const statusRef = dbRef(getDatabase(), `xoxo/orders/${orderCode}`);
       await update(statusRef, {
         status: selectedStatus,
         updatedAt: new Date().getTime(),
       });
+
+      // Auto-create follow-up schedules and warranty when order is completed
+      if (
+        selectedStatus === OrderStatus.COMPLETED &&
+        order.status !== OrderStatus.COMPLETED
+      ) {
+        try {
+          // Create follow-up schedules
+          await FollowUpService.createFollowUpSchedules(
+            orderCode,
+            orderCode,
+            order.customerCode,
+            order.customerName,
+            order.phone,
+            new Date().getTime()
+          );
+
+          // Create warranty for each product
+          if (order.products) {
+            for (const [productId, product] of Object.entries(order.products)) {
+              try {
+                await WarrantyService.createWarranty(
+                  orderCode,
+                  orderCode,
+                  productId,
+                  product.name,
+                  order.customerCode,
+                  order.customerName,
+                  order.phone,
+                  12, // Default 12 months
+                  "Bảo hành theo tiêu chuẩn XOXO",
+                  user?.uid,
+                  user?.displayName || user?.email || "Người dùng hiện tại"
+                );
+              } catch (warrantyError) {
+                console.error("Failed to create warranty:", warrantyError);
+                // Continue with other products
+              }
+            }
+          }
+        } catch (followUpError) {
+          console.error("Failed to create follow-up schedules:", followUpError);
+          // Don't block status update if follow-up creation fails
+        }
+      }
+
+      // Send order confirmed message if status changed to CONFIRMED
+      if (
+        selectedStatus === OrderStatus.CONFIRMED &&
+        order.status !== OrderStatus.CONFIRMED
+      ) {
+        try {
+          await MessageService.sendOrderConfirmed(
+            order.phone,
+            order.customerName,
+            orderCode
+          );
+        } catch (msgError) {
+          console.error("Failed to send order confirmation message:", msgError);
+          // Don't block status update
+        }
+      }
 
       antdMessage.success("Cập nhật trạng thái thành công!");
       setStatusModalVisible(false);
@@ -217,7 +456,7 @@ export default function OrderDetailPage() {
     }
   };
 
-  // Get available status options based on current status (prevent reverting to previous statuses)
+  // Get available status options - chỉ cho phép chuyển sang trạng thái tiếp theo (không nhảy cóc)
   const getAvailableStatusOptions = (currentStatus: OrderStatus) => {
     const statusOrder = [
       OrderStatus.PENDING,
@@ -225,6 +464,7 @@ export default function OrderDetailPage() {
       OrderStatus.IN_PROGRESS,
       OrderStatus.ON_HOLD,
       OrderStatus.COMPLETED,
+      OrderStatus.REFUND,
     ];
 
     const currentIndex = statusOrder.indexOf(currentStatus);
@@ -233,29 +473,44 @@ export default function OrderDetailPage() {
       {
         value: OrderStatus.PENDING,
         label: "Chờ xử lý",
-        disabled: currentIndex >= 0,
+        disabled: currentIndex !== -1 && currentIndex !== 0, // Chỉ enable nếu đang ở PENDING hoặc chưa có trong statusOrder
       },
       {
         value: OrderStatus.CONFIRMED,
         label: "Đã xác nhận",
-        disabled: currentIndex >= 1,
+        disabled: currentIndex !== 0 || !canConfirmOrder.canConfirm, // Chỉ enable nếu đang ở PENDING và đủ điều kiện
       },
       {
         value: OrderStatus.IN_PROGRESS,
         label: "Đang thực hiện",
-        disabled: currentIndex >= 2,
+        disabled: currentIndex !== 1, // Chỉ enable nếu đang ở CONFIRMED
       },
       {
         value: OrderStatus.ON_HOLD,
         label: "Tạm giữ",
-        disabled: currentIndex >= 3,
+        disabled: currentIndex !== 2 || !canMoveToOnHold.canMove, // Chỉ enable nếu đang ở IN_PROGRESS và đủ điều kiện
       },
       {
         value: OrderStatus.COMPLETED,
         label: "Hoàn thành",
-        disabled: currentIndex >= 4,
+        disabled:
+          (currentIndex !== 3 && currentIndex !== 2) ||
+          !canMoveToOnHold.canMove, // Chỉ enable nếu đang ở ON_HOLD hoặc IN_PROGRESS và đủ điều kiện chuyển sang ON_HOLD
       },
-      { value: OrderStatus.CANCELLED, label: "Đã hủy", disabled: false }, // Cancelled is always available
+      {
+        value: OrderStatus.REFUND,
+        label: "Hoàn tiền",
+        disabled: currentStatus === OrderStatus.REFUND || currentIndex < 1, // Chỉ enable nếu đã CONFIRMED trở lên và chưa REFUND
+      },
+      {
+        value: OrderStatus.CANCELLED,
+        label: "Đã hủy",
+        disabled:
+          currentStatus === OrderStatus.COMPLETED ||
+          currentStatus === OrderStatus.REFUND ||
+          currentStatus === OrderStatus.CANCELLED ||
+          currentStatus === OrderStatus.IN_PROGRESS, // Không thể hủy nếu đã hoàn thành, hoàn tiền, đang thực hiện hoặc đã hủy
+      },
     ];
   };
 
@@ -467,6 +722,305 @@ export default function OrderDetailPage() {
                       </div>
                     </div>
                   )}
+                {/* Feedback Section */}
+                <div className="mt-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <Text strong>Feedback khách hàng:</Text>
+                    {order?.status === OrderStatus.COMPLETED && (
+                      <Button
+                        size="small"
+                        type="primary"
+                        onClick={() => setFeedbackModalVisible(true)}
+                      >
+                        Thêm Feedback
+                      </Button>
+                    )}
+                  </div>
+                  {feedbacks.length > 0 ? (
+                    <div className="mt-2 space-y-2">
+                      {feedbacks.map((feedback) => {
+                        const getFeedbackColor = (type: FeedbackType) => {
+                          switch (type) {
+                            case FeedbackType.PRAISE:
+                              return "green";
+                            case FeedbackType.NEUTRAL:
+                              return "blue";
+                            case FeedbackType.COMPLAINT:
+                              return "orange";
+                            case FeedbackType.ANGRY:
+                              return "red";
+                            default:
+                              return "default";
+                          }
+                        };
+                        return (
+                          <div
+                            key={feedback.id}
+                            className="p-3 bg-gray-50 rounded border"
+                          >
+                            <div className="flex justify-between items-start mb-2">
+                              <Tag
+                                color={getFeedbackColor(feedback.feedbackType)}
+                              >
+                                {FeedbackTypeLabels[feedback.feedbackType]}
+                              </Tag>
+                              {feedback.rating && (
+                                <Text type="secondary" className="text-sm">
+                                  {feedback.rating}/5 ⭐
+                                </Text>
+                              )}
+                            </div>
+                            {feedback.notes && (
+                              <Text className="text-sm">{feedback.notes}</Text>
+                            )}
+                            <div className="mt-2 text-xs text-gray-500">
+                              {dayjs(feedback.collectedAt).format(
+                                "DD/MM/YYYY HH:mm"
+                              )}
+                              {feedback.collectedByName &&
+                                ` - ${feedback.collectedByName}`}
+                            </div>
+                            {feedback.requiresReService && (
+                              <Tag color="red" className="mt-2">
+                                Yêu cầu xử lý lại
+                              </Tag>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <Text type="secondary" className="text-sm">
+                      Chưa có feedback
+                    </Text>
+                  )}
+                </div>
+                {/* Delivery Info Section */}
+                {order?.deliveryInfo && (
+                  <div className="mt-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <Text strong>Thông tin giao hàng:</Text>
+                      <Button
+                        size="small"
+                        onClick={() => setDeliveryModalVisible(true)}
+                      >
+                        Cập nhật
+                      </Button>
+                    </div>
+                    <div className="mt-2 p-3 bg-gray-50 rounded border">
+                      <div className="space-y-2">
+                        <div>
+                          <Text strong>Phương thức: </Text>
+                          <Tag>
+                            {order.deliveryInfo.method === DeliveryMethod.SHIP
+                              ? "Gửi ship"
+                              : order.deliveryInfo.method ===
+                                DeliveryMethod.PICKUP
+                              ? "Khách qua lấy"
+                              : "Lưu kho"}
+                          </Tag>
+                        </div>
+                        {order.deliveryInfo.shippingAddress && (
+                          <div>
+                            <Text strong>Địa chỉ: </Text>
+                            <Text>{order.deliveryInfo.shippingAddress}</Text>
+                          </div>
+                        )}
+                        {order.deliveryInfo.trackingNumber && (
+                          <div>
+                            <Text strong>Mã vận đơn: </Text>
+                            <Text>{order.deliveryInfo.trackingNumber}</Text>
+                          </div>
+                        )}
+                        {order.deliveryInfo.storageLocation && (
+                          <div>
+                            <Text strong>Vị trí lưu kho: </Text>
+                            <Text>{order.deliveryInfo.storageLocation}</Text>
+                          </div>
+                        )}
+                        <div>
+                          <Text strong>Trạng thái: </Text>
+                          <Tag
+                            color={
+                              order.deliveryInfo.status === "delivered" ||
+                              order.deliveryInfo.status === "picked_up"
+                                ? "green"
+                                : order.deliveryInfo.status === "in_transit"
+                                ? "blue"
+                                : "default"
+                            }
+                          >
+                            {order.deliveryInfo.status === "pending"
+                              ? "Chờ xử lý"
+                              : order.deliveryInfo.status === "in_transit"
+                              ? "Đang vận chuyển"
+                              : order.deliveryInfo.status === "delivered"
+                              ? "Đã giao"
+                              : order.deliveryInfo.status === "picked_up"
+                              ? "Đã lấy"
+                              : "Đã lưu kho"}
+                          </Tag>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {!order?.deliveryInfo &&
+                  order?.status === OrderStatus.COMPLETED && (
+                    <div className="mt-4">
+                      <Button
+                        type="dashed"
+                        onClick={() => setDeliveryModalVisible(true)}
+                        className="w-full"
+                      >
+                        Thiết lập thông tin giao hàng
+                      </Button>
+                    </div>
+                  )}
+                {/* Appointments Section */}
+                {appointments.length > 0 && (
+                  <div className="mt-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <Text strong>Lịch hẹn liên quan:</Text>
+                      <Button
+                        size="small"
+                        onClick={() => router.push("/customers/appointments")}
+                      >
+                        Xem tất cả
+                      </Button>
+                    </div>
+                    <div className="mt-2 space-y-2">
+                      {appointments.map((appointment) => {
+                        const getStatusColor = (status: AppointmentStatus) => {
+                          switch (status) {
+                            case AppointmentStatus.SCHEDULED:
+                              return "blue";
+                            case AppointmentStatus.CONFIRMED:
+                              return "green";
+                            case AppointmentStatus.COMPLETED:
+                              return "success";
+                            case AppointmentStatus.CANCELLED:
+                              return "default";
+                            case AppointmentStatus.NO_SHOW:
+                              return "red";
+                            default:
+                              return "default";
+                          }
+                        };
+                        return (
+                          <div
+                            key={appointment.id}
+                            className="p-3 bg-blue-50 rounded border border-blue-200"
+                          >
+                            <div className="flex justify-between items-start mb-2">
+                              <Tag color={getStatusColor(appointment.status)}>
+                                {AppointmentStatusLabels[appointment.status]}
+                              </Tag>
+                              <Text type="secondary" className="text-sm">
+                                {dayjs(appointment.scheduledDate).format(
+                                  "DD/MM/YYYY HH:mm"
+                                )}
+                              </Text>
+                            </div>
+                            <div>
+                              <Text strong>Mục đích: </Text>
+                              <Text>{appointment.purpose}</Text>
+                            </div>
+                            {appointment.staffName && (
+                              <div className="mt-1">
+                                <Text strong>Nhân viên: </Text>
+                                <Text>{appointment.staffName}</Text>
+                              </div>
+                            )}
+                            {appointment.notes && (
+                              <div className="mt-1">
+                                <Text strong>Ghi chú: </Text>
+                                <Text className="text-sm">
+                                  {appointment.notes}
+                                </Text>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+                {/* Refund Section */}
+                {refunds.length > 0 && (
+                  <div className="mt-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <Text strong>Yêu cầu hoàn tiền:</Text>
+                      <Button
+                        size="small"
+                        onClick={() => setRefundModalVisible(true)}
+                      >
+                        Tạo yêu cầu mới
+                      </Button>
+                    </div>
+                    <div className="mt-2 space-y-2">
+                      {refunds.map((refund) => (
+                        <div
+                          key={refund.id}
+                          className="p-3 bg-orange-50 rounded border border-orange-200"
+                        >
+                          <div className="flex justify-between items-start mb-2">
+                            <Tag
+                              color={
+                                refund.status === "approved"
+                                  ? "green"
+                                  : refund.status === "rejected"
+                                  ? "red"
+                                  : refund.status === "processed"
+                                  ? "blue"
+                                  : "orange"
+                              }
+                            >
+                              {refund.status === "pending"
+                                ? "Chờ duyệt"
+                                : refund.status === "approved"
+                                ? "Đã duyệt"
+                                : refund.status === "rejected"
+                                ? "Từ chối"
+                                : refund.status === "processed"
+                                ? "Đã xử lý"
+                                : "Đã hủy"}
+                            </Tag>
+                            <Text strong className="text-red-600">
+                              {refund.amount.toLocaleString("vi-VN")} VNĐ
+                            </Text>
+                          </div>
+                          <div>
+                            <Text strong>Loại: </Text>
+                            <Text>
+                              {refund.type === "full"
+                                ? "Hoàn tiền toàn bộ"
+                                : refund.type === "partial"
+                                ? "Hoàn tiền một phần"
+                                : "Bồi thường"}
+                            </Text>
+                          </div>
+                          <div className="mt-1">
+                            <Text strong>Lý do: </Text>
+                            <Text>{refund.reason}</Text>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {refunds.length === 0 &&
+                  order?.status === OrderStatus.COMPLETED && (
+                    <div className="mt-4">
+                      <Button
+                        type="dashed"
+                        onClick={() => setRefundModalVisible(true)}
+                        className="w-full"
+                      >
+                        Tạo yêu cầu hoàn tiền/Bồi thường
+                      </Button>
+                    </div>
+                  )}
               </Card>
 
               {/* Order Summary */}
@@ -523,14 +1077,22 @@ export default function OrderDetailPage() {
                       </div>
                       <div className="flex justify-between pt-3 border-t border-gray-300">
                         <Text strong className="text-lg">
-                          Còn lại:
+                          {order?.status === OrderStatus.COMPLETED
+                            ? "Trạng thái thanh toán:"
+                            : "Còn lại:"}
                         </Text>
-                        <Text strong className="text-lg text-red-500">
-                          {(
-                            orderSummary.total - (order.depositAmount || 0)
-                          ).toLocaleString("vi-VN")}{" "}
-                          VNĐ
-                        </Text>
+                        {order?.status === OrderStatus.COMPLETED ? (
+                          <Tag color="success" className="text-lg px-3 py-1">
+                            Đã thanh toán
+                          </Tag>
+                        ) : (
+                          <Text strong className="text-lg text-red-500">
+                            {(
+                              orderSummary.total - (order.depositAmount || 0)
+                            ).toLocaleString("vi-VN")}{" "}
+                            VNĐ
+                          </Text>
+                        )}
                       </div>
                     </>
                   )}
@@ -584,21 +1146,126 @@ export default function OrderDetailPage() {
               />
             </div>
             {selectedStatus && selectedStatus !== order?.status && (
-              <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                <Text className="text-blue-700 text-sm">
-                  Trạng thái sẽ được cập nhật từ{" "}
-                  <Tag color={getStatusInfo(order?.status!).color}>
-                    {getStatusInfo(order?.status!).text}
-                  </Tag>{" "}
-                  sang{" "}
-                  <Tag color={getStatusInfo(selectedStatus!).color}>
-                    {getStatusInfo(selectedStatus!).text}
-                  </Tag>
-                </Text>
-              </div>
+              <>
+                <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                  <Text className="text-blue-700 text-sm">
+                    Trạng thái sẽ được cập nhật từ{" "}
+                    <Tag color={getStatusInfo(order?.status!).color}>
+                      {getStatusInfo(order?.status!).text}
+                    </Tag>{" "}
+                    sang{" "}
+                    <Tag color={getStatusInfo(selectedStatus!).color}>
+                      {getStatusInfo(selectedStatus!).text}
+                    </Tag>
+                  </Text>
+                </div>
+                {selectedStatus === OrderStatus.CONFIRMED &&
+                  !canConfirmOrder.canConfirm && (
+                    <Alert
+                      message="Không thể xác nhận đơn hàng"
+                      description={
+                        <div>
+                          <Text strong>
+                            Vui lòng hoàn thành các điều kiện sau:
+                          </Text>
+                          <ul className="mt-2 mb-0 pl-4">
+                            {canConfirmOrder.reasons.map((reason, index) => (
+                              <li key={index}>{reason}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      }
+                      type="warning"
+                      showIcon
+                      className="mt-4"
+                    />
+                  )}
+                {selectedStatus === OrderStatus.ON_HOLD &&
+                  !canMoveToOnHold.canMove && (
+                    <Alert
+                      message="Không thể chuyển sang trạng thái Thanh toán"
+                      description={
+                        <div>
+                          <Text strong>
+                            Vui lòng hoàn thành các điều kiện sau:
+                          </Text>
+                          <ul className="mt-2 mb-0 pl-4">
+                            {canMoveToOnHold.reasons.map((reason, index) => (
+                              <li key={index}>{reason}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      }
+                      type="warning"
+                      showIcon
+                      className="mt-4"
+                    />
+                  )}
+              </>
             )}
           </div>
         </Modal>
+
+        {/* Feedback Modal */}
+        {order && (
+          <Modal
+            title="Thêm Feedback"
+            open={feedbackModalVisible}
+            onCancel={() => setFeedbackModalVisible(false)}
+            footer={null}
+            width={600}
+          >
+            <FeedbackForm
+              orderId={orderCode}
+              orderCode={orderCode}
+              customerName={order.customerName}
+              customerPhone={order.phone}
+              customerId={order.customerCode}
+              onSuccess={() => {
+                setFeedbackModalVisible(false);
+              }}
+              onCancel={() => setFeedbackModalVisible(false)}
+            />
+          </Modal>
+        )}
+
+        {/* Delivery Modal */}
+        {order && (
+          <Modal
+            title="Quản lý giao hàng"
+            open={deliveryModalVisible}
+            onCancel={() => setDeliveryModalVisible(false)}
+            footer={null}
+            width={600}
+          >
+            <DeliveryManager
+              orderCode={orderCode}
+              order={order}
+              onSuccess={() => {
+                setDeliveryModalVisible(false);
+              }}
+            />
+          </Modal>
+        )}
+
+        {/* Refund Modal */}
+        {order && (
+          <Modal
+            title="Quản lý hoàn tiền/Bồi thường"
+            open={refundModalVisible}
+            onCancel={() => setRefundModalVisible(false)}
+            footer={null}
+            width={600}
+          >
+            <RefundManager
+              orderCode={orderCode}
+              orderTotalAmount={order.totalAmount || 0}
+              onSuccess={() => {
+                setRefundModalVisible(false);
+              }}
+            />
+          </Modal>
+        )}
       </div>
     </WrapperContent>
   );

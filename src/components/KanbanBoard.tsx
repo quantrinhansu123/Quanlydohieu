@@ -16,6 +16,7 @@ import {
   FirebaseWorkflowData,
   OrderStatus,
 } from "@/types/order";
+import { WarrantyClaimStatus, type WarrantyClaim } from "@/types/warrantyClaim";
 import { PlusOutlined } from "@ant-design/icons";
 import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
 import { App, Badge, Empty, Typography } from "antd";
@@ -29,14 +30,34 @@ const { Text, Title } = Typography;
 // Firebase update function
 const updateOrderInFirebase = async (
   orderCode: string,
-  updates: Partial<FirebaseOrderData>
+  updates: Partial<FirebaseOrderData>,
+  type: "order" | "warranty_claim" = "order"
 ) => {
   try {
-    const orderRef = ref(database, `xoxo/orders/${orderCode}`);
+    const path =
+      type === "warranty_claim"
+        ? `xoxo/warranty_claims/${orderCode}`
+        : `xoxo/orders/${orderCode}`;
+    const orderRef = ref(database, path);
+
+    // Map order status back to warranty claim status if needed
+    if (type === "warranty_claim" && updates.status) {
+      const statusMap: Record<OrderStatus, WarrantyClaimStatus> = {
+        [OrderStatus.PENDING]: WarrantyClaimStatus.PENDING,
+        [OrderStatus.CONFIRMED]: WarrantyClaimStatus.CONFIRMED,
+        [OrderStatus.IN_PROGRESS]: WarrantyClaimStatus.IN_PROGRESS,
+        [OrderStatus.ON_HOLD]: WarrantyClaimStatus.ON_HOLD,
+        [OrderStatus.COMPLETED]: WarrantyClaimStatus.COMPLETED,
+        [OrderStatus.REFUND]: WarrantyClaimStatus.CANCELLED,
+        [OrderStatus.CANCELLED]: WarrantyClaimStatus.CANCELLED,
+      };
+      updates.status = statusMap[updates.status as OrderStatus] as any;
+    }
+
     await update(orderRef, updates);
-    console.log("✅ Updated order in Firebase:", orderCode, updates);
+    console.log("✅ Updated in Firebase:", orderCode, updates);
   } catch (error) {
-    console.error("❌ Failed to update order in Firebase:", error);
+    console.error("❌ Failed to update in Firebase:", error);
     throw error;
   }
 };
@@ -67,6 +88,8 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
   // Sử dụng useRealtimeList để lấy dữ liệu từ Firebase
   const { data: ordersData, isLoading: ordersLoading } =
     useRealtimeList<FirebaseOrderData>("xoxo/orders");
+  const { data: warrantyClaimsData, isLoading: warrantyClaimsLoading } =
+    useRealtimeList<WarrantyClaim>("xoxo/warranty_claims");
   console.log("ordersData:", ordersData);
   const { data: membersData, isLoading: membersLoading } =
     useRealtimeList<FirebaseStaff>("xoxo/members");
@@ -107,6 +130,7 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
         id: item.id,
         ...item.data,
         products: item.data?.products || {},
+        type: "order" as const,
       };
 
       // Calculate total amount if missing
@@ -121,9 +145,58 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
           productTotal + (order.shippingFee || 0) - (order.discount || 0);
       }
 
-      return order as FirebaseOrderData & { id: string };
+      return order as FirebaseOrderData & { id: string; type: "order" };
     });
   }, [ordersData]);
+
+  // Convert warranty claims to order-like format for Kanban
+  const warrantyClaimsAsOrders = useMemo(() => {
+    if (!warrantyClaimsData || warrantyClaimsData.length === 0) return [];
+
+    return warrantyClaimsData.map((item) => {
+      // Handle WithId format: { id, data }
+      const claim: WarrantyClaim = item.data;
+      // Map warranty claim status to order status for kanban display
+      const statusMap: Record<WarrantyClaimStatus, OrderStatus> = {
+        [WarrantyClaimStatus.PENDING]: OrderStatus.PENDING,
+        [WarrantyClaimStatus.CONFIRMED]: OrderStatus.CONFIRMED,
+        [WarrantyClaimStatus.IN_PROGRESS]: OrderStatus.IN_PROGRESS,
+        [WarrantyClaimStatus.ON_HOLD]: OrderStatus.ON_HOLD,
+        [WarrantyClaimStatus.COMPLETED]: OrderStatus.COMPLETED,
+        [WarrantyClaimStatus.CANCELLED]: OrderStatus.CANCELLED,
+      };
+
+      return {
+        id: item.id,
+        code: claim.code,
+        customerName: claim.customerName,
+        phone: claim.phone,
+        email: claim.email,
+        address: claim.address,
+        customerSource: claim.customerSource,
+        customerCode: claim.customerCode,
+        orderDate: claim.orderDate,
+        deliveryDate: claim.deliveryDate,
+        createdAt: claim.createdAt,
+        updatedAt: claim.updatedAt,
+        createdBy: claim.createdBy,
+        createdByName: claim.createdByName,
+        consultantId: claim.consultantId,
+        consultantName: claim.consultantName,
+        notes: claim.notes,
+        issues: claim.issues,
+        products: claim.products || {},
+        status: statusMap[claim.status] || OrderStatus.PENDING,
+        totalAmount: claim.totalAmount || 0,
+        type: "warranty_claim" as const,
+        originalOrderCode: claim.originalOrderCode,
+      } as FirebaseOrderData & {
+        id: string;
+        type: "warranty_claim";
+        originalOrderCode: string;
+      };
+    });
+  }, [warrantyClaimsData]);
 
   console.log("🔍 Debug Firebase Data:");
   console.log("orders length:", orders.length);
@@ -160,8 +233,10 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
     return workflowMap;
   }, [workflowsData]);
 
-  // Use orders directly instead of local state for better performance
-  const workingOrders = orders;
+  // Merge orders and warranty claims
+  const workingOrders = useMemo(() => {
+    return [...orders, ...warrantyClaimsAsOrders];
+  }, [orders, warrantyClaimsAsOrders]);
 
   // Get unique members members
   const allStaff = useMemo(() => {
@@ -244,25 +319,73 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
         source.droppableId === OrderStatus.PENDING ||
         destination.droppableId === OrderStatus.PENDING
       ) {
-        message.warning("Đơn hàng này chưa thanh toán cọc!");
+        message.warning("Đơn hàng này chưa được xác nhận!");
         return;
       }
 
       const newStatus = destination.droppableId as OrderStatus;
 
+      // Find the order/claim to determine its type
+      const item = workingOrders.find((o) => o.id === draggableId);
+      if (!item) {
+        message.error("Không tìm thấy đơn hàng!");
+        return;
+      }
+
+      // Check if all workflows are completed before moving to ON_HOLD
+      if (newStatus === OrderStatus.ON_HOLD) {
+        const allWorkflowsCompleted = (() => {
+          if (!item.products || Object.keys(item.products).length === 0) {
+            return true; // No products means no workflows to check
+          }
+
+          // Check all workflows in all products
+          for (const product of Object.values(item.products)) {
+            if (
+              !product.workflows ||
+              Object.keys(product.workflows).length === 0
+            ) {
+              continue; // No workflows in this product
+            }
+
+            // Check if all workflows in this product are done
+            for (const workflow of Object.values(product.workflows)) {
+              if (!workflow.isDone) {
+                return false; // Found an incomplete workflow
+              }
+            }
+          }
+
+          return true; // All workflows are completed
+        })();
+
+        if (!allWorkflowsCompleted) {
+          message.warning(
+            "Không thể chuyển sang trạng thái Thanh toán. Vui lòng hoàn thành tất cả các công đoạn trước!"
+          );
+          return;
+        }
+      }
+
+      const itemType = (item as any)?.type || "order";
+
       try {
         // Update in Firebase immediately
-        await updateOrderInFirebase(draggableId, {
-          status: newStatus,
-        });
-        console.log("✅ Successfully moved order to", newStatus);
+        await updateOrderInFirebase(
+          draggableId,
+          {
+            status: newStatus,
+          },
+          itemType as "order" | "warranty_claim"
+        );
+        console.log("✅ Successfully moved to", newStatus);
       } catch (error) {
-        message.error("Không thể di chuyển đơn hàng. Vui lòng thử lại.");
-        console.error("❌ Failed to update order:", error);
+        message.error("Không thể di chuyển. Vui lòng thử lại.");
+        console.error("❌ Failed to update:", error);
         // Could show error message to user here
       }
     },
-    [message]
+    [message, workingOrders]
   );
 
   const handleEditOrder = (
@@ -277,10 +400,18 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
     updatedOrder: Partial<FirebaseOrderData>
   ) => {
     try {
-      await updateOrderInFirebase(orderCode, updatedOrder);
-      console.log("✅ Order saved to Firebase successfully");
+      // Find the order/claim to determine its type
+      const item = workingOrders.find((o) => o.id === orderCode);
+      const itemType = (item as any)?.type || "order";
+
+      await updateOrderInFirebase(
+        orderCode,
+        updatedOrder,
+        itemType as "order" | "warranty_claim"
+      );
+      console.log("✅ Saved to Firebase successfully");
     } catch (error) {
-      console.error("❌ Failed to save order:", error);
+      console.error("❌ Failed to save:", error);
     }
   };
 
@@ -293,6 +424,7 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
     <WrapperContent<FirebaseOrderData>
       isLoading={
         ordersLoading ||
+        warrantyClaimsLoading ||
         membersLoading ||
         workflowsLoading ||
         departmentsLoading
@@ -339,8 +471,12 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
                 { value: OrderStatus.IN_PROGRESS, label: "Sản xuất" },
                 { value: OrderStatus.ON_HOLD, label: "Thanh toán" },
                 { value: OrderStatus.COMPLETED, label: "CSKH" },
-                { value: OrderStatus.CANCELLED, label: "Huỷ" },
               ],
+            },
+            {
+              name: "createdAt",
+              label: "Ngày tạo",
+              type: "dateRange",
             },
           ],
         },

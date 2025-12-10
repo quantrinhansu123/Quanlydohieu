@@ -42,11 +42,30 @@ export const FilterList: React.FC<FilterListProps> = ({
       key: string;
       value: any;
     }[] = [];
+
     Object.entries(values).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== "") {
+      if (value === undefined || value === null || value === "") return;
+
+      const fieldDef = fields.find((f) => f.name === key);
+      if (fieldDef?.type === "dateRange" && Array.isArray(value)) {
+        const [from, to] = value;
+        payload.push({
+          key,
+          value: {
+            from: from?.toDate ? from.toDate() : from,
+            to: to?.toDate ? to.toDate() : to,
+          },
+        });
+      } else if (fieldDef?.type === "date") {
+        payload.push({
+          key,
+          value: value?.toDate ? value.toDate() : value,
+        });
+      } else {
         payload.push({ key, value });
       }
     });
+
     onApplyFilter(payload);
     onCancel();
   };

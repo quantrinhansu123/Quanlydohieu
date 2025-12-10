@@ -42,12 +42,4 @@ export const columnsKanban = [
     description: "Chăm sóc khách hàng (Completed)",
     status: OrderStatus.COMPLETED,
   },
-  {
-    key: OrderStatus.CANCELLED,
-    title: "Huỷ",
-    color: "#ff4d4f",
-    bgColor: "#fff2f0",
-    description: "Đơn hàng bị huỷ (Cancelled)",
-    status: OrderStatus.CANCELLED,
-  },
 ];
