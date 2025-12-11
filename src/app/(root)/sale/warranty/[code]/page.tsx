@@ -315,11 +315,12 @@ export default function WarrantyClaimDetailPage() {
                 },
               ]
             : []),
-          ...(claim?.status !== WarrantyClaimStatus.COMPLETED
+          ...(claim?.status !== WarrantyClaimStatus.COMPLETED 
             ? [
                 {
                   name: "Cập nhật trạng thái",
                   icon: <SaveOutlined />,
+                  can: true,
                   type: "primary" as const,
                   onClick: () => setStatusModalVisible(true),
                 },
@@ -327,6 +328,7 @@ export default function WarrantyClaimDetailPage() {
                   name: "Chỉnh sửa",
                   icon: <EditOutlined />,
                   type: "default" as const,
+                  can: true,
                   onClick: () =>
                     router.push(`/sale/warranty/${claimCode}/update`),
                 },

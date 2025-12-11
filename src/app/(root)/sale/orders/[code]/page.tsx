@@ -600,13 +600,15 @@ export default function OrderDetailPage() {
                 },
               ]
             : []),
-          ...(order?.status !== OrderStatus.COMPLETED
+          ...(order?.status !== OrderStatus.COMPLETED &&
+          order?.status !== OrderStatus.CANCELLED &&
+          order?.status !== OrderStatus.REFUND
             ? [
                 {
                   name: "Cập nhật trạng thái",
                   icon: <SaveOutlined />,
                   type: "primary" as const,
-                  can: true,
+                  can: order?.status !== OrderStatus.PENDING,
                   onClick: () => setStatusModalVisible(true),
                 },
                 {
