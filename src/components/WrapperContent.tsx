@@ -292,7 +292,7 @@ const RightControls: React.FC<RightControlsProps> = ({
     if (a.type === "primary" && b.type !== "primary") return 1;
     if (a.type !== "primary" && b.type === "primary") return -1;
     return 0;
-  });
+  }).filter((buttonEnd) => buttonEnd.can);
 
   if (isMobile) {
     return (
@@ -329,6 +329,7 @@ const RightControls: React.FC<RightControlsProps> = ({
 
         {sortedEnds.map((buttonEnd, index) => {
           if (!buttonEnd.can) return null;
+          console.log(buttonEnd,'111111111111111');
           return (
             <Tooltip key={index} title={buttonEnd.name}>
               <span>

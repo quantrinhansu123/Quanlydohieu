@@ -459,7 +459,7 @@ export default function WarrantyPage() {
         },
         buttonEnds: [
           {
-            can: activeTab === "claims",
+            can: true,
             type: "primary",
             name: "Tạo phiếu bảo hành",
             icon: <PlusOutlined />,

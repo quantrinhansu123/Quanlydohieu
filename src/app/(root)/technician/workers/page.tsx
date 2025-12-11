@@ -1,16 +1,14 @@
 "use client";
 
 import CommonTable, { PropRowDetails } from "@/components/CommonTable";
-import { FilterList } from "@/components/FilterList";
+import WrapperContent from "@/components/WrapperContent";
 import useFilter from "@/hooks/useFilter";
-import { useIsMobile } from "@/hooks/useIsMobile";
 import { DepartmentService, IDepartment } from "@/services/departmentService";
 import { MemberService } from "@/services/memberService";
 import { ROLES } from "@/types/enum";
 import { IMembers } from "@/types/members";
-import { ClearOutlined, FilterOutlined } from "@ant-design/icons";
 import type { TableColumnsType } from "antd";
-import { Button, Drawer, Form, Tag, Typography } from "antd";
+import { Tag, Typography } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
@@ -112,15 +110,10 @@ const WorkersPage = () => {
   const [workers, setWorkers] = useState<IMembers[]>([]);
   const [departments, setDepartments] = useState<IDepartment[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filterVisible, setFilterVisible] = useState(false);
-  const [form] = Form.useForm();
-  const isMobile = useIsMobile();
   const { query, applyFilter, updateQueries, reset } = useFilter();
 
   // Apply filters
   let filteredWorkers = applyFilter(workers);
-  console.log(query, filteredWorkers, workers);
-  // Filter by department if selected
 
   // Load data
   useEffect(() => {
@@ -140,13 +133,6 @@ const WorkersPage = () => {
       unsubscribeDepartments();
     };
   }, []);
-
-  // Sync form values with query when filter drawer opens
-  useEffect(() => {
-    if (filterVisible) {
-      form.setFieldsValue(query);
-    }
-  }, [filterVisible, query, form]);
 
   const columns: TableColumnsType<IMembers> = [
     {
@@ -222,46 +208,16 @@ const WorkersPage = () => {
   ];
 
   return (
-    <div>
-      <div className="mb-4 flex justify-between items-center">
-        <div>
-          <h2 className="text-xl font-semibold">Danh sách nhân viên kỹ thuật</h2>
-          <p className="text-gray-500 text-sm mt-1">
-            Hiển thị: {filteredWorkers.length} / {workers.length} thợ nghề
-          </p>
-        </div>
-        <div className="flex gap-2">
-          {Object.keys(query).length > 0 && (
-            <Button
-              icon={<ClearOutlined />}
-              onClick={() => {
-                reset();
-                form.resetFields();
-              }}
-            >
-              Xóa bộ lọc
-            </Button>
-          )}
-          <Button
-            icon={<FilterOutlined />}
-            onClick={() => setFilterVisible(true)}
-          >
-            Bộ lọc
-          </Button>
-        </div>
-      </div>
-
-      <Drawer
-        title="Bộ lọc"
-        placement="right"
-        onClose={() => setFilterVisible(false)}
-        open={filterVisible}
-        size={isMobile ? "default" : "large"}
-      >
-        <FilterList
-          form={form}
-          isMobile={isMobile}
-          fields={[
+    <WrapperContent
+      isLoading={loading}
+      isEmpty={!loading && filteredWorkers.length === 0}
+      header={{
+        searchInput: {
+          placeholder: "Tìm kiếm nhân viên kỹ thuật...",
+          filterKeys: ["code", "name", "email", "phone"],
+        },
+        filters: {
+          fields: [
             {
               label: "Phòng ban",
               name: "departments",
@@ -280,19 +236,13 @@ const WorkersPage = () => {
                 { label: "Ngưng hoạt động", value: "false" },
               ],
             },
-          ]}
-          onApplyFilter={(params) => {
-            updateQueries(params);
-            setFilterVisible(false);
-          }}
-          onReset={() => {
-            reset();
-            form.resetFields();
-          }}
-          onCancel={() => setFilterVisible(false)}
-        />
-      </Drawer>
-
+          ],
+          query,
+          onApplyFilter: updateQueries,
+          onReset: reset,
+        },
+      }}
+    >
       <CommonTable
         dataSource={filteredWorkers}
         columns={columns}
@@ -301,7 +251,7 @@ const WorkersPage = () => {
         paging={true}
         rank={true}
       />
-    </div>
+    </WrapperContent>
   );
 };
 

@@ -65,6 +65,7 @@ const ProtectedRoutes = ({ children }: { children: React.ReactNode }) => {
                 ? normalizedAllowed.slice(0, -1)
                 : normalizedAllowed;
 
+                console.log(cleanAllowed,'222222222222')
             // Exact match
             if (cleanPath === cleanAllowed) return true;
 

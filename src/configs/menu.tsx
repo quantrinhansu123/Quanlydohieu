@@ -81,7 +81,7 @@ export const allMenuItems: Array<{
       {
         icon: DollarOutlined,
         title: "Hoàn tiền",
-        href: "/customers/refunds",
+        href: "/censor/refunds",
       },
     ],
   },

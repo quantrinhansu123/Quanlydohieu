@@ -1,24 +1,17 @@
 "use client";
 
 import CommonTable, { PropRowDetails } from "@/components/CommonTable";
-import { FilterList } from "@/components/FilterList";
+import WrapperContent from "@/components/WrapperContent";
 import useFilter from "@/hooks/useFilter";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { DepartmentService, IDepartment } from "@/services/departmentService";
 import { IWorkflow, WorkflowCRUDService } from "@/services/workflowCRUDService";
 import { genCode } from "@/utils/genCode";
-import {
-  ClearOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  FilterOutlined,
-  PlusOutlined,
-} from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import type { TableColumnsType } from "antd";
 import {
   App,
   Button,
-  Drawer,
   Form,
   Input,
   Modal,
@@ -191,9 +184,7 @@ const WorkflowPage = () => {
   const [departments, setDepartments] = useState<IDepartment[]>([]);
   const [loading, setLoading] = useState(true);
   const [formVisible, setFormVisible] = useState(false);
-  const [filterVisible, setFilterVisible] = useState(false);
-  const [filterForm] = Form.useForm();
-  const isMobile = useIsMobile();
+  const { isAdmin } = useIsAdmin();
   const [editingWorkflow, setEditingWorkflow] = useState<
     IWorkflow | undefined
   >();
@@ -217,13 +208,6 @@ const WorkflowPage = () => {
       unsubscribeDepartments();
     };
   }, []);
-
-  // Sync filter form values with query when filter drawer opens
-  useEffect(() => {
-    if (filterVisible) {
-      filterForm.setFieldsValue(query);
-    }
-  }, [filterVisible, query, filterForm]);
 
   const handleDelete = async (code: string) => {
     try {
@@ -298,87 +282,55 @@ const WorkflowPage = () => {
   ];
 
   return (
-    <div>
-      <div className="mb-4 flex justify-between items-center">
-        <div>
-          <h2 className="text-xl font-semibold">Danh sách quy trình</h2>
-          <p className="text-gray-500 text-sm mt-1">
-            Hiển thị: {filteredWorkflows.length} / {workflows.length} quy trình
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            icon={<FilterOutlined />}
-            onClick={() => setFilterVisible(true)}
-          >
-            Bộ lọc
-          </Button>
-          {Object.keys(query).length > 0 && (
-            <Button
-              icon={<ClearOutlined />}
-              onClick={() => {
-                reset();
-                filterForm.resetFields();
-              }}
-            >
-              Xóa bộ lọc
-            </Button>
-          )}
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => {
-              setEditingWorkflow(undefined);
-              setFormVisible(true);
-            }}
-          >
-            Thêm công đoạn
-          </Button>
-        </div>
-      </div>
-
-      <Drawer
-        title="Bộ lọc"
-        placement="right"
-        onClose={() => setFilterVisible(false)}
-        open={filterVisible}
-        size={isMobile ? "default" : "large"}
-      >
-        <FilterList
-          form={filterForm}
-          isMobile={isMobile}
-          fields={[
+    <>
+      <WrapperContent
+        isLoading={loading}
+        isEmpty={!loading && filteredWorkflows.length === 0}
+        header={{
+          searchInput: {
+            placeholder: "Tìm kiếm quy trình...",
+            filterKeys: ["code", "name"],
+          },
+          filters: {
+            fields: [
+              {
+                label: "Phòng ban",
+                name: "department",
+                type: "select",
+                options: departments.map((dept) => ({
+                  label: dept.name,
+                  value: dept.code,
+                })),
+              },
+            ],
+            query,
+            onApplyFilter: updateQueries,
+            onReset: reset,
+          },
+          buttonEnds: [
             {
-              label: "Phòng ban",
-              name: "department",
-              type: "select",
-              options: departments.map((dept) => ({
-                label: dept.name,
-                value: dept.code,
-              })),
+              can: isAdmin,
+              type: "primary",
+              name: "Thêm công đoạn",
+              icon: <PlusOutlined />,
+              onClick: () => {
+                setEditingWorkflow(undefined);
+                setFormVisible(true);
+              },
             },
-          ]}
-          onApplyFilter={(params) => {
-            updateQueries(params);
-            setFilterVisible(false);
-          }}
-          onReset={() => {
-            reset();
-            filterForm.resetFields();
-          }}
-          onCancel={() => setFilterVisible(false)}
+          ],
+        }}
+      >
+        <CommonTable
+          rowKey="code"
+          dataSource={filteredWorkflows}
+          columns={columns}
+          loading={loading}
+          DrawerDetails={WorkflowDetails}
+          paging={true}
+          rank={true}
         />
-      </Drawer>
-
-      <CommonTable
-        rowKey="code"
-        dataSource={filteredWorkflows}
-        columns={columns}
-        loading={loading}
-        DrawerDetails={WorkflowDetails}
-        paging={true}
-        rank={true}
-      />
+      </WrapperContent>
 
       <WorkflowForm
         workflow={editingWorkflow}
@@ -391,7 +343,7 @@ const WorkflowPage = () => {
           // Data will be updated through realtime listener
         }}
       />
-    </div>
+    </>
   );
 };
 

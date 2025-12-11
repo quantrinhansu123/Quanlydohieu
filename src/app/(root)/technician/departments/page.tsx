@@ -1,7 +1,9 @@
 "use client";
 
 import CommonTable, { PropRowDetails } from "@/components/CommonTable";
+import WrapperContent from "@/components/WrapperContent";
 import useFilter from "@/hooks/useFilter";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { DepartmentService, IDepartment } from "@/services/departmentService";
 import { genCode } from "@/utils/genCode";
 import {
@@ -145,6 +147,8 @@ const DepartmentPage = () => {
   const [departments, setDepartments] = useState<IDepartment[]>([]);
   const [loading, setLoading] = useState(true);
   const [formVisible, setFormVisible] = useState(false);
+  const { isAdmin } = useIsAdmin();
+  console.log(isAdmin,'111111111111111');
   const [editingDepartment, setEditingDepartment] = useState<
     IDepartment | undefined
   >();
@@ -245,30 +249,45 @@ const DepartmentPage = () => {
   ];
 
   return (
-    <div>
-      <div className="mb-4 flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Danh sách phòng kỹ thuật</h2>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => {
-            setEditingDepartment(undefined);
-            setFormVisible(true);
-          }}
-        >
-          Thêm phòng ban
-        </Button>
-      </div>
-
-      <CommonTable
-        rowKey="code"
-        dataSource={filteredDepartments.reverse()}
-        columns={columns}
-        loading={loading}
-        DrawerDetails={DepartmentDetails}
-        paging={true}
-        rank={true}
-      />
+    <>
+      <WrapperContent
+        isLoading={loading}
+        isEmpty={!loading && filteredDepartments.length === 0}
+        header={{
+          searchInput: {
+            placeholder: "Tìm kiếm phòng ban...",
+            filterKeys: ["code", "name"],
+          },
+          filters: {
+            fields: [],
+            query,
+            onApplyFilter: updateQueries,
+            onReset: reset,
+          },
+          buttonEnds: [
+            {
+              can: isAdmin,
+              type: "primary",
+              name: "Thêm phòng ban",
+              icon: <PlusOutlined />,
+              onClick: () => {
+                setEditingDepartment(undefined);
+                setFormVisible(true);
+              },
+            },
+          ],
+        }}
+      >
+        <CommonTable
+          rowKey="code"
+          dataSource={filteredDepartments.reverse()}
+          columns={columns}
+          loading={loading}
+          DrawerDetails={DepartmentDetails}
+          paging={true}
+          rank={true}
+        />
+      </WrapperContent>
 
       <DepartmentForm
         department={editingDepartment}
@@ -281,7 +300,7 @@ const DepartmentPage = () => {
           // Data will be updated through realtime listener
         }}
       />
-    </div>
+    </>
   );
 };
 

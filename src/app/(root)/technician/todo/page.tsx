@@ -289,7 +289,6 @@ export default function TechnicianTodoPage() {
       }
       isLoading={ordersLoading || warrantyClaimsLoading}
       header={{
-        buttonBackTo: "/technician",
         searchInput: {
           placeholder: "Tìm kiếm theo mã đơn, khách hàng, sản phẩm...",
           filterKeys: [
