@@ -4,7 +4,7 @@ import { useAuth, UseAuthResult } from "@/firebase/hooks/useAuth";
 import { Spin } from "antd";
 import { createContext, ReactNode, useContext } from "react";
 
-const AuthContext = createContext<UseAuthResult | undefined>(undefined);
+const AuthContext = createContext<any | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const auth = useAuth();
