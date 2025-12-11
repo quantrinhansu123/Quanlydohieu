@@ -13,7 +13,10 @@ import type { CustomerFeedback } from "@/types/feedback";
 import { FirebaseOrderData } from "@/types/order";
 import type { RefundRequest } from "@/types/refund";
 import type { WarrantyRecord } from "@/types/warranty";
-import type { WarrantyClaim } from "@/types/warrantyClaim";
+import {
+  WarrantyClaimStatusLabels,
+  type WarrantyClaim,
+} from "@/types/warrantyClaim";
 import {
   AppstoreOutlined,
   CheckCircleOutlined,
@@ -1295,14 +1298,14 @@ export default function DashboardPage() {
                     </Card>
                   </Col>
                   <Col xs={24} lg={8}>
-                    <Card
+                    <div className="space-y-4 flex flex-col gap-4"><Card
                       title={
                         <Space>
                           <WarningOutlined />
                           <span>Khiếu nại bảo hành</span>
                         </Space>
                       }
-                      className="mb-4 shadow-sm"
+                      className="shadow-sm"
                     >
                       <Space vertical size="middle" className="w-full">
                         {filteredWarrantyClaims.slice(0, 5).map((claim) => (
@@ -1322,7 +1325,8 @@ export default function DashboardPage() {
                                   {claim.code || claim.id}
                                 </Text>
                                 <Tag color="orange" icon={<WarningOutlined />}>
-                                  {claim.status || "Chờ xử lý"}
+                                  {WarrantyClaimStatusLabels[claim.status] ||
+                                    "Chờ xử lý"}
                                 </Tag>
                               </div>
                               <Text className="text-xs text-gray-600 mt-1">
@@ -1339,6 +1343,7 @@ export default function DashboardPage() {
                         )}
                       </Space>
                     </Card>
+
                     <Card
                       title={
                         <Space>
@@ -1393,7 +1398,7 @@ export default function DashboardPage() {
                           <Empty description="Không có feedback tiêu cực" />
                         )}
                       </Space>
-                    </Card>
+                    </Card></div>
                   </Col>
                 </Row>
               ),
