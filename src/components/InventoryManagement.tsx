@@ -6,11 +6,11 @@ import useFilter from "@/hooks/useFilter";
 import { CategoryService } from "@/services/categoryService";
 import { InventoryService } from "@/services/inventoryService";
 import { Category } from "@/types/category";
-import { InventorySettings, Material } from "@/types/inventory";
+import { Unit, unitOptions } from "@/types/enum";
+import { Material } from "@/types/inventory";
 import {
   DeleteOutlined,
   EditOutlined,
-  FileExcelOutlined,
   MinusOutlined,
   PlusOutlined,
   WarningOutlined,
@@ -19,6 +19,7 @@ import type { TableColumnsType } from "antd";
 import {
   Button,
   Card,
+  Checkbox,
   Col,
   DatePicker,
   Descriptions,
@@ -27,6 +28,7 @@ import {
   InputNumber,
   Modal,
   Progress,
+  Radio,
   Row,
   Select,
   Space,
@@ -41,6 +43,12 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const { Text } = Typography;
+
+// Helper function to get unit label from unit value
+const getUnitLabel = (unitValue: string): string => {
+  const unitOption = unitOptions.find((opt) => opt.value === unitValue);
+  return unitOption?.label || unitValue;
+};
 
 const isLongStock = (lastUpdated?: string, alertDays: number = 90): boolean => {
   if (!lastUpdated) return false;
@@ -79,7 +87,9 @@ const createMaterialDetailDrawer = (categories: Category[]) => {
           <Descriptions.Item label="Nhà cung cấp">
             {data.supplier || "Chưa có thông tin"}
           </Descriptions.Item>
-          <Descriptions.Item label="Đơn vị">{data.unit}</Descriptions.Item>
+          <Descriptions.Item label="Đơn vị">
+            {getUnitLabel(data.unit)}
+          </Descriptions.Item>
           {data.importPrice && (
             <Descriptions.Item label="Giá nhập">
               <Text strong>
@@ -87,7 +97,7 @@ const createMaterialDetailDrawer = (categories: Category[]) => {
                   style: "currency",
                   currency: "VND",
                 }).format(data.importPrice)}
-                /{data.unit}
+                /{getUnitLabel(data.unit)}
               </Text>
             </Descriptions.Item>
           )}
@@ -98,7 +108,7 @@ const createMaterialDetailDrawer = (categories: Category[]) => {
                 className={`text-lg ${isLowStock ? "text-red-600" : ""}`}
               >
                 {isLowStock && <WarningOutlined className="mr-2" />}
-                {data.stockQuantity} {data.unit}
+                {data.stockQuantity} {getUnitLabel(data.unit)}
               </Text>
               <Progress
                 percent={Math.round(
@@ -107,12 +117,12 @@ const createMaterialDetailDrawer = (categories: Category[]) => {
                 status={isLowStock ? "exception" : "normal"}
               />
               <Text className="text-xs text-gray-500">
-                Mức tối thiểu: {data.minThreshold} {data.unit} / Tối đa:{" "}
-                {data.maxCapacity} {data.unit}
+                Mức tối thiểu: {data.minThreshold} {getUnitLabel(data.unit)} /
+                Tối đa: {data.maxCapacity} {getUnitLabel(data.unit)}
               </Text>
             </Space>
           </Descriptions.Item>
-          <Descriptions.Item label="Cập nhật lần cuối">
+          <Descriptions.Item label="Cập nhật">
             {data.lastUpdated
               ? dayjs(data.lastUpdated).format("DD/MM/YYYY")
               : "Chưa cập nhật"}
@@ -136,24 +146,26 @@ export default function InventoryManagement() {
   const router = useRouter();
   const [materials, setMaterials] = useState<Material[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [settings, setSettings] = useState<InventorySettings>({
-    defaultLongStockDays: 90,
-  });
-  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [selectedMaterial, setSelectedMaterial] = useState<Material | null>(
     null
   );
   const [loading, setLoading] = useState(true);
-  const [importForm] = Form.useForm();
+  const [materialInputType, setMaterialInputType] = useState<
+    "new" | "existing"
+  >("new");
   const [exportForm] = Form.useForm();
   const [createForm] = Form.useForm();
   const [editForm] = Form.useForm();
-  const [settingsForm] = Form.useForm();
+
+  const selectedExistingMaterialId = Form.useWatch("materialId", createForm);
+  const hasExistingSelection =
+    materialInputType === "existing" && !!selectedExistingMaterialId;
+  const updateThresholds = Form.useWatch("updateThresholds", createForm);
+  const updateImportPrice = Form.useWatch("updateImportPrice", createForm);
 
   const {
     query,
@@ -169,17 +181,14 @@ export default function InventoryManagement() {
     const loadData = async () => {
       try {
         setLoading(true);
-        const [materialsData, categoriesData, settingsData] = await Promise.all(
+        const [materialsData, categoriesData] = await Promise.all(
           [
             InventoryService.getAllMaterials(),
             CategoryService.getAll(),
-            InventoryService.getSettings(),
           ]
         );
         setMaterials(materialsData);
         setCategories(categoriesData);
-        setSettings(settingsData);
-        settingsForm.setFieldsValue(settingsData);
       } catch (error) {
         console.error("Error loading data:", error);
         message.error("Không thể tải dữ liệu");
@@ -212,29 +221,107 @@ export default function InventoryManagement() {
 
   const filteredMaterials = applyFilter(materials);
 
-  // Handle create
+  // Handle create/import
   const handleCreate = async () => {
     try {
       const values = await createForm.validateFields();
-      const materialData: Omit<Material, "id" | "createdAt" | "updatedAt"> = {
-        name: values.name,
-        category: values.category,
-        stockQuantity: values.stockQuantity || 0,
-        unit: values.unit,
-        minThreshold: values.minThreshold,
-        maxCapacity: values.maxCapacity,
-        supplier: values.supplier,
-        importPrice: values.importPrice,
-        longStockAlertDays: values.longStockAlertDays,
-        lastUpdated: new Date().toISOString().split("T")[0],
-      };
 
-      await InventoryService.createMaterial(materialData);
-      message.success("Tạo vật liệu thành công");
+      if (materialInputType === "existing") {
+        // Nhập kho vật liệu có sẵn
+        const material = materials.find((m) => m.id === values.materialId);
+        if (!material) {
+          message.error("Không tìm thấy vật liệu");
+          return;
+        }
+
+        // Sử dụng giá tùy chỉnh nếu có, nếu không thì dùng giá từ material
+        const price = values.importPrice ?? material.importPrice ?? 0;
+        const totalAmount = values.quantity * price;
+        const shouldUpdateImportPrice = values.updateImportPrice;
+
+        // Create transaction
+        await InventoryService.createTransaction({
+          materialId: material.id,
+          materialName: material.name,
+          type: "import",
+          quantity: values.quantity,
+          unit: material.unit,
+          price: price,
+          totalAmount: totalAmount,
+          date: dayjs(values.importDate).format("YYYY-MM-DD"),
+          supplier: material.supplier || undefined,
+          ...(values.note ? { note: values.note } : {}),
+        });
+
+        // Update import price if provided custom price
+        if (
+          shouldUpdateImportPrice &&
+          values.importPrice !== undefined &&
+          values.importPrice !== null &&
+          values.importPrice !== material.importPrice
+        ) {
+          await InventoryService.updateMaterial(material.id, {
+            importPrice: values.importPrice,
+          });
+        }
+
+        if (values.updateThresholds) {
+          await InventoryService.updateMaterial(material.id, {
+            minThreshold: values.minThreshold,
+            maxCapacity: values.maxCapacity,
+          });
+        }
+
+        message.success(
+          `Đã nhập ${values.quantity} ${getUnitLabel(material.unit)} ${
+            material.name
+          }`
+        );
+      } else {
+        // Tạo vật liệu mới và nhập kho
+        const materialData: Omit<Material, "id" | "createdAt" | "updatedAt"> = {
+          name: values.name,
+          category: values.category,
+          stockQuantity: 0, // Sẽ được cập nhật sau khi nhập kho
+          unit: values.unit,
+          minThreshold: values.minThreshold,
+          maxCapacity: values.maxCapacity,
+          supplier: values.supplier,
+          importPrice: values.importPrice,
+          longStockAlertDays: values.longStockAlertDays,
+          lastUpdated: new Date().toISOString().split("T")[0],
+        };
+
+        const newMaterial = await InventoryService.createMaterial(materialData);
+
+        // Tự động nhập kho với số lượng ban đầu
+        const quantity = values.stockQuantity || values.quantity || 0;
+        const price = values.importPrice || 0;
+        const totalAmount = quantity * price;
+
+        if (quantity > 0) {
+          await InventoryService.createTransaction({
+            materialId: newMaterial.id,
+            materialName: newMaterial.name,
+            type: "import",
+            quantity: quantity,
+            unit: newMaterial.unit,
+            price: price,
+            totalAmount: totalAmount,
+            date: dayjs(values.importDate || new Date()).format("YYYY-MM-DD"),
+            supplier: values.supplier || undefined,
+            ...(values.note ? { note: values.note } : {}),
+          });
+        }
+
+        message.success("Tạo vật liệu và nhập kho thành công");
+      }
+
       setIsCreateModalOpen(false);
       createForm.resetFields();
+      setMaterialInputType("new");
     } catch (error) {
-      console.error("Create failed:", error);
+      console.error("Create/Import failed:", error);
     }
   };
 
@@ -279,53 +366,6 @@ export default function InventoryManagement() {
     }
   };
 
-  // Handle import
-  const handleImport = async () => {
-    try {
-      const values = await importForm.validateFields();
-      const material = materials.find((m) => m.id === values.materialId);
-
-      if (!material) {
-        message.error("Không tìm thấy vật liệu");
-        return;
-      }
-
-      const price = values.price || material.importPrice || 0;
-      const totalAmount = values.quantity * price;
-
-      // Create transaction
-      await InventoryService.createTransaction({
-        materialId: material.id,
-        materialName: material.name,
-        type: "import",
-        quantity: values.quantity,
-        unit: material.unit,
-        price: price,
-        totalAmount: totalAmount,
-        date: dayjs(values.importDate).format("YYYY-MM-DD"),
-        ...(values.supplier || material.supplier
-          ? { supplier: values.supplier || material.supplier }
-          : {}),
-        ...(values.note ? { note: values.note } : {}),
-      });
-
-      // Update import price if provided
-      if (values.price && values.price !== material.importPrice) {
-        await InventoryService.updateMaterial(material.id, {
-          importPrice: values.price,
-        });
-      }
-
-      message.success(
-        `Đã nhập ${values.quantity} ${material.unit} ${material.name}`
-      );
-      setIsImportModalOpen(false);
-      importForm.resetFields();
-    } catch (error) {
-      console.error("Import validation failed:", error);
-    }
-  };
-
   // Handle export
   const handleExport = async () => {
     try {
@@ -360,25 +400,14 @@ export default function InventoryManagement() {
       });
 
       message.success(
-        `Đã xuất ${values.quantity} ${material.unit} ${material.name}`
+        `Đã xuất ${values.quantity} ${getUnitLabel(material.unit)} ${
+          material.name
+        }`
       );
       setIsExportModalOpen(false);
       exportForm.resetFields();
     } catch (error) {
       console.error("Export validation failed:", error);
-    }
-  };
-
-  // Handle settings update
-  const handleSettingsUpdate = async () => {
-    try {
-      const values = await settingsForm.validateFields();
-      await InventoryService.updateSettings(values);
-      setSettings({ ...settings, ...values });
-      message.success("Cập nhật cài đặt thành công");
-      setIsSettingsModalOpen(false);
-    } catch (error) {
-      console.error("Settings update failed:", error);
     }
   };
 
@@ -397,13 +426,7 @@ export default function InventoryManagement() {
       name: "unit",
       label: "Đơn vị",
       type: "select" as const,
-      options: [
-        { label: "m²", value: "m²" },
-        { label: "cuộn", value: "cuộn" },
-        { label: "lít", value: "lít" },
-        { label: "kg", value: "kg" },
-        { label: "cái", value: "cái" },
-      ],
+      options: unitOptions,
     },
   ];
 
@@ -412,10 +435,7 @@ export default function InventoryManagement() {
     (m) => m.stockQuantity < m.minThreshold
   ).length;
   const longStockCount = materials.filter((m) =>
-    isLongStock(
-      m.lastUpdated,
-      m.longStockAlertDays || settings.defaultLongStockDays
-    )
+    isLongStock(m.lastUpdated, m.longStockAlertDays || 30)
   ).length;
 
   const updatedColumns: TableColumnsType<Material> = [
@@ -458,7 +478,7 @@ export default function InventoryManagement() {
           <Space vertical size="small" style={{}}>
             <Text strong className={isLowStock ? "text-red-600" : ""}>
               {isLowStock && <WarningOutlined className="mr-1" />}
-              {record.stockQuantity} {record.unit}
+              {record.stockQuantity} {getUnitLabel(record.unit)}
             </Text>
             <Progress
               percent={Math.round(
@@ -482,7 +502,7 @@ export default function InventoryManagement() {
           ? `${new Intl.NumberFormat("vi-VN", {
               style: "currency",
               currency: "VND",
-            }).format(price)}/${record.unit}`
+            }).format(price)}/${getUnitLabel(record.unit)}`
           : "-";
       },
     },
@@ -500,8 +520,24 @@ export default function InventoryManagement() {
               icon={<PlusOutlined />}
               onClick={(e) => {
                 e.stopPropagation();
-                importForm.setFieldsValue({ materialId: record.id });
-                setIsImportModalOpen(true);
+                setMaterialInputType("existing");
+                createForm.resetFields();
+                createForm.setFieldsValue({
+                  inputType: "existing",
+                  materialId: record.id,
+                  importDate: dayjs(),
+                  updateImportPrice: false,
+                  updateThresholds: false,
+                });
+                const material = materials.find((m) => m.id === record.id);
+                if (material) {
+                  createForm.setFieldsValue({
+                    unit: material.unit,
+                    importPrice: material.importPrice || 0,
+                    supplier: material.supplier || "",
+                  });
+                }
+                setIsCreateModalOpen(true);
               }}
             />
           </Tooltip>
@@ -562,16 +598,16 @@ export default function InventoryManagement() {
             onReset: reset,
           },
           buttonEnds: [
+            // {
+            //   name: "Export Excel",
+            //   icon: <FileExcelOutlined />,
+            //   can: true,
+            //   onClick: () => {
+            //     console.log("Export Excel");
+            //   },
+            // },
             {
-              name: "Export Excel",
-              icon: <FileExcelOutlined />,
-              can: true,
-              onClick: () => {
-                console.log("Export Excel");
-              },
-            },
-            {
-              name: "Thêm vật liệu",
+              name: "Nhập kho",
               icon: <PlusOutlined />,
               type: "primary",
               can: true,
@@ -582,19 +618,6 @@ export default function InventoryManagement() {
                 );
                 setIsCreateModalOpen(true);
                 console.log("Set isCreateModalOpen to true");
-              },
-            },
-            {
-              name: "Nhập kho",
-              icon: <PlusOutlined />,
-              can: true,
-              onClick: () => {
-                console.log(
-                  "Opening import modal, current state:",
-                  isImportModalOpen
-                );
-                setIsImportModalOpen(true);
-                console.log("Set isImportModalOpen to true");
               },
             },
             {
@@ -665,172 +688,466 @@ export default function InventoryManagement() {
           </Card>
         </Col>
       )}
-      {/* Create Material Modal */}
+      {/* Create/Import Material Modal */}
       {isCreateModalOpen && (
         <Modal
-          title="Thêm vật liệu mới"
+          title="Nhập kho vật liệu"
           open={isCreateModalOpen}
           onOk={handleCreate}
           onCancel={() => {
             setIsCreateModalOpen(false);
             createForm.resetFields();
+            setMaterialInputType("new");
           }}
           width={700}
-          okText="Tạo"
+          okText={
+            materialInputType === "existing" ? "Nhập kho" : "Tạo và nhập kho"
+          }
           cancelText="Hủy"
-          destroyOnClose
-          maskClosable={false}
+          destroyOnHidden
         >
           <Form form={createForm} layout="vertical" className="mt-4">
             <Row gutter={16}>
-              <Col span={12}>
+              <Col span={24}>
                 <Form.Item
-                  name="name"
-                  label="Tên vật liệu"
-                  rules={[
-                    { required: true, message: "Vui lòng nhập tên vật liệu" },
-                  ]}
+                  name="inputType"
+                  label="Loại nhập"
+                  initialValue="new"
+                  rules={[{ required: true }]}
                 >
-                  <Input placeholder="Nhập tên vật liệu" />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  name="category"
-                  label="Danh mục"
-                  rules={[
-                    { required: true, message: "Vui lòng chọn danh mục" },
-                  ]}
-                >
-                  <Select
-                    placeholder="Chọn danh mục"
-                    showSearch
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    options={categories.map((cat) => ({
-                      label: cat.name,
-                      value: cat.name,
-                    }))}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item
-                  name="unit"
-                  label="Đơn vị"
-                  rules={[{ required: true, message: "Vui lòng nhập đơn vị" }]}
-                >
-                  <Select
-                    placeholder="Chọn đơn vị"
-                    options={[
-                      { label: "m²", value: "m²" },
-                      { label: "cuộn", value: "cuộn" },
-                      { label: "lít", value: "lít" },
-                      { label: "kg", value: "kg" },
-                      { label: "cái", value: "cái" },
-                    ]}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item
-                  name="minThreshold"
-                  label="Mức tối thiểu"
-                  rules={[
-                    { required: true, message: "Vui lòng nhập mức tối thiểu" },
-                  ]}
-                >
-                  <InputNumber
-                    placeholder="Nhập mức tối thiểu"
-                    style={{
-                      width: "100%",
+                  <Radio.Group
+                    onChange={(e) => {
+                      setMaterialInputType(e.target.value);
+                      createForm.resetFields(["inputType"]);
+                      createForm.setFieldsValue({ inputType: e.target.value });
+                      if (e.target.value === "existing") {
+                        createForm.setFieldsValue({ importDate: dayjs() });
+                      }
                     }}
-                    min={0}
-                  />
+                  >
+                    <Radio value="new">Nhập nguyên liệu mới</Radio>
+                    <Radio value="existing">Nguyên liệu có sẵn</Radio>
+                  </Radio.Group>
                 </Form.Item>
               </Col>
-              <Col span={8}>
-                <Form.Item
-                  name="maxCapacity"
-                  label="Mức tối đa"
-                  rules={[
-                    { required: true, message: "Vui lòng nhập mức tối đa" },
-                  ]}
-                >
-                  <InputNumber
-                    placeholder="Nhập mức tối đa"
-                    style={{
-                      width: "100%",
-                    }}
-                    min={1}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  name="stockQuantity"
-                  label="Số lượng tồn kho ban đầu"
-                  initialValue={0}
-                >
-                  <InputNumber
-                    placeholder="Nhập số lượng"
-                    style={{
-                      width: "100%",
-                    }}
-                    min={0}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item name="importPrice" label="Giá nhập (VND/đơn vị)">
-                  <InputNumber
-                    placeholder="Nhập giá nhập"
-                    style={{
-                      width: "100%",
-                    }}
-                    min={0}
-                    formatter={(value) =>
-                      `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                    }
-                    parser={(value) =>
-                      Number(value?.replace(/\$\s?|(,*)/g, "") || 0) as any
-                    }
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item name="supplier" label="Nhà cung cấp">
-                  <Input placeholder="Nhập nhà cung cấp" />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item name="expiryDate" label="Hạn sử dụng">
-                  <DatePicker
-                    style={{
-                      width: "100%",
-                    }}
-                    format="DD/MM/YYYY"
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  name="longStockAlertDays"
-                  label="Cảnh báo tồn quá lâu (ngày)"
-                  tooltip="Số ngày không có giao dịch để cảnh báo tồn quá lâu"
-                >
-                  <InputNumber
-                    placeholder="Nhập số ngày"
-                    style={{
-                      width: "100%",
-                    }}
-                    min={1}
-                  />
-                </Form.Item>
-              </Col>
+
+              {materialInputType === "existing" ? (
+                <>
+                  <Col span={24}>
+                    <Form.Item
+                      name="materialId"
+                      label="Vật liệu"
+                      rules={[
+                        { required: true, message: "Vui lòng chọn vật liệu" },
+                      ]}
+                    >
+                      <Select
+                        placeholder="Chọn vật liệu"
+                        showSearch={{
+                          filterOption: (
+                            input: string,
+                            option: { label: string } | undefined
+                          ) =>
+                            (option?.label ?? "")
+                              .toLowerCase()
+                              .includes(input.toLowerCase()),
+                        }}
+                        options={materials.map((m) => ({
+                          label: `${m.name} (${m.category}) - Tồn: ${m.stockQuantity} ${m.unit} - ${m.supplier}`,
+                          value: m.id,
+                        }))}
+                        onChange={(value) => {
+                          const material = materials.find(
+                            (m) => m.id === value
+                          );
+                          if (material) {
+                            createForm.setFieldsValue({
+                              unit: material.unit,
+                              importPrice: material.importPrice || 0,
+                              supplier: material.supplier || "",
+                              name: material.name,
+                              category: material.category,
+                              minThreshold: material.minThreshold,
+                              maxCapacity: material.maxCapacity,
+                            });
+                          }
+                        }}
+                      />
+                    </Form.Item>
+                  </Col>
+
+                  <Col span={12}>
+                    <Form.Item
+                      name="quantity"
+                      label="Số lượng"
+                      rules={[
+                        { required: true, message: "Vui lòng nhập số lượng" },
+                        {
+                          type: "number",
+                          min: 1,
+                          message: "Số lượng phải lớn hơn 0",
+                        },
+                      ]}
+                    >
+                      <InputNumber
+                        placeholder="Nhập số lượng"
+                        style={{
+                          width: "100%",
+                        }}
+                        min={1}
+                        disabled={!hasExistingSelection}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item name="unit" label="Đơn vị">
+                      <Input disabled placeholder="Đơn vị" />
+                    </Form.Item>
+                  </Col>
+
+                  <Col span={12}>
+                    <Form.Item name="importPrice" label="Giá nhập (VND/đơn vị)">
+                      <InputNumber
+                        disabled={!hasExistingSelection || !updateImportPrice}
+                        style={{
+                          width: "100%",
+                        }}
+                        formatter={(value) =>
+                          `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                        }
+                        parser={(value) => {
+                          const parsed = Number(value?.replace(/,/g, "") || 0);
+                          return parsed as any;
+                        }}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      name="importDate"
+                      label="Ngày nhập"
+                      rules={[
+                        { required: true, message: "Vui lòng chọn ngày" },
+                      ]}
+                      initialValue={dayjs()}
+                    >
+                      <DatePicker
+                        style={{
+                          width: "100%",
+                        }}
+                        disabled
+                        format="DD/MM/YYYY"
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      name="updateImportPrice"
+                      valuePropName="checked"
+                      initialValue={false}
+                      tooltip="Bật nếu muốn lưu giá nhập tùy chỉnh thành giá nhập mặc định của vật liệu"
+                    >
+                      <Checkbox disabled={!hasExistingSelection}>
+                        Cập nhật giá nhập mặc định
+                      </Checkbox>
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      name="updateThresholds"
+                      valuePropName="checked"
+                      initialValue={false}
+                      tooltip="Bật nếu muốn cập nhật mức tối thiểu / tối đa tồn kho cho vật liệu này"
+                    >
+                      <Checkbox disabled={!hasExistingSelection}>
+                        Cập nhật mức tồn (tối thiểu/tối đa)
+                      </Checkbox>
+                    </Form.Item>
+                  </Col>
+
+                  <Col span={12}>
+                    <Form.Item
+                      name="minThreshold"
+                      label="Mức tối thiểu"
+                      rules={[
+                        {
+                          type: "number",
+                          min: 0,
+                          message: "Mức tối thiểu phải >= 0",
+                        },
+                      ]}
+                    >
+                      <InputNumber
+                        formatter={(value) =>
+                          `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                        }
+                        parser={(value) => {
+                          const parsed = Number(value?.replace(/,/g, "") || 0);
+                          return parsed as any;
+                        }}
+                        placeholder="Nhập mức tối thiểu"
+                        style={{
+                          width: "100%",
+                        }}
+                        min={0}
+                        disabled={!hasExistingSelection || !updateThresholds}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      name="maxCapacity"
+                      label="Mức tối đa"
+                      rules={[
+                        {
+                          type: "number",
+                          min: 1,
+                          message: "Mức tối đa phải >= 1",
+                        },
+                        ({ getFieldValue }) => ({
+                          validator: (_, value) => {
+                            const min = getFieldValue("minThreshold");
+                            if (
+                              value === undefined ||
+                              value === null ||
+                              min === undefined ||
+                              min === null
+                            ) {
+                              return Promise.resolve();
+                            }
+                            if (value >= min) return Promise.resolve();
+                            return Promise.reject(
+                              new Error(
+                                "Mức tối đa phải lớn hơn hoặc bằng mức tối thiểu"
+                              )
+                            );
+                          },
+                        }),
+                      ]}
+                    >
+                      <InputNumber
+                        placeholder="Nhập mức tối đa"
+                        style={{
+                          width: "100%",
+                        }}
+                        min={1}
+                        formatter={(value) =>
+                          `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                        }
+                        parser={(value) => {
+                          const parsed = Number(value?.replace(/,/g, "") || 0);
+                          return parsed as any;
+                        }}
+                        disabled={!hasExistingSelection || !updateThresholds}
+                      />
+                    </Form.Item>
+                  </Col>
+
+                  <Col span={12}>
+                    <Form.Item name="supplier" label="Nhà cung cấp">
+                      <Input disabled placeholder="Nhà cung cấp" />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item name="note" label="Ghi chú">
+                      <Input.TextArea
+                        rows={3}
+                        placeholder="Nhập ghi chú..."
+                        disabled={!hasExistingSelection}
+                      />
+                    </Form.Item>
+                  </Col>
+                </>
+              ) : (
+                <>
+                  <Col span={12}>
+                    <Form.Item
+                      name="name"
+                      label="Tên vật liệu"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Vui lòng nhập tên vật liệu",
+                        },
+                      ]}
+                    >
+                      <Input placeholder="Nhập tên vật liệu" />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      name="category"
+                      label="Danh mục"
+                      rules={[
+                        { required: true, message: "Vui lòng chọn danh mục" },
+                      ]}
+                    >
+                      <Select
+                        placeholder="Chọn danh mục"
+                        showSearch
+                        filterOption={(input, option) =>
+                          (option?.label ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase())
+                        }
+                        options={categories.map((cat) => ({
+                          label: cat.name,
+                          value: cat.name,
+                        }))}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item
+                      name="unit"
+                      label="Đơn vị"
+                      rules={[
+                        { required: true, message: "Vui lòng nhập đơn vị" },
+                        {
+                          validator: (_, value) => {
+                            if (!value) return Promise.resolve();
+                            const validUnits = Object.values(Unit);
+                            if (validUnits.includes(value as Unit)) {
+                              return Promise.resolve();
+                            }
+                            return Promise.reject(
+                              new Error("Đơn vị không hợp lệ")
+                            );
+                          },
+                        },
+                      ]}
+                    >
+                      <Select placeholder="Chọn đơn vị" options={unitOptions} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item
+                      name="minThreshold"
+                      label="Mức tối thiểu"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Vui lòng nhập mức tối thiểu",
+                        },
+                      ]}
+                    >
+                      <InputNumber
+                        placeholder="Nhập mức tối thiểu"
+                        style={{
+                          width: "100%",
+                        }}
+                        min={0}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item
+                      name="maxCapacity"
+                      label="Mức tối đa"
+                      rules={[
+                        { required: true, message: "Vui lòng nhập mức tối đa" },
+                      ]}
+                    >
+                      <InputNumber
+                        placeholder="Nhập mức tối đa"
+                        style={{
+                          width: "100%",
+                        }}
+                        min={1}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      name="quantity"
+                      label="Số lượng nhập kho"
+                      rules={[
+                        { required: true, message: "Vui lòng nhập số lượng" },
+                        {
+                          type: "number",
+                          min: 0,
+                          message: "Số lượng phải lớn hơn hoặc bằng 0",
+                        },
+                      ]}
+                      initialValue={0}
+                    >
+                      <InputNumber
+                        placeholder="Nhập số lượng"
+                        style={{
+                          width: "100%",
+                        }}
+                        min={0}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      name="importPrice"
+                      label="Giá nhập (VND/đơn vị)"
+                      rules={[
+                        { required: true, message: "Vui lòng nhập giá nhập" },
+                      ]}
+                    >
+                      <InputNumber
+                        placeholder="Nhập giá nhập"
+                        style={{
+                          width: "100%",
+                        }}
+                        min={0}
+                        formatter={(value) =>
+                          `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                        }
+                        parser={(value) =>
+                          Number(value?.replace(/\$\s?|(,*)/g, "") || 0) as any
+                        }
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      name="importDate"
+                      label="Ngày nhập"
+                      rules={[
+                        { required: true, message: "Vui lòng chọn ngày" },
+                      ]}
+                      initialValue={dayjs()}
+                    >
+                      <DatePicker
+                        style={{
+                          width: "100%",
+                        }}
+                        format="DD/MM/YYYY"
+                        disabled
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item name="supplier" label="Nhà cung cấp">
+                      <Input placeholder="Nhập nhà cung cấp" />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      name="longStockAlertDays"
+                      label="Cảnh báo tồn quá lâu (ngày)"
+                      tooltip="Số ngày không có giao dịch để cảnh báo tồn quá lâu"
+                    >
+                      <InputNumber
+                        placeholder="Nhập số ngày"
+                        style={{
+                          width: "100%",
+                        }}
+                        min={1}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={24}>
+                    <Form.Item name="note" label="Ghi chú">
+                      <Input.TextArea rows={3} placeholder="Nhập ghi chú..." />
+                    </Form.Item>
+                  </Col>
+                </>
+              )}
             </Row>
           </Form>
         </Modal>
@@ -850,8 +1167,7 @@ export default function InventoryManagement() {
           width={700}
           okText="Cập nhật"
           cancelText="Hủy"
-          destroyOnClose
-          maskClosable={false}
+          destroyOnHidden
         >
           <Form form={editForm} layout="vertical" className="mt-4">
             <Row gutter={16}>
@@ -964,16 +1280,6 @@ export default function InventoryManagement() {
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item name="expiryDate" label="Hạn sử dụng">
-                  <DatePicker
-                    style={{
-                      width: "100%",
-                    }}
-                    format="DD/MM/YYYY"
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
                 <Form.Item
                   name="longStockAlertDays"
                   label="Cảnh báo tồn quá lâu (ngày)"
@@ -1006,161 +1312,13 @@ export default function InventoryManagement() {
           okText="Xóa"
           cancelText="Hủy"
           okButtonProps={{ danger: true }}
-          destroyOnClose
-          maskClosable={false}
+          destroyOnHidden
         >
           <p>
             Bạn có chắc chắn muốn xóa vật liệu{" "}
             <strong>{selectedMaterial?.name}</strong>? Hành động này không thể
             hoàn tác.
           </p>
-        </Modal>
-      )}
-
-      {/* Settings Modal */}
-      {isSettingsModalOpen && (
-        <Modal
-          title="Cài đặt thông báo"
-          open={isSettingsModalOpen}
-          onOk={handleSettingsUpdate}
-          onCancel={() => setIsSettingsModalOpen(false)}
-          okText="Lưu"
-          cancelText="Hủy"
-          destroyOnClose
-          maskClosable={false}
-        >
-          <Form form={settingsForm} layout="vertical" className="mt-4">
-            <Form.Item
-              name="defaultLongStockDays"
-              label="Cảnh báo tồn quá lâu (ngày)"
-              rules={[
-                { required: true, message: "Vui lòng nhập số ngày" },
-                { type: "number", min: 1, message: "Số ngày phải lớn hơn 0" },
-              ]}
-            >
-              <InputNumber
-                placeholder="Nhập số ngày"
-                style={{
-                  width: "100%",
-                }}
-                min={1}
-              />
-            </Form.Item>
-          </Form>
-        </Modal>
-      )}
-
-      {/* Import Modal */}
-      {isImportModalOpen && (
-        <Modal
-          title="Nhập kho vật liệu"
-          open={isImportModalOpen}
-          onOk={handleImport}
-          onCancel={() => {
-            setIsImportModalOpen(false);
-            importForm.resetFields();
-          }}
-          width={600}
-          okText="Nhập kho"
-          cancelText="Hủy"
-          destroyOnClose
-          maskClosable={false}
-        >
-          <Form form={importForm} layout="vertical" className="mt-4">
-            <Row gutter={16}>
-              <Col span={24}>
-                <Form.Item
-                  name="materialId"
-                  label="Vật liệu"
-                  rules={[
-                    { required: true, message: "Vui lòng chọn vật liệu" },
-                  ]}
-                >
-                  <Select
-                    placeholder="Chọn vật liệu"
-                    showSearch
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    options={materials.map((m) => ({
-                      label: `${m.name} (${m.category}) - Tồn: ${m.stockQuantity} ${m.unit}`,
-                      value: m.id,
-                    }))}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  name="quantity"
-                  label="Số lượng"
-                  rules={[
-                    { required: true, message: "Vui lòng nhập số lượng" },
-                    {
-                      type: "number",
-                      min: 1,
-                      message: "Số lượng phải lớn hơn 0",
-                    },
-                  ]}
-                >
-                  <InputNumber
-                    placeholder="Nhập số lượng"
-                    style={{
-                      width: "100%",
-                    }}
-                    min={1}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  name="price"
-                  label="Giá nhập (VND/đơn vị)"
-                  tooltip="Nếu không nhập, sẽ sử dụng giá nhập hiện tại của vật liệu"
-                >
-                  <InputNumber
-                    placeholder="Nhập giá nhập"
-                    style={{
-                      width: "100%",
-                    }}
-                    min={0}
-                    formatter={(value) =>
-                      `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                    }
-                    parser={(value) =>
-                      Number(value?.replace(/\$\s?|(,*)/g, "") || 0) as any
-                    }
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  name="importDate"
-                  label="Ngày nhập"
-                  rules={[{ required: true, message: "Vui lòng chọn ngày" }]}
-                  initialValue={dayjs()}
-                >
-                  <DatePicker
-                    style={{
-                      width: "100%",
-                    }}
-                    format="DD/MM/YYYY"
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={24}>
-                <Form.Item name="supplier" label="Nhà cung cấp">
-                  <Input placeholder="Nhập nhà cung cấp" />
-                </Form.Item>
-              </Col>
-              <Col span={24}>
-                <Form.Item name="note" label="Ghi chú">
-                  <Input.TextArea rows={3} placeholder="Nhập ghi chú..." />
-                </Form.Item>
-              </Col>
-            </Row>
-          </Form>
         </Modal>
       )}
 
@@ -1177,8 +1335,7 @@ export default function InventoryManagement() {
           width={600}
           okText="Xuất kho"
           cancelText="Hủy"
-          destroyOnClose
-          maskClosable={false}
+          destroyOnHidden
         >
           <Form form={exportForm} layout="vertical" className="mt-4">
             <Row gutter={16}>
@@ -1192,16 +1349,29 @@ export default function InventoryManagement() {
                 >
                   <Select
                     placeholder="Chọn vật liệu"
-                    showSearch
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
+                    showSearch={{
+                      filterOption: (
+                        input: string,
+                        option: { label: string } | undefined
+                      ) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
                     options={materials.map((m) => ({
-                      label: `${m.name} (Tồn: ${m.stockQuantity} ${m.unit})`,
+                      label: `${m.name} (${m.category}) - Tồn: ${m.stockQuantity} ${m.unit} - ${m.supplier}`,
                       value: m.id,
                     }))}
+                    onChange={(value) => {
+                      const material = materials.find((m) => m.id === value);
+                      if (material) {
+                        exportForm.setFieldsValue({
+                          unit: material.unit,
+                          importPrice: material.importPrice || 0,
+                          supplier: material.supplier || "",
+                        });
+                      }
+                    }}
                   />
                 </Form.Item>
               </Col>
@@ -1228,13 +1398,34 @@ export default function InventoryManagement() {
                 </Form.Item>
               </Col>
               <Col span={12}>
+                <Form.Item name="unit" label="Đơn vị">
+                  <Input disabled placeholder="Đơn vị" />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item name="importPrice" label="Giá nhập (VND/đơn vị)">
+                  <InputNumber
+                    disabled
+                    style={{
+                      width: "100%",
+                    }}
+                    formatter={(value) =>
+                      `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    }
+                    parser={(value) =>
+                      Number(value?.replace(/\$\s?|(,*)/g, "") || 0) as any
+                    }
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
                 <Form.Item
                   name="price"
                   label="Giá xuất (VND/đơn vị)"
                   tooltip="Nếu không nhập, sẽ sử dụng giá nhập của vật liệu"
                 >
                   <InputNumber
-                    placeholder="Nhập giá xuất"
+                    placeholder="Nhập giá xuất (tùy chọn)"
                     style={{
                       width: "100%",
                     }}
@@ -1261,6 +1452,11 @@ export default function InventoryManagement() {
                     }}
                     format="DD/MM/YYYY"
                   />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item name="supplier" label="Nhà cung cấp">
+                  <Input disabled placeholder="Nhà cung cấp" />
                 </Form.Item>
               </Col>
               <Col span={24}>

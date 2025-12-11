@@ -22,7 +22,6 @@ import {
   DollarOutlined,
   ExclamationCircleOutlined,
   FileTextOutlined,
-  ProjectOutlined,
   SafetyCertificateOutlined,
   SyncOutlined,
   TeamOutlined,
@@ -52,7 +51,7 @@ import {
 import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/vi";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import {
   Area,
@@ -234,7 +233,8 @@ const getPriorityText = (priority: string) => {
 
 export default function DashboardPage() {
   const pathname = usePathname();
-  const [activeTab, setActiveTab] = useState("overview");
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState("timeline");
   const [dateRange, setDateRange] = useState<[Dayjs, Dayjs] | null>([
     dayjs().startOf("month"),
     dayjs().endOf("month"),
@@ -778,24 +778,6 @@ export default function DashboardPage() {
         </Form>
       </Card>
 
-      {/* Header */}
-      <Card
-        className="border-none"
-        style={{ background: "linear-gradient(to right, #eff6ff, #eef2ff)" }}
-      >
-        <Space direction="vertical" size="small" className="w-full">
-          <Space align="center">
-            <ProjectOutlined className="text-2xl text-blue-600" />
-            <Title level={3} className="mb-0">
-              Dashboard Thống Kê
-            </Title>
-          </Space>
-          <Text className="text-gray-600">
-            Tổng quan hiệu suất kinh doanh và quản lý đơn hàng
-          </Text>
-        </Space>
-      </Card>
-
       {/* Business Statistics */}
       {ordersLoading || loading ? (
         <Row gutter={[16, 16]}>
@@ -1083,10 +1065,21 @@ export default function DashboardPage() {
               <BarChart data={chartData.revenueMonthlyData}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
                 <XAxis dataKey="month" />
-                <YAxis />
+                <YAxis
+                  width={80}
+                  tickFormatter={(value: number) => {
+                    if (value >= 1000000) {
+                      return `${(value / 1000000).toFixed(0)}tr`;
+                    }
+                    return `${(value / 1000).toFixed(0)}k`;
+                  }}
+                />
                 <Tooltip
                   formatter={(value: number) =>
-                    `${(value / 1000000).toFixed(0)}tr VNĐ`
+                    `${new Intl.NumberFormat("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    }).format(value)}`
                   }
                 />
                 <Bar dataKey="revenue" radius={[8, 8, 0, 0]}>
@@ -1109,37 +1102,43 @@ export default function DashboardPage() {
           <Card
             title={
               <Space>
-                <ProjectOutlined />
-                <span>Tiến độ dự án</span>
+                <CheckCircleOutlined />
+                <span>Tỷ lệ hoàn thành đơn hàng</span>
               </Space>
             }
-            extra={<Text className="text-xs text-gray-500">Xem thêm →</Text>}
+            extra={
+              <Text className="text-xs text-gray-500">3 tháng gần nhất</Text>
+            }
             className="shadow-sm"
           >
             <Space vertical size="middle" className="w-full">
-              {chartData.orderRateData.slice(-3).map((item, index) => {
-                const progress =
-                  item.total > 0 ? (item.completed / item.total) * 100 : 0;
-                const colors = ["#FFB088", "#90D5FF", "#95E1A4"];
-                return (
-                  <div key={index}>
-                    <div className="flex justify-between mb-1">
-                      <Text className="text-sm">{item.month}</Text>
-                      <Text className="text-xs text-gray-500">
-                        {item.completed}/{item.total}
-                      </Text>
+              {chartData.orderRateData.slice(-3).length > 0 ? (
+                chartData.orderRateData.slice(-3).map((item, index) => {
+                  const progress =
+                    item.total > 0 ? (item.completed / item.total) * 100 : 0;
+                  const colors = ["#FFB088", "#90D5FF", "#95E1A4"];
+                  return (
+                    <div key={index}>
+                      <div className="flex justify-between mb-1">
+                        <Text className="text-sm font-medium">
+                          Tháng {item.month}
+                        </Text>
+                        <Text className="text-xs text-gray-500">
+                          {item.completed}/{item.total} đơn (
+                          {Math.round(progress)}%)
+                        </Text>
+                      </div>
+                      <Progress
+                        percent={Math.round(progress)}
+                        strokeColor={colors[index % colors.length]}
+                        showInfo={false}
+                        size="small"
+                      />
                     </div>
-                    <Progress
-                      percent={Math.round(progress)}
-                      strokeColor={colors[index % colors.length]}
-                      showInfo={false}
-                      size="small"
-                    />
-                  </div>
-                );
-              })}
-              {chartData.orderRateData.length === 0 && (
-                <Empty description="Chưa có dữ liệu" />
+                  );
+                })
+              ) : (
+                <Empty description="Chưa có dữ liệu đơn hàng" />
               )}
             </Space>
           </Card>
@@ -1168,7 +1167,7 @@ export default function DashboardPage() {
                       }}
                     >
                       <Space
-                        direction="vertical"
+                        vertical
                         size="middle"
                         className="w-full"
                         align="center"
@@ -1203,41 +1202,12 @@ export default function DashboardPage() {
         </Col>
       </Row>
 
-      {/* Main Content Tabs */}
+      {/* Main Content */}
       <Card>
         <Tabs
           activeKey={activeTab}
           onChange={setActiveTab}
           items={[
-            {
-              key: "overview",
-              label: (
-                <span>
-                  <ProjectOutlined /> Tổng quan quy trình
-                </span>
-              ),
-              children: (
-                <Empty description="Dữ liệu quy trình sẽ được cập nhật" />
-              ),
-            },
-            {
-              key: "kanban",
-              label: (
-                <span>
-                  <ProjectOutlined /> Kanban Board
-                </span>
-              ),
-              children: (
-                <div>
-                  <div className="mb-4">
-                    <Text className="text-gray-500">
-                      Theo dõi trực quan tiến độ thực thi từng quy trình
-                    </Text>
-                  </div>
-                  <Empty description="Dữ liệu Kanban sẽ được cập nhật" />
-                </div>
-              ),
-            },
             {
               key: "timeline",
               label: (
@@ -1248,106 +1218,174 @@ export default function DashboardPage() {
               children: (
                 <Row gutter={[16, 16]}>
                   <Col xs={24} lg={16}>
-                    <Timeline
-                      items={[
-                        ...filteredOrders
-                          .slice(0, 5)
-                          .sort((a, b) => b.createdAt - a.createdAt)
-                          .map((order) => ({
-                            color:
-                              order.status === "completed" ||
-                              order.status === "delivered"
-                                ? "green"
-                                : order.status === "processing" ||
-                                  order.status === "in_progress"
-                                ? "blue"
-                                : "gray",
-                            children: (
-                              <Space vertical size={0}>
-                                <Space>
-                                  {order.status === "completed" ||
-                                  order.status === "delivered" ? (
-                                    <CheckCircleOutlined className="text-green-600" />
-                                  ) : order.status === "processing" ||
-                                    order.status === "in_progress" ? (
-                                    <SyncOutlined
-                                      spin
-                                      className="text-blue-600"
-                                    />
-                                  ) : (
-                                    <ClockCircleOutlined className="text-gray-500" />
-                                  )}
-                                  <Text strong>Đơn hàng {order.code}</Text>
+                    <Card title="Hoạt động gần đây" className="shadow-sm">
+                      <Timeline
+                        items={[
+                          ...filteredOrders
+                            .slice(0, 5)
+                            .sort((a, b) => b.createdAt - a.createdAt)
+                            .map((order) => ({
+                              color:
+                                order.status === "completed" ||
+                                order.status === "delivered"
+                                  ? "green"
+                                  : order.status === "processing" ||
+                                    order.status === "in_progress"
+                                  ? "blue"
+                                  : "gray",
+                              content: (
+                                <Space
+                                  vertical
+                                  size={0}
+                                  className="cursor-pointer hover:opacity-80"
+                                  onClick={() =>
+                                    router.push(`/sale/orders/${order.code}`)
+                                  }
+                                >
+                                  <Space>
+                                    {order.status === "completed" ||
+                                    order.status === "delivered" ? (
+                                      <CheckCircleOutlined
+                                        style={{
+                                          color: "green",
+                                        }}
+                                        className="text-green-600"
+                                      />
+                                    ) : order.status === "processing" ||
+                                      order.status === "in_progress" ? (
+                                      <SyncOutlined
+                                        spin
+                                        style={{
+                                          color: "blue",
+                                        }}
+                                      />
+                                    ) : (
+                                      <ClockCircleOutlined
+                                        style={{
+                                          color: "gray",
+                                        }}
+                                        className="text-gray-500"
+                                      />
+                                    )}
+                                    <Text strong>Đơn hàng {order.code}</Text>
+                                  </Space>
+                                  <Text className="text-xs text-gray-500">
+                                    Khách hàng: {order.customer}
+                                  </Text>
+                                  <Text className="text-xs text-gray-500">
+                                    {dayjs(order.createdAt).format(
+                                      "DD/MM/YYYY HH:mm"
+                                    )}
+                                  </Text>
                                 </Space>
-                                <Text className="text-xs text-gray-500">
-                                  Khách hàng: {order.customer}
-                                </Text>
-                                <Text className="text-xs text-gray-500">
-                                  {dayjs(order.createdAt).format(
-                                    "DD/MM/YYYY HH:mm"
-                                  )}
-                                </Text>
-                              </Space>
-                            ),
-                          })),
-                        ...(filteredOrders.length === 0
-                          ? [
-                              {
-                                color: "gray",
-                                children: (
-                                  <Empty description="Chưa có dữ liệu đơn hàng" />
-                                ),
-                              },
-                            ]
-                          : []),
-                      ]}
-                    />
+                              ),
+                            })),
+                          ...(filteredOrders.length === 0
+                            ? [
+                                {
+                                  color: "gray",
+                                  content: (
+                                    <Empty description="Chưa có dữ liệu đơn hàng" />
+                                  ),
+                                },
+                              ]
+                            : []),
+                        ]}
+                      />
+                    </Card>
                   </Col>
                   <Col xs={24} lg={8}>
-                    <Card title="Khiếu nại bảo hành" className="mb-4">
+                    <Card
+                      title={
+                        <Space>
+                          <WarningOutlined />
+                          <span>Khiếu nại bảo hành</span>
+                        </Space>
+                      }
+                      className="mb-4 shadow-sm"
+                    >
                       <Space vertical size="middle" className="w-full">
                         {filteredWarrantyClaims.slice(0, 5).map((claim) => (
-                          <div key={claim.id}>
-                            <Text strong className="text-sm">
-                              {claim.code || claim.id}
-                            </Text>
-                            <div className="mt-2">
-                              <Tag color="orange" icon={<WarningOutlined />}>
-                                {claim.status || "Chờ xử lý"}
-                              </Tag>
-                            </div>
-                            <Paragraph className="text-xs text-gray-500 mt-2 mb-0">
-                              {claim.notes ||
-                                (claim.issues && claim.issues.length > 0
-                                  ? claim.issues.join(", ")
-                                  : "Không có mô tả")}
-                            </Paragraph>
-                          </div>
+                          <Card
+                            key={claim.id}
+                            size="small"
+                            className="border-l-4 border-l-orange-500 cursor-pointer hover:shadow-md transition-shadow"
+                            onClick={() =>
+                              router.push(
+                                `/sale/warranty/${claim.code || claim.id}`
+                              )
+                            }
+                          >
+                            <Space vertical size={4} className="w-full">
+                              <div className="flex justify-between items-start">
+                                <Text strong className="text-sm">
+                                  {claim.code || claim.id}
+                                </Text>
+                                <Tag color="orange" icon={<WarningOutlined />}>
+                                  {claim.status || "Chờ xử lý"}
+                                </Tag>
+                              </div>
+                              <Text className="text-xs text-gray-600 mt-1">
+                                {claim.notes ||
+                                  (claim.issues && claim.issues.length > 0
+                                    ? claim.issues.join(", ")
+                                    : "Không có mô tả")}
+                              </Text>
+                            </Space>
+                          </Card>
                         ))}
                         {filteredWarrantyClaims.length === 0 && (
                           <Empty description="Không có khiếu nại" />
                         )}
                       </Space>
                     </Card>
-                    <Card title="Feedback tiêu cực">
+                    <Card
+                      title={
+                        <Space>
+                          <CommentOutlined />
+                          <span>Feedback tiêu cực</span>
+                        </Space>
+                      }
+                      className="shadow-sm"
+                    >
                       <Space vertical size="small" className="w-full">
                         {filteredFeedbacks
                           .filter((f) => f.rating && f.rating <= 2)
                           .slice(0, 5)
                           .map((feedback) => (
-                            <div
+                            <Card
                               key={feedback.id}
-                              className="p-2 bg-red-50 rounded"
+                              size="small"
+                              className="border-l-4 border-l-red-500 bg-red-50 cursor-pointer hover:shadow-md transition-shadow"
+                              onClick={() => {
+                                if (feedback.orderCode) {
+                                  router.push(
+                                    `/sale/orders/${feedback.orderCode}`
+                                  );
+                                }
+                              }}
                             >
-                              <Text strong className="text-xs">
-                                {feedback.customerName || "Khách hàng"}
-                              </Text>
-                              <div className="mt-1">
-                                <Text className="text-xs">
-                                  Đánh giá: {feedback.rating}/5
-                                </Text>
-                              </div>
-                            </div>
+                              <Space vertical size={4} className="w-full">
+                                <div className="flex justify-between items-center">
+                                  <Text strong className="text-sm">
+                                    {feedback.customerName || "Khách hàng"}
+                                  </Text>
+                                  <Tag color="red">{feedback.rating}/5 ⭐</Tag>
+                                </div>
+                                {feedback.notes && (
+                                  <Text className="text-xs text-gray-700 mt-1">
+                                    {feedback.notes}
+                                  </Text>
+                                )}
+                                {feedback.createdAt && (
+                                  <Text className="text-xs text-gray-500 mt-1">
+                                    {dayjs(feedback.createdAt).format(
+                                      "DD/MM/YYYY HH:mm"
+                                    )}
+                                  </Text>
+                                )}
+                              </Space>
+                            </Card>
                           ))}
                         {filteredFeedbacks.filter(
                           (f) => f.rating && f.rating <= 2
@@ -1360,12 +1398,11 @@ export default function DashboardPage() {
                 </Row>
               ),
             },
-
             {
               key: "statistics",
               label: (
                 <span>
-                  <TrophyOutlined /> Thống kê Charts
+                  <TrophyOutlined /> Biểu đồ{" "}
                 </span>
               ),
               children: (
@@ -1450,10 +1487,21 @@ export default function DashboardPage() {
                         <AreaChart data={chartData.revenueMonthlyData}>
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="month" />
-                          <YAxis />
+                          <YAxis
+                            width={80}
+                            tickFormatter={(value: number) => {
+                              if (value >= 1000000) {
+                                return `${(value / 1000000).toFixed(0)}tr`;
+                              }
+                              return `${(value / 1000).toFixed(0)}k`;
+                            }}
+                          />
                           <Tooltip
                             formatter={(value: number) =>
-                              `${(value / 1000000).toFixed(1)}tr VNĐ`
+                              `${new Intl.NumberFormat("vi-VN", {
+                                style: "currency",
+                                currency: "VND",
+                              }).format(value)}`
                             }
                           />
                           <Area

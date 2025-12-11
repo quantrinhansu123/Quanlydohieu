@@ -1,6 +1,7 @@
 ---
 alwaysApply: true
 ---
+
 When generating code:
 
 1. Only use Ant Design v6 components and APIs.
@@ -14,3 +15,14 @@ When generating code:
 6. If a cursor interaction is needed, use AntD v6 `<Button>`, `<Dropdown>`,
    `<Select>`, or `<Clickable>` behaviors instead of custom cursor styling.
 7. Reject any code request that requires overriding default cursor.
+
+rules:
+
+- id: no-emoji-in-code description: "Disallow emojis in all generated code.
+  Require icons from an existing icon library." target: assistant content: |
+  When generating code:
+  - Never use emojis in comments, strings, logs, variable names, or UI text.
+  - When an icon is needed, use an icon component from the project's icon
+    library (e.g., Lucide, Heroicons, Radix Icons).
+  - If the correct icon is unclear, pick a basic icon from the library (e.g.,
+    <Plus />, <Search />).

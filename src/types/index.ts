@@ -46,6 +46,7 @@ export interface FilterField {
   isMultiple?: boolean;
   placeholder?: string;
   options?: { label: string; value: string | number | boolean }[];
+  presets?: Array<{ label: string; value: [any, any] | readonly [any, any] }>;
 }
 
 export interface ColumnSetting {

@@ -61,3 +61,67 @@ export type IOption ={
     label: string;
     value: string;
 }
+
+export enum Unit {
+  Cai = "cai",
+  Hop = "hop",
+  Thung = "thung",
+  Cuon = "cuon",
+  Bo = "bo",
+
+  Kg = "kg",
+  G = "g",
+  Mg = "mg",
+  Tan = "tan",
+
+  Lit = "lit",
+  Ml = "ml",
+  M3 = "m3",
+
+  M = "m",
+  Cm = "cm",
+  Mm = "mm",
+
+  M2 = "m2",
+  Cm2 = "cm2",
+
+  Tam = "tam",
+  Bao = "bao",
+  Palette = "palette",
+}
+
+
+
+export const unitOptions = [
+  // Số lượng
+  { label: "Cái", value: Unit.Cai, description: "Đơn vị đếm chung cho sản phẩm rời." },
+  { label: "Hộp", value: Unit.Hop, description: "Bao bì chứa nhiều cái, phù hợp sản phẩm đóng gói." },
+  { label: "Thùng", value: Unit.Thung, description: "Đơn vị lớn chứa số lượng nhiều, thường dùng trong nhập kho." },
+  { label: "Cuộn", value: Unit.Cuon, description: "Áp dụng cho dây, vải, bao bì dạng cuộn." },
+  { label: "Bộ", value: Unit.Bo, description: "Một nhóm phụ kiện hay sản phẩm đi kèm." },
+
+  // Khối lượng
+  { label: "Kilogram (kg)", value: Unit.Kg, description: "Đơn vị khối lượng chính, phổ biến nhất trong kho." },
+  { label: "Gram (g)", value: Unit.G, description: "Đơn vị khối lượng nhỏ, dùng cho vật liệu nhẹ." },
+  { label: "Milligram (mg)", value: Unit.Mg, description: "Dùng cho nguyên liệu cực nhỏ, phòng thí nghiệm." },
+  { label: "Tấn (t)", value: Unit.Tan, description: "Dùng cho hàng nặng số lượng lớn như vật liệu xây dựng." },
+
+  // Thể tích
+  { label: "Lít (L)", value: Unit.Lit, description: "Dùng cho chất lỏng: hóa chất, sơn, nước, dầu." },
+  { label: "Milliliter (ml)", value: Unit.Ml, description: "Đơn vị thể tích nhỏ, sản phẩm dung dịch nhỏ." },
+  { label: "Mét khối (m³)", value: Unit.M3, description: "Dùng cho vật liệu khối lớn: cát, đá, gas." },
+
+  // Chiều dài
+  { label: "Mét (m)", value: Unit.M, description: "Đơn vị chiều dài chuẩn, dùng cho dây, ống, vải." },
+  { label: "Centimet (cm)", value: Unit.Cm, description: "Đo chiều dài nhỏ hơn, dùng trong nội thất." },
+  { label: "Milimet (mm)", value: Unit.Mm, description: "Độ chính xác cao cho vật liệu kỹ thuật." },
+
+  // Diện tích
+  { label: "Mét vuông (m²)", value: Unit.M2, description: "Dùng cho gạch, kính, tôn, sàn gỗ." },
+  { label: "Centimet vuông (cm²)", value: Unit.Cm2, description: "Dùng cho bề mặt nhỏ, tấm mẫu." },
+
+  // Đặc thù ngành
+  { label: "Tấm", value: Unit.Tam, description: "Dùng cho tôn, mica, gỗ ép, ván." },
+  { label: "Bao", value: Unit.Bao, description: "Bao chứa vật liệu nặng như xi măng, gạo." },
+  { label: "Palette", value: Unit.Palette, description: "Đơn vị chuẩn cho hàng lưu kho dạng khối lớn." },
+];

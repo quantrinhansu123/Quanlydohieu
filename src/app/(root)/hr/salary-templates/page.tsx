@@ -385,3 +385,4 @@ const SalaryTemplatesPage = () => {
 
 export default SalaryTemplatesPage;
 
+

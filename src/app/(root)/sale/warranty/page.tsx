@@ -461,7 +461,7 @@ export default function WarrantyPage() {
           {
             can: activeTab === "claims",
             type: "primary",
-            name: "Tạo phiếu nhập bảo hành",
+            name: "Tạo phiếu bảo hành",
             icon: <PlusOutlined />,
             onClick: () => setFormVisible(true),
           },
@@ -478,7 +478,7 @@ export default function WarrantyPage() {
 
       {/* Warranty Claim Form Modal */}
       <Modal
-        title="Tạo phiếu nhập bảo hành"
+        title="Tạo phiếu bảo hành"
         open={formVisible}
         onCancel={() => {
           setFormVisible(false);

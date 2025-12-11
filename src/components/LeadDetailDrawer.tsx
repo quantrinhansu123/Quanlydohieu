@@ -722,7 +722,7 @@ export default function LeadDetailDrawer({
       placement="right"
       onClose={onClose}
       open={visible}
-      width={800}
+      size="large"
     >
       <Tabs
         items={[

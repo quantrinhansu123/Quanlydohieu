@@ -32,7 +32,7 @@ const CategoryDetailDrawer: React.FC<PropRowDetails<Category>> = ({ data }) => {
 
   return (
     <div>
-      <Space direction="vertical" size="middle" className="w-full">
+      <Space vertical size="middle" className="w-full">
         <div>
           <Text type="secondary">Mô tả:</Text>
           <div className="mt-2">
@@ -192,7 +192,9 @@ export default function CategoryManagement() {
       width: 200,
       fixed: "left",
       render: (code: string, record: Category) => (
-        <Tag color={record.color || "default"}>{code}</Tag>
+        <Text strong className="font-mono text-xs">
+          {code}
+        </Text>
       ),
     },
     {
@@ -312,8 +314,7 @@ export default function CategoryManagement() {
           width={600}
           okText="Tạo"
           cancelText="Hủy"
-          destroyOnClose
-          maskClosable={false}
+          destroyOnHidden
         >
           <Form form={createForm} layout="vertical" className="mt-4">
             <Row gutter={16}>
@@ -366,8 +367,7 @@ export default function CategoryManagement() {
           width={600}
           okText="Cập nhật"
           cancelText="Hủy"
-          destroyOnClose
-          maskClosable={false}
+          destroyOnHidden
         >
           <Form form={editForm} layout="vertical" className="mt-4">
             <Row gutter={16}>
@@ -415,8 +415,7 @@ export default function CategoryManagement() {
           okText="Xóa"
           cancelText="Hủy"
           okButtonProps={{ danger: true }}
-          destroyOnClose
-          maskClosable={false}
+          destroyOnHidden
         >
           <p>
             Bạn có chắc chắn muốn xóa danh mục{" "}
@@ -428,4 +427,3 @@ export default function CategoryManagement() {
     </>
   );
 }
-

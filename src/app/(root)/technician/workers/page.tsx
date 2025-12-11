@@ -10,7 +10,7 @@ import { ROLES } from "@/types/enum";
 import { IMembers } from "@/types/members";
 import { ClearOutlined, FilterOutlined } from "@ant-design/icons";
 import type { TableColumnsType } from "antd";
-import { Button, Drawer, Form, Tag } from "antd";
+import { Button, Drawer, Form, Tag, Typography } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
@@ -155,6 +155,11 @@ const WorkersPage = () => {
       key: "code",
       sorter: true,
       width: 120,
+      render: (code: string) => (
+        <Typography.Text strong className="font-mono text-xs">
+          {code}
+        </Typography.Text>
+      ),
     },
     {
       title: "Họ và tên",
@@ -251,7 +256,7 @@ const WorkersPage = () => {
         placement="right"
         onClose={() => setFilterVisible(false)}
         open={filterVisible}
-        width={isMobile ? "100%" : 400}
+        size={isMobile ? "default" : "large"}
       >
         <FilterList
           form={form}

@@ -49,13 +49,23 @@ export const FilterList: React.FC<FilterListProps> = ({
       const fieldDef = fields.find((f) => f.name === key);
       if (fieldDef?.type === "dateRange" && Array.isArray(value)) {
         const [from, to] = value;
-        payload.push({
-          key,
-          value: {
-            from: from?.toDate ? from.toDate() : from,
-            to: to?.toDate ? to.toDate() : to,
-          },
-        });
+        if (from && to) {
+          // Format as YYYY-MM-DD string for consistency with query
+          const formatDate = (date: any) => {
+            if (date?.format) return date.format("YYYY-MM-DD");
+            if (date instanceof Date) {
+              return date.toISOString().split("T")[0];
+            }
+            return date;
+          };
+          payload.push({
+            key,
+            value: {
+              from: formatDate(from),
+              to: formatDate(to),
+            },
+          });
+        }
       } else if (fieldDef?.type === "date") {
         payload.push({
           key,
@@ -124,7 +134,11 @@ export const FilterList: React.FC<FilterListProps> = ({
             label={field.label}
             className=" mb-4"
           >
-            <DatePicker.RangePicker className=" w-full" />
+            <DatePicker.RangePicker
+              className=" w-full"
+              format="DD/MM/YYYY"
+              presets={field.presets?.map((preset) => ({ ...preset, value: [...preset.value] }))}
+            />
           </Form.Item>
         );
 

@@ -51,7 +51,7 @@ export default function SolutionSelector({
         disabled={disabled}
         className="w-full"
       >
-        <Space direction="vertical" size="middle" className="w-full">
+        <Space vertical size="middle" className="w-full">
           {solutionOptions.map((option) => (
             <Radio key={option.id} value={option.id} className="w-full">
               <Card
@@ -98,5 +98,3 @@ export default function SolutionSelector({
     </div>
   );
 }
-
-

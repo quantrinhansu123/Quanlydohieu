@@ -1,6 +1,5 @@
 import {
   AppstoreOutlined,
-  CalculatorOutlined,
   CalendarOutlined,
   CommentOutlined,
   CustomerServiceOutlined,
@@ -8,10 +7,10 @@ import {
   DatabaseOutlined,
   DollarOutlined,
   ExperimentOutlined,
+  HistoryOutlined,
   IdcardOutlined,
   InboxOutlined,
   LayoutOutlined,
-  MoneyCollectOutlined,
   SafetyCertificateOutlined,
   ShoppingCartOutlined,
   TeamOutlined,
@@ -126,7 +125,7 @@ export const allMenuItems: Array<{
         href: "/inventory/categories",
       },
       {
-        icon: DatabaseOutlined,
+        icon: HistoryOutlined,
         title: "Lịch sử",
         href: "/inventory/history",
       },

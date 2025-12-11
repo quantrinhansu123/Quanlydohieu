@@ -11,7 +11,7 @@ const Page = () => {
       title="Truy cập bị từ chối"
       subTitle="Bạn không có quyền truy cập vào trang này."
       extra={[
-        <Button type="primary" key="console" onClick={() => router.back()}>
+        <Button type="primary" key="console" onClick={() => router.replace("/center")}>
           Trở về
         </Button>,
       ]}

@@ -671,7 +671,7 @@ const MemberForm: React.FC<MemberFormProps> = ({
         onCancel={onCancel}
         footer={null}
         width={700}
-        destroyOnClose
+        destroyOnHidden
       >
         <Tabs
           activeKey={activeTab}

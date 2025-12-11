@@ -143,7 +143,10 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
     >
       <head>
         <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, viewport-fit=cover"
+        />
       </head>
       <body className={`${playfair.variable}`} id="root">
         <AppContext>{children}</AppContext>

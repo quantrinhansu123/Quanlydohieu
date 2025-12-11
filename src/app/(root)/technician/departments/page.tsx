@@ -11,7 +11,7 @@ import {
   PlusOutlined,
 } from "@ant-design/icons";
 import type { TableColumnsType } from "antd";
-import { App, Button, Form, Input, Modal, Popconfirm } from "antd";
+import { App, Button, Form, Input, Modal, Popconfirm, Typography } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
@@ -191,7 +191,9 @@ const DepartmentPage = () => {
       sorter: true,
       render: (code: string) => (
         <div className="flex items-center gap-2">
-          <span>{code}</span>
+          <Typography.Text strong className="font-mono text-xs">
+            {code}
+          </Typography.Text>
           <Button
             type="text"
             size="small"

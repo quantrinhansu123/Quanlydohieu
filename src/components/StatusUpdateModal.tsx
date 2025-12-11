@@ -4,14 +4,11 @@ import {
   DiscountType,
   OrderStatus,
   type FirebaseOrderData,
-  type FirebaseProductData,
   type FirebaseStaff,
   type ProductData,
 } from "@/types/order";
-import { App, Button, Modal, Space, Switch, Tag, Typography } from "antd";
+import { App, Modal, Space, Switch, Tag, Typography } from "antd";
 import React, { useEffect, useState } from "react";
-import { calculateOrderTotals } from "@/utils/calcultateOrderTotals"; // Assuming this utility exists
-import ProductCard from "./OrderForm"; // Re-using ProductCard from OrderForm
 
 const { Text } = Typography;
 
@@ -24,7 +21,13 @@ interface StatusUpdateModalProps {
   members: FirebaseStaff;
   workflows: any; // Assuming workflows are passed for ProductCard
   departments: any; // Assuming departments are passed for ProductCard
-  onConfirm: (orderCode: string, newStatus: OrderStatus, isDepositPaid?: boolean, deposit?: number, depositType?: DiscountType) => void;
+  onConfirm: (
+    orderCode: string,
+    newStatus: OrderStatus,
+    isDepositPaid?: boolean,
+    deposit?: number,
+    depositType?: DiscountType
+  ) => void;
   onCancel: () => void;
 }
 
@@ -58,15 +61,25 @@ export const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({
   onCancel,
 }) => {
   const { message } = App.useApp();
-  const [isDepositPaid, setIsDepositPaid] = useState(order?.isDepositPaid || false);
+  const [isDepositPaid, setIsDepositPaid] = useState(
+    order?.isDepositPaid || false
+  );
   const [deposit, setDeposit] = useState(order?.deposit || 0); // Raw deposit value
-  const [depositType, setDepositType] = useState<DiscountType>(order?.depositType === DiscountType.Amount ? DiscountType.Amount : DiscountType.Percentage);
+  const [depositType, setDepositType] = useState<DiscountType>(
+    order?.depositType === DiscountType.Amount
+      ? DiscountType.Amount
+      : DiscountType.Percentage
+  );
 
   useEffect(() => {
     if (order) {
       setIsDepositPaid(order.isDepositPaid || false);
       setDeposit(order.deposit || 0);
-      setDepositType(order.depositType === DiscountType.Amount ? DiscountType.Amount : DiscountType.Percentage);
+      setDepositType(
+        order.depositType === DiscountType.Amount
+          ? DiscountType.Amount
+          : DiscountType.Percentage
+      );
     }
   }, [order]);
 
@@ -107,7 +120,13 @@ export const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({
     }
 
     // All validations passed, proceed with confirmation
-    onConfirm(order.id, proposedNextStatus, isDepositPaid, deposit, depositType);
+    onConfirm(
+      order.id,
+      proposedNextStatus,
+      isDepositPaid,
+      deposit,
+      depositType
+    );
   };
 
   const currentStatusInfo =
@@ -124,14 +143,13 @@ export const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({
   const discountAmount =
     order && order.discountType === DiscountType.Percentage
       ? (subtotal * (order.discount || 0)) / 100
-      : (order?.discount || 0);
+      : order?.discount || 0;
   const totalAmount = subtotal - discountAmount + (order?.shippingFee || 0);
 
   const calculatedDepositAmount =
     depositType === DiscountType.Percentage
       ? (totalAmount * deposit) / 100
       : deposit;
-
 
   return (
     <Modal
@@ -152,9 +170,7 @@ export const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({
               #{order.code}
             </Text>{" "}
             từ{" "}
-            <Tag color={currentStatusInfo.color}>
-              {currentStatusInfo.label}
-            </Tag>{" "}
+            <Tag color={currentStatusInfo.color}>{currentStatusInfo.label}</Tag>{" "}
             sang{" "}
             <Tag color={proposedStatusInfo.color}>
               {proposedStatusInfo.label}
@@ -165,7 +181,7 @@ export const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({
           {/* Conditional UI for Deposit Paid */}
           {proposedNextStatus === OrderStatus.CONFIRMED && (
             <div className="p-4 border border-dashed border-blue-300 rounded-lg bg-blue-50">
-              <Space direction="vertical" className="w-full">
+              <Space vertical className="w-full">
                 <Text strong>Xác nhận thông tin đặt cọc:</Text>
                 <div className="flex items-center gap-2">
                   <Text>Khách hàng đã thanh toán tiền cọc:</Text>
@@ -177,29 +193,38 @@ export const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({
                   />
                 </div>
                 <Text type="secondary" className="text-sm">
-                  Số tiền cọc hiển thị: {calculatedDepositAmount.toLocaleString("vi-VN")} VNĐ
+                  Số tiền cọc hiển thị:{" "}
+                  {calculatedDepositAmount.toLocaleString("vi-VN")} VNĐ
                 </Text>
               </Space>
             </div>
           )}
 
           {/* Conditional UI for Images Done */}
-          {(proposedNextStatus === OrderStatus.COMPLETED && currentStatus === OrderStatus.ON_HOLD) && (
-            <div className="p-4 border border-dashed border-green-300 rounded-lg bg-green-50">
+          {proposedNextStatus === OrderStatus.COMPLETED &&
+            currentStatus === OrderStatus.ON_HOLD && (
+              <div className="p-4 border border-dashed border-green-300 rounded-lg bg-green-50">
                 <Text strong>Kiểm tra ảnh sản phẩm sau hoàn thiện:</Text>
                 {products.length > 0 ? (
-                    <ul className="list-disc pl-5 mt-2 space-y-1">
-                        {products.map(p => (
-                            <li key={p.id}>
-                                <Text>{p.name}: {p.imagesDone && p.imagesDone.length > 0 ? "✅ Đã tải ảnh" : "❌ Chưa tải ảnh"}</Text>
-                            </li>
-                        ))}
-                    </ul>
+                  <ul className="list-disc pl-5 mt-2 space-y-1">
+                    {products.map((p) => (
+                      <li key={p.id}>
+                        <Text>
+                          {p.name}:{" "}
+                          {p.imagesDone && p.imagesDone.length > 0
+                            ? "✅ Đã tải ảnh"
+                            : "❌ Chưa tải ảnh"}
+                        </Text>
+                      </li>
+                    ))}
+                  </ul>
                 ) : (
-                    <Text type="secondary">Không có sản phẩm nào trong đơn hàng.</Text>
+                  <Text type="secondary">
+                    Không có sản phẩm nào trong đơn hàng.
+                  </Text>
                 )}
-            </div>
-          )}
+              </div>
+            )}
         </div>
       )}
     </Modal>

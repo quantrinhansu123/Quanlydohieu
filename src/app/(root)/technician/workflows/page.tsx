@@ -24,6 +24,7 @@ import {
   Modal,
   Popconfirm,
   Select,
+  Typography,
 } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
@@ -240,6 +241,11 @@ const WorkflowPage = () => {
       dataIndex: "code",
       key: "code",
       sorter: true,
+      render: (code: string) => (
+        <Typography.Text strong className="font-mono text-xs">
+          {code}
+        </Typography.Text>
+      ),
     },
     {
       title: "Tên",
@@ -336,7 +342,7 @@ const WorkflowPage = () => {
         placement="right"
         onClose={() => setFilterVisible(false)}
         open={filterVisible}
-        width={isMobile ? "100%" : 400}
+        size={isMobile ? "default" : "large"}
       >
         <FilterList
           form={filterForm}

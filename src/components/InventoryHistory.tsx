@@ -8,23 +8,12 @@ import { InventoryService } from "@/services/inventoryService";
 import { InventoryTransaction } from "@/types/inventory";
 import { ArrowLeftOutlined, FileExcelOutlined } from "@ant-design/icons";
 import type { TableColumnsType } from "antd";
-import {
-  Card,
-  Col,
-  DatePicker,
-  Form,
-  message,
-  Row,
-  Statistic,
-  Tag,
-  Typography,
-} from "antd";
+import { Card, Col, message, Row, Statistic, Tag, Typography } from "antd";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const { Text } = Typography;
-const { RangePicker } = DatePicker;
 
 // Define columns first for useFileExport
 const getColumns = (): TableColumnsType<InventoryTransaction> => [
@@ -34,6 +23,11 @@ const getColumns = (): TableColumnsType<InventoryTransaction> => [
     key: "code",
     width: 150,
     fixed: "left",
+    render: (code: string) => (
+      <Text strong className="font-mono text-xs">
+        {code}
+      </Text>
+    ),
   },
   {
     title: "Ngày",
@@ -108,7 +102,6 @@ export default function InventoryHistory() {
   const [transactions, setTransactions] = useState<InventoryTransaction[]>([]);
   const [materials, setMaterials] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filterForm] = Form.useForm();
   const { exportToXlsx } = useFileExport<InventoryTransaction>(getColumns());
 
   const {
@@ -150,23 +143,6 @@ export default function InventoryHistory() {
     return () => unsubscribe();
   }, []);
 
-  // Apply date filter
-  const handleDateFilter = (dates: any) => {
-    if (!dates || dates.length !== 2) {
-      updateQueries([{ key: "dateRange", value: undefined }]);
-      return;
-    }
-    updateQueries([
-      {
-        key: "dateRange",
-        value: {
-          from: dates[0].format("YYYY-MM-DD"),
-          to: dates[1].format("YYYY-MM-DD"),
-        },
-      },
-    ]);
-  };
-
   // Filter transactions
   const filteredTransactions = applyFilter(
     transactions.filter((t) => {
@@ -205,7 +181,7 @@ export default function InventoryHistory() {
     try {
       // Prepare data for export with formatted values
       const exportData = filteredTransactions.map((t) => ({
-        id: t.code.slice(-8).toUpperCase(),
+        id: t.code,
         date: dayjs(t.date).format("DD/MM/YYYY"),
         type: t.type === "import" ? "Nhập kho" : "Xuất kho",
         materialName: t.materialName,
@@ -252,7 +228,7 @@ export default function InventoryHistory() {
       fixed: "left",
       render: (code: string) => (
         <Text strong className="font-mono text-xs">
-          {code.slice(-8).toUpperCase()}
+          {code}
         </Text>
       ),
     },
@@ -356,6 +332,33 @@ export default function InventoryHistory() {
   // Filter fields
   const filterFields = [
     {
+      name: "dateRange",
+      label: "Khoảng ngày",
+      type: "dateRange" as const,
+      presets: [
+        { label: "Hôm nay", value: [dayjs(), dayjs()] as const },
+        {
+          label: "Tuần này",
+          value: [dayjs().startOf("week"), dayjs().endOf("week")] as const,
+        },
+        {
+          label: "Tháng này",
+          value: [dayjs().startOf("month"), dayjs().endOf("month")] as const,
+        },
+        {
+          label: "Tháng trước",
+          value: [
+            dayjs().subtract(1, "month").startOf("month"),
+            dayjs().subtract(1, "month").endOf("month"),
+          ] as const,
+        },
+        {
+          label: "Năm nay",
+          value: [dayjs().startOf("year"), dayjs().endOf("year")] as const,
+        },
+      ],
+    },
+    {
       name: "type",
       label: "Loại giao dịch",
       type: "select" as const,
@@ -414,23 +417,6 @@ export default function InventoryHistory() {
       }}
       isEmpty={!filteredTransactions?.length}
     >
-      {/* Date Range Filter */}
-      <Card className="mb-4">
-        <Form form={filterForm} layout="inline">
-          <Form.Item label="Lọc theo ngày">
-            <RangePicker
-              format="DD/MM/YYYY"
-              onChange={handleDateFilter}
-              defaultValue={
-                query.dateRange
-                  ? [dayjs(query.dateRange.from), dayjs(query.dateRange.to)]
-                  : undefined
-              }
-            />
-          </Form.Item>
-        </Form>
-      </Card>
-
       {/* Statistics */}
       <Row gutter={[16, 16]} className="mb-6">
         <Col xs={24} sm={12} lg={6}>

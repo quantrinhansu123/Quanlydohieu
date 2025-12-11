@@ -371,7 +371,7 @@ export default function DashboardLayout({
     ];
 
     // Only add additional breadcrumb items if not on root path
-    if (pathname !== rootPath && pathname !== "/dashboard") {
+    if (pathname !== rootPath) {
       const breadcrumbInfo = getBreadcrumbTitle(pathname);
 
       // Add parent if exists and different from root
@@ -638,6 +638,7 @@ export default function DashboardLayout({
         <Header
           style={{
             padding: "0 24px",
+            paddingTop: "env(safe-area-inset-top, 0px)",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -646,6 +647,9 @@ export default function DashboardLayout({
             position: "sticky",
             top: 0,
             zIndex: 20,
+            minHeight: `calc(64px + env(safe-area-inset-top, 0px))`,
+            boxSizing: "border-box",
+            background: token.colorBgContainer,
           }}
         >
           <div className="flex gap-3 items-center">
