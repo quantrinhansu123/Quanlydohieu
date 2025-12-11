@@ -427,6 +427,62 @@ func generateMockData(config MockConfig) MockData {
 	// Generate Members
 	data.Xoxo.Members = make(map[string]Member)
 
+	// Fixed members - always include these 3 members
+	// Admin member
+	adminID := "ADMIN_FIXED_001"
+	data.Xoxo.Members[adminID] = Member{
+		Code:        adminID,
+		ID:          adminID,
+		Name:        "Quản trị",
+		Phone:       "0900000001",
+		Email:       "admin@gmail.com",
+		Role:        "admin",
+		DateOfBirth: "1985-01-01",
+		IsActive:    true,
+		CreatedAt:   now - int64(90*24*3600*1000), // Created 90 days ago
+		UpdatedAt:   now - int64(90*24*3600*1000),
+	}
+
+	// Sales member
+	salesID := "SALES_FIXED_001"
+	data.Xoxo.Members[salesID] = Member{
+		Code:        salesID,
+		ID:          salesID,
+		Name:        "Bán hàng",
+		Phone:       "0900000002",
+		Email:       "sale31@gmail.com",
+		Role:        "sales",
+		DateOfBirth: "1990-01-01",
+		IsActive:    true,
+		CreatedAt:   now - int64(90*24*3600*1000), // Created 90 days ago
+		UpdatedAt:   now - int64(90*24*3600*1000),
+	}
+
+	// Worker (Kỹ thuật) member
+	workerID := "WORKER_FIXED_001"
+	// Assign to first department if available
+	var firstDeptCode string
+	if len(deptList) > 0 {
+		firstDeptCode = deptList[0].Code
+	}
+	workerDepts := []string{}
+	if firstDeptCode != "" {
+		workerDepts = []string{firstDeptCode}
+	}
+	data.Xoxo.Members[workerID] = Member{
+		Code:        workerID,
+		ID:          workerID,
+		Name:        "Kỹ thuật",
+		Phone:       "0900000003",
+		Email:       "kt@gmail.com",
+		Role:        "worker",
+		Departments: workerDepts,
+		DateOfBirth: "1992-01-01",
+		IsActive:    true,
+		CreatedAt:   now - int64(90*24*3600*1000), // Created 90 days ago
+		UpdatedAt:   now - int64(90*24*3600*1000),
+	}
+
 	// Generate sales members
 	for i := 0; i < config.NumSalesMembers; i++ {
 		id := generateID("SALES", i)

@@ -1,0 +1,5677 @@
+{
+  "xoxo": {
+    "departments": {
+      "DEPT_001": {
+        "code": "DEPT_001",
+        "name": "Phòng Cắt",
+        "createdAt": 1765228768517
+      },
+      "DEPT_002": {
+        "code": "DEPT_002",
+        "name": "Phòng May",
+        "createdAt": 1763261195651
+      },
+      "DEPT_003": {
+        "code": "DEPT_003",
+        "name": "Phòng Là Ủi",
+        "createdAt": 1763305942584
+      },
+      "DEPT_004": {
+        "code": "DEPT_004",
+        "name": "Phòng Kiểm Tra",
+        "createdAt": 1763827755820
+      },
+      "DEPT_005": {
+        "code": "DEPT_005",
+        "name": "Phòng Đóng Gói",
+        "createdAt": 1763243119466
+      }
+    },
+    "members": {
+      "ADMIN_001": {
+        "code": "ADMIN_001",
+        "id": "ADMIN_001",
+        "name": "Đặng Hồng Dũng",
+        "phone": "0989964235",
+        "email": "ngHngDng251@gmail.com",
+        "role": "admin",
+        "date_of_birth": "1986-12-08",
+        "isActive": true,
+        "createdAt": 1763824617826
+      },
+      "ADMIN_002": {
+        "code": "ADMIN_002",
+        "id": "ADMIN_002",
+        "name": "Nguyễn Dũng Minh",
+        "phone": "0994786070",
+        "email": "NguynDngMinh660@gmail.com",
+        "role": "admin",
+        "date_of_birth": "1992-08-26",
+        "isActive": true,
+        "createdAt": 1763034785911
+      },
+      "ADMIN_FIXED_001": {
+        "code": "ADMIN_FIXED_001",
+        "id": "ADMIN_FIXED_001",
+        "name": "Quản trị",
+        "phone": "0900000001",
+        "email": "admin@gmail.com",
+        "role": "admin",
+        "date_of_birth": "1985-01-01",
+        "isActive": true,
+        "createdAt": 1757679724000,
+        "updatedAt": 1757679724000
+      },
+      "DEV_001": {
+        "code": "DEV_001",
+        "id": "DEV_001",
+        "name": "Phạm Hồng Hùng",
+        "phone": "0960518995",
+        "email": "PhmHngHng558@gmail.com",
+        "role": "development",
+        "date_of_birth": "1999-08-14",
+        "isActive": true,
+        "createdAt": 1763298713058
+      },
+      "DEV_002": {
+        "code": "DEV_002",
+        "id": "DEV_002",
+        "name": "Hoàng Thị Dũng",
+        "phone": "0954332543",
+        "email": "HongThDng645@gmail.com",
+        "role": "development",
+        "date_of_birth": "1989-08-09",
+        "isActive": true,
+        "createdAt": 1765018849442
+      },
+      "SALES_001": {
+        "code": "SALES_001",
+        "id": "SALES_001",
+        "name": "Trần Dũng Thảo",
+        "phone": "0977865458",
+        "email": "TrnDngTho50@gmail.com",
+        "role": "sales",
+        "date_of_birth": "2007-06-03",
+        "isActive": true,
+        "createdAt": 1763963987116
+      },
+      "SALES_002": {
+        "code": "SALES_002",
+        "id": "SALES_002",
+        "name": "Đỗ Thị Hùng",
+        "phone": "0943939284",
+        "email": "ThHng622@gmail.com",
+        "role": "sales",
+        "date_of_birth": "1981-02-04",
+        "isActive": true,
+        "createdAt": 1763074991363
+      },
+      "SALES_003": {
+        "code": "SALES_003",
+        "id": "SALES_003",
+        "name": "Trần Hồng Thảo",
+        "phone": "0927835528",
+        "email": "TrnHngTho143@gmail.com",
+        "role": "sales",
+        "date_of_birth": "1992-10-28",
+        "isActive": true,
+        "createdAt": 1764298846219
+      },
+      "SALES_004": {
+        "code": "SALES_004",
+        "id": "SALES_004",
+        "name": "Trần Thảo Hồng",
+        "phone": "0990154612",
+        "email": "TrnThoHng7@gmail.com",
+        "role": "sales",
+        "date_of_birth": "1989-06-20",
+        "isActive": true,
+        "createdAt": 1763416155576
+      },
+      "SALES_005": {
+        "code": "SALES_005",
+        "id": "SALES_005",
+        "name": "Võ Dũng Linh",
+        "phone": "0992634654",
+        "email": "VDngLinh71@gmail.com",
+        "role": "sales",
+        "date_of_birth": "2001-12-13",
+        "isActive": true,
+        "createdAt": 1765301750782
+      },
+      "SALES_FIXED_001": {
+        "code": "SALES_FIXED_001",
+        "id": "SALES_FIXED_001",
+        "name": "Bán hàng",
+        "phone": "0900000002",
+        "email": "sale31@gmail.com",
+        "role": "sales",
+        "date_of_birth": "1990-01-01",
+        "isActive": true,
+        "createdAt": 1757679724000,
+        "updatedAt": 1757679724000
+      },
+      "WORKER_001": {
+        "code": "WORKER_001",
+        "id": "WORKER_001",
+        "name": "Nguyễn Dũng Dũng",
+        "phone": "0992348036",
+        "email": "NguynDngDng890@gmail.com",
+        "role": "worker",
+        "departments": [
+          "DEPT_001"
+        ],
+        "date_of_birth": "1995-05-18",
+        "isActive": true,
+        "createdAt": 1763127851022
+      },
+      "WORKER_002": {
+        "code": "WORKER_002",
+        "id": "WORKER_002",
+        "name": "Đỗ Lan Thị",
+        "phone": "0982082427",
+        "email": "LanTh243@gmail.com",
+        "role": "worker",
+        "departments": [
+          "DEPT_001"
+        ],
+        "date_of_birth": "1991-01-19",
+        "isActive": true,
+        "createdAt": 1763441560139
+      },
+      "WORKER_003": {
+        "code": "WORKER_003",
+        "id": "WORKER_003",
+        "name": "Bùi Linh Minh",
+        "phone": "0990305784",
+        "email": "BiLinhMinh408@gmail.com",
+        "role": "worker",
+        "departments": [
+          "DEPT_001"
+        ],
+        "date_of_birth": "1985-06-28",
+        "isActive": true,
+        "createdAt": 1764812467965
+      },
+      "WORKER_004": {
+        "code": "WORKER_004",
+        "id": "WORKER_004",
+        "name": "Phạm Hồng Anh",
+        "phone": "0977510114",
+        "email": "PhmHngAnh99@gmail.com",
+        "role": "worker",
+        "departments": [
+          "DEPT_002"
+        ],
+        "date_of_birth": "2000-12-19",
+        "isActive": true,
+        "createdAt": 1765089379305
+      },
+      "WORKER_005": {
+        "code": "WORKER_005",
+        "id": "WORKER_005",
+        "name": "Hoàng Hùng Linh",
+        "phone": "0917738538",
+        "email": "HongHngLinh844@gmail.com",
+        "role": "worker",
+        "departments": [
+          "DEPT_002"
+        ],
+        "date_of_birth": "2007-10-10",
+        "isActive": true,
+        "createdAt": 1764456243546
+      },
+      "WORKER_006": {
+        "code": "WORKER_006",
+        "id": "WORKER_006",
+        "name": "Võ Minh Anh",
+        "phone": "0967823226",
+        "email": "VMinhAnh608@gmail.com",
+        "role": "worker",
+        "departments": [
+          "DEPT_002"
+        ],
+        "date_of_birth": "2005-10-23",
+        "isActive": true,
+        "createdAt": 1765153722065
+      },
+      "WORKER_007": {
+        "code": "WORKER_007",
+        "id": "WORKER_007",
+        "name": "Lê Hùng Thị",
+        "phone": "0948754626",
+        "email": "LHngTh58@gmail.com",
+        "role": "worker",
+        "departments": [
+          "DEPT_003"
+        ],
+        "date_of_birth": "2005-04-17",
+        "isActive": true,
+        "createdAt": 1762975953268
+      },
+      "WORKER_008": {
+        "code": "WORKER_008",
+        "id": "WORKER_008",
+        "name": "Võ Hồng Minh",
+        "phone": "0918088411",
+        "email": "VHngMinh155@gmail.com",
+        "role": "worker",
+        "departments": [
+          "DEPT_003"
+        ],
+        "date_of_birth": "1997-03-16",
+        "isActive": true,
+        "createdAt": 1763030306972
+      },
+      "WORKER_009": {
+        "code": "WORKER_009",
+        "id": "WORKER_009",
+        "name": "Võ Văn Minh",
+        "phone": "0971441514",
+        "email": "VVnMinh638@gmail.com",
+        "role": "worker",
+        "departments": [
+          "DEPT_003"
+        ],
+        "date_of_birth": "1987-09-09",
+        "isActive": true,
+        "createdAt": 1764127554288
+      },
+      "WORKER_010": {
+        "code": "WORKER_010",
+        "id": "WORKER_010",
+        "name": "Phạm Hồng Dũng",
+        "phone": "0906012881",
+        "email": "PhmHngDng816@gmail.com",
+        "role": "worker",
+        "departments": [
+          "DEPT_004"
+        ],
+        "date_of_birth": "1988-05-16",
+        "isActive": true,
+        "createdAt": 1763033456945
+      },
+      "WORKER_011": {
+        "code": "WORKER_011",
+        "id": "WORKER_011",
+        "name": "Đặng Dũng Linh",
+        "phone": "0990037711",
+        "email": "ngDngLinh561@gmail.com",
+        "role": "worker",
+        "departments": [
+          "DEPT_004"
+        ],
+        "date_of_birth": "2001-05-11",
+        "isActive": true,
+        "createdAt": 1763251858398
+      },
+      "WORKER_012": {
+        "code": "WORKER_012",
+        "id": "WORKER_012",
+        "name": "Đỗ Minh Minh",
+        "phone": "0907082557",
+        "email": "MinhMinh682@gmail.com",
+        "role": "worker",
+        "departments": [
+          "DEPT_004"
+        ],
+        "date_of_birth": "1999-08-10",
+        "isActive": true,
+        "createdAt": 1763937397544
+      },
+      "WORKER_013": {
+        "code": "WORKER_013",
+        "id": "WORKER_013",
+        "name": "Đặng Anh Anh",
+        "phone": "0982514788",
+        "email": "ngAnhAnh920@gmail.com",
+        "role": "worker",
+        "departments": [
+          "DEPT_005"
+        ],
+        "date_of_birth": "1985-11-03",
+        "isActive": true,
+        "createdAt": 1764660600222
+      },
+      "WORKER_014": {
+        "code": "WORKER_014",
+        "id": "WORKER_014",
+        "name": "Lê Dũng Hồng",
+        "phone": "0986477616",
+        "email": "LDngHng663@gmail.com",
+        "role": "worker",
+        "departments": [
+          "DEPT_005"
+        ],
+        "date_of_birth": "1981-04-18",
+        "isActive": true,
+        "createdAt": 1764424136114
+      },
+      "WORKER_015": {
+        "code": "WORKER_015",
+        "id": "WORKER_015",
+        "name": "Trần Anh Văn",
+        "phone": "0976930446",
+        "email": "TrnAnhVn957@gmail.com",
+        "role": "worker",
+        "departments": [
+          "DEPT_005"
+        ],
+        "date_of_birth": "1996-08-01",
+        "isActive": true,
+        "createdAt": 1763575059330
+      },
+      "WORKER_FIXED_001": {
+        "code": "WORKER_FIXED_001",
+        "id": "WORKER_FIXED_001",
+        "name": "Kỹ thuật",
+        "phone": "0900000003",
+        "email": "kt@gmail.com",
+        "role": "worker",
+        "departments": [
+          "DEPT_001"
+        ],
+        "date_of_birth": "1992-01-01",
+        "isActive": true,
+        "createdAt": 1757679724000,
+        "updatedAt": 1757679724000
+      }
+    },
+    "workflows": {
+      "WF_001": {
+        "name": "Cắt vải",
+        "department": "DEPT_001"
+      },
+      "WF_002": {
+        "name": "Cắt chỉ",
+        "department": "DEPT_001"
+      },
+      "WF_003": {
+        "name": "Cắt phụ liệu",
+        "department": "DEPT_001"
+      },
+      "WF_004": {
+        "name": "May thân",
+        "department": "DEPT_002"
+      },
+      "WF_005": {
+        "name": "May tay áo",
+        "department": "DEPT_002"
+      },
+      "WF_006": {
+        "name": "May cổ áo",
+        "department": "DEPT_002"
+      },
+      "WF_007": {
+        "name": "May đường viền",
+        "department": "DEPT_002"
+      },
+      "WF_008": {
+        "name": "Là ủi thân",
+        "department": "DEPT_003"
+      },
+      "WF_009": {
+        "name": "Là ủi tay áo",
+        "department": "DEPT_003"
+      },
+      "WF_010": {
+        "name": "Là ủi hoàn thiện",
+        "department": "DEPT_003"
+      },
+      "WF_011": {
+        "name": "Kiểm tra chất lượng",
+        "department": "DEPT_004"
+      },
+      "WF_012": {
+        "name": "Kiểm tra kích thước",
+        "department": "DEPT_004"
+      },
+      "WF_013": {
+        "name": "Kiểm tra đường may",
+        "department": "DEPT_004"
+      },
+      "WF_014": {
+        "name": "Đóng gói",
+        "department": "DEPT_005"
+      },
+      "WF_015": {
+        "name": "Dán nhãn",
+        "department": "DEPT_005"
+      },
+      "WF_016": {
+        "name": "Bọc bảo vệ",
+        "department": "DEPT_005"
+      }
+    },
+    "orders": {
+      "ORD_001": {
+        "code": "ORD20251211001",
+        "customerName": "Hồ Thảo Thị",
+        "phone": "0921099649",
+        "email": "HongThoDng253@gmail.com",
+        "address": "550 Đường Phạm Thảo Dũng, Quận 6, TP.HCM",
+        "customerSource": "walk_in",
+        "orderDate": 1763309245027,
+        "deliveryDate": 1764259645027,
+        "createdBy": "SALES_001",
+        "createdByName": "Trần Dũng Thảo",
+        "consultantId": "SALES_FIXED_001",
+        "consultantName": "Bán hàng",
+        "createdAt": 1763309245027,
+        "updatedAt": 1763340917772,
+        "notes": "Ghi chú cho đơn hàng ORD20251211001",
+        "discountType": "amount",
+        "shippingFee": 47834,
+        "products": {
+          "PROD_ORD_001_1": {
+            "name": "Áo len nữ size L",
+            "quantity": 64,
+            "price": 514806,
+            "commissionPercentage": 11.936543693348849,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_001_1_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_001_1_0": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_013"
+                ],
+                "workflowName": [
+                  "Kiểm tra đường may"
+                ],
+                "members": [
+                  "WORKER_010"
+                ],
+                "isDone": false,
+                "updatedAt": 1763309245027
+              },
+              "workflow_PROD_ORD_001_1_1": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_015"
+                ],
+                "workflowName": [
+                  "Dán nhãn"
+                ],
+                "members": [
+                  "WORKER_013"
+                ],
+                "isDone": false,
+                "updatedAt": 1763312845027
+              },
+              "workflow_PROD_ORD_001_1_2": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_001",
+                  "WF_002"
+                ],
+                "workflowName": [
+                  "Cắt vải",
+                  "Cắt chỉ"
+                ],
+                "members": [
+                  "WORKER_001"
+                ],
+                "isDone": false,
+                "updatedAt": 1763316445027
+              }
+            }
+          },
+          "PROD_ORD_001_2": {
+            "name": "Quần short nam size 30",
+            "quantity": 85,
+            "price": 65493,
+            "commissionPercentage": 11.137769330720978,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_001_2_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_001_2_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_001_2_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_001_2_0": {
+                "departmentCode": "DEPT_002",
+                "workflowCode": [
+                  "WF_005"
+                ],
+                "workflowName": [
+                  "May tay áo"
+                ],
+                "members": [
+                  "WORKER_006"
+                ],
+                "isDone": true,
+                "updatedAt": 1763309245027
+              },
+              "workflow_PROD_ORD_001_2_1": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_015"
+                ],
+                "workflowName": [
+                  "Dán nhãn"
+                ],
+                "members": [
+                  "WORKER_014"
+                ],
+                "isDone": false,
+                "updatedAt": 1763312845027
+              },
+              "workflow_PROD_ORD_001_2_2": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_011",
+                  "WF_012"
+                ],
+                "workflowName": [
+                  "Kiểm tra chất lượng",
+                  "Kiểm tra kích thước"
+                ],
+                "members": [
+                  "WORKER_010",
+                  "WORKER_011"
+                ],
+                "isDone": false,
+                "updatedAt": 1763316445027
+              }
+            }
+          },
+          "PROD_ORD_001_3": {
+            "name": "Áo len nữ size L",
+            "quantity": 68,
+            "price": 426460,
+            "commissionPercentage": 10.483324294956475,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_001_3_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_001_3_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_001_3_0": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_015"
+                ],
+                "workflowName": [
+                  "Dán nhãn"
+                ],
+                "members": [
+                  "WORKER_015"
+                ],
+                "isDone": false,
+                "updatedAt": 1763309245027
+              },
+              "workflow_PROD_ORD_001_3_1": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_011"
+                ],
+                "workflowName": [
+                  "Kiểm tra chất lượng"
+                ],
+                "members": [
+                  "WORKER_011"
+                ],
+                "isDone": false,
+                "updatedAt": 1763312845027
+              },
+              "workflow_PROD_ORD_001_3_2": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_009",
+                  "WF_008"
+                ],
+                "workflowName": [
+                  "Là ủi tay áo",
+                  "Là ủi thân"
+                ],
+                "members": [
+                  "WORKER_007",
+                  "WORKER_009"
+                ],
+                "isDone": false,
+                "updatedAt": 1763316445027
+              }
+            }
+          }
+        },
+        "status": "confirmed",
+        "totalAmount": 67561603,
+        "subtotal": 67513769,
+        "deposit": 56,
+        "depositType": "percentage",
+        "depositAmount": 37834497,
+        "isDepositPaid": true
+      },
+      "ORD_002": {
+        "code": "ORD20251211002",
+        "customerName": "Trần Dũng Thảo",
+        "phone": "0907820766",
+        "email": "NguynVnAnh657@gmail.com",
+        "address": "512 Đường Phạm Văn Minh, Quận 2, TP.HCM",
+        "customerSource": "tiktok",
+        "orderDate": 1763983308362,
+        "deliveryDate": 1764501708362,
+        "createdBy": "SALES_001",
+        "createdByName": "Trần Dũng Thảo",
+        "consultantId": "SALES_001",
+        "consultantName": "Trần Dũng Thảo",
+        "createdAt": 1763983308362,
+        "updatedAt": 1764028755259,
+        "notes": "Ghi chú cho đơn hàng ORD20251211002",
+        "discount": 242911,
+        "discountType": "amount",
+        "shippingFee": 29376,
+        "products": {
+          "PROD_ORD_002_1": {
+            "name": "Áo len nữ size L",
+            "quantity": 84,
+            "price": 248989,
+            "commissionPercentage": 6.426803117577051,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_002_1_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_002_1_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_002_1_2",
+                "name": "product_3.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_002_1_0": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_009",
+                  "WF_008"
+                ],
+                "workflowName": [
+                  "Là ủi tay áo",
+                  "Là ủi thân"
+                ],
+                "members": [
+                  "WORKER_007",
+                  "WORKER_008"
+                ],
+                "isDone": true,
+                "updatedAt": 1763983308362
+              },
+              "workflow_PROD_ORD_002_1_1": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_011",
+                  "WF_012"
+                ],
+                "workflowName": [
+                  "Kiểm tra chất lượng",
+                  "Kiểm tra kích thước"
+                ],
+                "members": [
+                  "WORKER_012"
+                ],
+                "isDone": false,
+                "updatedAt": 1763986908362
+              },
+              "workflow_PROD_ORD_002_1_2": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_002"
+                ],
+                "workflowName": [
+                  "Cắt chỉ"
+                ],
+                "members": [
+                  "WORKER_FIXED_001",
+                  "WORKER_002"
+                ],
+                "isDone": false,
+                "updatedAt": 1763990508362
+              },
+              "workflow_PROD_ORD_002_1_3": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_016",
+                  "WF_014"
+                ],
+                "workflowName": [
+                  "Bọc bảo vệ",
+                  "Đóng gói"
+                ],
+                "members": [
+                  "WORKER_015"
+                ],
+                "isDone": false,
+                "updatedAt": 1763994108362
+              }
+            }
+          },
+          "PROD_ORD_002_2": {
+            "name": "Áo len nữ size L",
+            "quantity": 69,
+            "price": 461381,
+            "commissionPercentage": 11.117214278794577,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_002_2_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_002_2_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_002_2_0": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_001",
+                  "WF_002"
+                ],
+                "workflowName": [
+                  "Cắt vải",
+                  "Cắt chỉ"
+                ],
+                "members": [
+                  "WORKER_FIXED_001",
+                  "WORKER_002"
+                ],
+                "isDone": true,
+                "updatedAt": 1763983308362
+              },
+              "workflow_PROD_ORD_002_2_1": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_010",
+                  "WF_009"
+                ],
+                "workflowName": [
+                  "Là ủi hoàn thiện",
+                  "Là ủi tay áo"
+                ],
+                "members": [
+                  "WORKER_007"
+                ],
+                "isDone": true,
+                "updatedAt": 1763986908362
+              },
+              "workflow_PROD_ORD_002_2_2": {
+                "departmentCode": "DEPT_002",
+                "workflowCode": [
+                  "WF_006",
+                  "WF_004"
+                ],
+                "workflowName": [
+                  "May cổ áo",
+                  "May thân"
+                ],
+                "members": [
+                  "WORKER_006",
+                  "WORKER_004"
+                ],
+                "isDone": false,
+                "updatedAt": 1763990508362
+              }
+            }
+          }
+        },
+        "status": "completed",
+        "totalAmount": 52536830,
+        "discountAmount": 242911,
+        "subtotal": 52750365,
+        "deposit": 32,
+        "depositType": "percentage",
+        "depositAmount": 16811785,
+        "isDepositPaid": true
+      },
+      "ORD_003": {
+        "code": "ORD20251211003",
+        "customerName": "Nguyễn Hùng Linh",
+        "phone": "0920651064",
+        "email": "VLanTho235@gmail.com",
+        "address": "946 Đường Nguyễn Lan Dũng, Quận 4, TP.HCM",
+        "customerSource": "tiktok",
+        "orderDate": 1764073854453,
+        "deliveryDate": 1764592254453,
+        "createdBy": "SALES_002",
+        "createdByName": "Đỗ Thị Hùng",
+        "consultantId": "SALES_001",
+        "consultantName": "Trần Dũng Thảo",
+        "createdAt": 1764073854453,
+        "updatedAt": 1764160063336,
+        "notes": "Ghi chú cho đơn hàng ORD20251211003",
+        "discountType": "amount",
+        "shippingFee": 48176,
+        "products": {
+          "PROD_ORD_003_1": {
+            "name": "Váy công sở size S",
+            "quantity": 97,
+            "price": 116985,
+            "commissionPercentage": 12.91905626992477,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_003_1_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_003_1_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_003_1_2",
+                "name": "product_3.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_003_1_0": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_015",
+                  "WF_016"
+                ],
+                "workflowName": [
+                  "Dán nhãn",
+                  "Bọc bảo vệ"
+                ],
+                "members": [
+                  "WORKER_014",
+                  "WORKER_015"
+                ],
+                "isDone": false,
+                "updatedAt": 1764073854453
+              },
+              "workflow_PROD_ORD_003_1_1": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_009"
+                ],
+                "workflowName": [
+                  "Là ủi tay áo"
+                ],
+                "members": [
+                  "WORKER_008"
+                ],
+                "isDone": true,
+                "updatedAt": 1764077454453
+              },
+              "workflow_PROD_ORD_003_1_2": {
+                "departmentCode": "DEPT_002",
+                "workflowCode": [
+                  "WF_004",
+                  "WF_007"
+                ],
+                "workflowName": [
+                  "May thân",
+                  "May đường viền"
+                ],
+                "members": [
+                  "WORKER_004",
+                  "WORKER_006"
+                ],
+                "isDone": false,
+                "updatedAt": 1764081054453
+              },
+              "workflow_PROD_ORD_003_1_3": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_013"
+                ],
+                "workflowName": [
+                  "Kiểm tra đường may"
+                ],
+                "members": [
+                  "WORKER_012"
+                ],
+                "isDone": false,
+                "updatedAt": 1764084654453
+              }
+            }
+          }
+        },
+        "status": "completed",
+        "totalAmount": 11395721,
+        "subtotal": 11347545,
+        "deposit": 57,
+        "depositType": "percentage",
+        "depositAmount": 6495560,
+        "isDepositPaid": true
+      },
+      "ORD_004": {
+        "code": "ORD20251211004",
+        "customerName": "Đặng Dũng Hồng",
+        "phone": "0911723259",
+        "email": "TrnLinhAnh535@gmail.com",
+        "address": "320 Đường Hoàng Thảo Minh, Quận 10, TP.HCM",
+        "customerSource": "facebook",
+        "orderDate": 1765067802931,
+        "deliveryDate": 1765672602931,
+        "createdBy": "SALES_001",
+        "createdByName": "Trần Dũng Thảo",
+        "consultantId": "SALES_002",
+        "consultantName": "Đỗ Thị Hùng",
+        "createdAt": 1765067802931,
+        "updatedAt": 1765133546180,
+        "notes": "Ghi chú cho đơn hàng ORD20251211004",
+        "discount": 161333,
+        "discountType": "amount",
+        "products": {
+          "PROD_ORD_004_1": {
+            "name": "Áo sơ mi nam size L",
+            "quantity": 16,
+            "price": 277168,
+            "commissionPercentage": 7.372353794418118,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_004_1_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_004_1_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_004_1_0": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_001",
+                  "WF_002"
+                ],
+                "workflowName": [
+                  "Cắt vải",
+                  "Cắt chỉ"
+                ],
+                "members": [
+                  "WORKER_001"
+                ],
+                "isDone": true,
+                "updatedAt": 1765067802931
+              },
+              "workflow_PROD_ORD_004_1_1": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_015",
+                  "WF_016"
+                ],
+                "workflowName": [
+                  "Dán nhãn",
+                  "Bọc bảo vệ"
+                ],
+                "members": [
+                  "WORKER_013",
+                  "WORKER_015"
+                ],
+                "isDone": false,
+                "updatedAt": 1765071402931
+              },
+              "workflow_PROD_ORD_004_1_2": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_008"
+                ],
+                "workflowName": [
+                  "Là ủi thân"
+                ],
+                "members": [
+                  "WORKER_009"
+                ],
+                "isDone": false,
+                "updatedAt": 1765075002931
+              },
+              "workflow_PROD_ORD_004_1_3": {
+                "departmentCode": "DEPT_002",
+                "workflowCode": [
+                  "WF_004",
+                  "WF_007"
+                ],
+                "workflowName": [
+                  "May thân",
+                  "May đường viền"
+                ],
+                "members": [
+                  "WORKER_004"
+                ],
+                "isDone": false,
+                "updatedAt": 1765078602931
+              }
+            }
+          },
+          "PROD_ORD_004_2": {
+            "name": "Áo thun nữ size M",
+            "quantity": 68,
+            "price": 283234,
+            "commissionPercentage": 10.206882871786817,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_004_2_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_004_2_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_004_2_2",
+                "name": "product_3.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_004_2_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_done_PROD_ORD_004_2_1",
+                "name": "product_done_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_004_2_0": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_016",
+                  "WF_014"
+                ],
+                "workflowName": [
+                  "Bọc bảo vệ",
+                  "Đóng gói"
+                ],
+                "members": [
+                  "WORKER_015"
+                ],
+                "isDone": true,
+                "updatedAt": 1765067802931
+              },
+              "workflow_PROD_ORD_004_2_1": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_012",
+                  "WF_013"
+                ],
+                "workflowName": [
+                  "Kiểm tra kích thước",
+                  "Kiểm tra đường may"
+                ],
+                "members": [
+                  "WORKER_011",
+                  "WORKER_010"
+                ],
+                "isDone": true,
+                "updatedAt": 1765071402931
+              },
+              "workflow_PROD_ORD_004_2_2": {
+                "departmentCode": "DEPT_002",
+                "workflowCode": [
+                  "WF_004"
+                ],
+                "workflowName": [
+                  "May thân"
+                ],
+                "members": [
+                  "WORKER_006"
+                ],
+                "isDone": false,
+                "updatedAt": 1765075002931
+              },
+              "workflow_PROD_ORD_004_2_3": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_002"
+                ],
+                "workflowName": [
+                  "Cắt chỉ"
+                ],
+                "members": [
+                  "WORKER_001"
+                ],
+                "isDone": false,
+                "updatedAt": 1765078602931
+              }
+            }
+          },
+          "PROD_ORD_004_3": {
+            "name": "Quần short nam size 30",
+            "quantity": 93,
+            "price": 306806,
+            "commissionPercentage": 14.029395809629372,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_004_3_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_004_3_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_004_3_2",
+                "name": "product_3.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_004_3_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_done_PROD_ORD_004_3_1",
+                "name": "product_done_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_004_3_0": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_002"
+                ],
+                "workflowName": [
+                  "Cắt chỉ"
+                ],
+                "members": [
+                  "WORKER_002",
+                  "WORKER_003"
+                ],
+                "isDone": true,
+                "updatedAt": 1765067802931
+              },
+              "workflow_PROD_ORD_004_3_1": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_011"
+                ],
+                "workflowName": [
+                  "Kiểm tra chất lượng"
+                ],
+                "members": [
+                  "WORKER_012",
+                  "WORKER_010"
+                ],
+                "isDone": false,
+                "updatedAt": 1765071402931
+              },
+              "workflow_PROD_ORD_004_3_2": {
+                "departmentCode": "DEPT_002",
+                "workflowCode": [
+                  "WF_004",
+                  "WF_007"
+                ],
+                "workflowName": [
+                  "May thân",
+                  "May đường viền"
+                ],
+                "members": [
+                  "WORKER_004",
+                  "WORKER_005"
+                ],
+                "isDone": false,
+                "updatedAt": 1765075002931
+              }
+            }
+          }
+        },
+        "status": "completed",
+        "totalAmount": 52066225,
+        "discountAmount": 161333,
+        "subtotal": 52227558,
+        "deposit": 56,
+        "depositType": "percentage",
+        "depositAmount": 29157086,
+        "isDepositPaid": true
+      },
+      "ORD_005": {
+        "code": "ORD20251211005",
+        "customerName": "Nguyễn Anh Hồng",
+        "phone": "0927680684",
+        "email": "PhmVnMinh386@gmail.com",
+        "address": "736 Đường Bùi Minh Anh, Quận 11, TP.HCM",
+        "customerSource": "facebook",
+        "orderDate": 1764495088272,
+        "deliveryDate": 1764840688272,
+        "createdBy": "SALES_001",
+        "createdByName": "Trần Dũng Thảo",
+        "createdAt": 1764495088272,
+        "updatedAt": 1764498454523,
+        "notes": "Ghi chú cho đơn hàng ORD20251211005",
+        "discountType": "percentage",
+        "shippingFee": 25444,
+        "products": {
+          "PROD_ORD_005_1": {
+            "name": "Áo khoác nữ size M",
+            "quantity": 89,
+            "price": 496564,
+            "commissionPercentage": 6.1584173485797296,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_005_1_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_005_1_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_done_PROD_ORD_005_1_1",
+                "name": "product_done_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_005_1_0": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_011"
+                ],
+                "workflowName": [
+                  "Kiểm tra chất lượng"
+                ],
+                "members": [
+                  "WORKER_012"
+                ],
+                "isDone": true,
+                "updatedAt": 1764495088272
+              },
+              "workflow_PROD_ORD_005_1_1": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_009"
+                ],
+                "workflowName": [
+                  "Là ủi tay áo"
+                ],
+                "members": [
+                  "WORKER_007"
+                ],
+                "isDone": true,
+                "updatedAt": 1764498688272
+              }
+            }
+          }
+        },
+        "status": "completed",
+        "totalAmount": 44219640,
+        "subtotal": 44194196,
+        "depositType": "percentage"
+      },
+      "ORD_006": {
+        "code": "ORD20251211006",
+        "customerName": "Hoàng Văn Dũng",
+        "phone": "0983425768",
+        "email": "PhmThoTh258@gmail.com",
+        "address": "903 Đường Bùi Lan Thảo, Quận 1, TP.HCM",
+        "customerSource": "walk_in",
+        "orderDate": 1765309853008,
+        "deliveryDate": 1765569053008,
+        "createdBy": "SALES_002",
+        "createdByName": "Đỗ Thị Hùng",
+        "consultantId": "SALES_002",
+        "consultantName": "Đỗ Thị Hùng",
+        "createdAt": 1765309853008,
+        "updatedAt": 1765330900092,
+        "notes": "Ghi chú cho đơn hàng ORD20251211006",
+        "discountType": "percentage",
+        "products": {
+          "PROD_ORD_006_1": {
+            "name": "Quần tây nam size 34",
+            "quantity": 45,
+            "price": 189907,
+            "commissionPercentage": 8.164385861131798,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_006_1_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_006_1_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_006_1_0": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_011"
+                ],
+                "workflowName": [
+                  "Kiểm tra chất lượng"
+                ],
+                "members": [
+                  "WORKER_012"
+                ],
+                "isDone": true,
+                "updatedAt": 1765309853008
+              },
+              "workflow_PROD_ORD_006_1_1": {
+                "departmentCode": "DEPT_002",
+                "workflowCode": [
+                  "WF_004",
+                  "WF_007"
+                ],
+                "workflowName": [
+                  "May thân",
+                  "May đường viền"
+                ],
+                "members": [
+                  "WORKER_005",
+                  "WORKER_004"
+                ],
+                "isDone": true,
+                "updatedAt": 1765313453008
+              }
+            }
+          },
+          "PROD_ORD_006_2": {
+            "name": "Quần jeans nam size 32",
+            "quantity": 95,
+            "price": 315577,
+            "commissionPercentage": 12.214428450142222,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_006_2_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_006_2_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_006_2_2",
+                "name": "product_3.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_006_2_0": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_009"
+                ],
+                "workflowName": [
+                  "Là ủi tay áo"
+                ],
+                "members": [
+                  "WORKER_008"
+                ],
+                "isDone": true,
+                "updatedAt": 1765309853008
+              },
+              "workflow_PROD_ORD_006_2_1": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_001"
+                ],
+                "workflowName": [
+                  "Cắt vải"
+                ],
+                "members": [
+                  "WORKER_001",
+                  "WORKER_002"
+                ],
+                "isDone": true,
+                "updatedAt": 1765313453008
+              },
+              "workflow_PROD_ORD_006_2_2": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_013"
+                ],
+                "workflowName": [
+                  "Kiểm tra đường may"
+                ],
+                "members": [
+                  "WORKER_010"
+                ],
+                "isDone": false,
+                "updatedAt": 1765317053008
+              }
+            }
+          },
+          "PROD_ORD_006_3": {
+            "name": "Quần jeans nam size 32",
+            "quantity": 15,
+            "price": 50537,
+            "commissionPercentage": 13.830271339793349,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_006_3_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_006_3_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_006_3_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_006_3_0": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_016",
+                  "WF_014"
+                ],
+                "workflowName": [
+                  "Bọc bảo vệ",
+                  "Đóng gói"
+                ],
+                "members": [
+                  "WORKER_013",
+                  "WORKER_015"
+                ],
+                "isDone": true,
+                "updatedAt": 1765309853008
+              },
+              "workflow_PROD_ORD_006_3_1": {
+                "departmentCode": "DEPT_002",
+                "workflowCode": [
+                  "WF_005"
+                ],
+                "workflowName": [
+                  "May tay áo"
+                ],
+                "members": [
+                  "WORKER_006",
+                  "WORKER_005"
+                ],
+                "isDone": false,
+                "updatedAt": 1765313453008
+              },
+              "workflow_PROD_ORD_006_3_2": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_001",
+                  "WF_002"
+                ],
+                "workflowName": [
+                  "Cắt vải",
+                  "Cắt chỉ"
+                ],
+                "members": [
+                  "WORKER_002"
+                ],
+                "isDone": false,
+                "updatedAt": 1765317053008
+              },
+              "workflow_PROD_ORD_006_3_3": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_011"
+                ],
+                "workflowName": [
+                  "Kiểm tra chất lượng"
+                ],
+                "members": [
+                  "WORKER_011"
+                ],
+                "isDone": false,
+                "updatedAt": 1765320653008
+              }
+            }
+          }
+        },
+        "status": "pending",
+        "totalAmount": 39283685,
+        "subtotal": 39283685,
+        "deposit": 44,
+        "depositType": "percentage",
+        "depositAmount": 17284821,
+        "isDepositPaid": true
+      },
+      "ORD_007": {
+        "code": "ORD20251211007",
+        "customerName": "Hồ Hùng Lan",
+        "phone": "0935210542",
+        "email": "BiHngHng454@gmail.com",
+        "address": "197 Đường Nguyễn Anh Văn, Quận 10, TP.HCM",
+        "customerSource": "walk_in",
+        "orderDate": 1765068823704,
+        "deliveryDate": 1765673623704,
+        "createdBy": "SALES_003",
+        "createdByName": "Trần Hồng Thảo",
+        "consultantId": "SALES_004",
+        "consultantName": "Trần Thảo Hồng",
+        "createdAt": 1765068823704,
+        "updatedAt": 1765092435505,
+        "notes": "Ghi chú cho đơn hàng ORD20251211007",
+        "discount": 11,
+        "discountType": "percentage",
+        "products": {
+          "PROD_ORD_007_1": {
+            "name": "Áo len nữ size L",
+            "quantity": 58,
+            "price": 503501,
+            "commissionPercentage": 7.275304091079933,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_007_1_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_007_1_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_007_1_2",
+                "name": "product_3.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_007_1_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_007_1_0": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_009",
+                  "WF_008"
+                ],
+                "workflowName": [
+                  "Là ủi tay áo",
+                  "Là ủi thân"
+                ],
+                "members": [
+                  "WORKER_009"
+                ],
+                "isDone": true,
+                "updatedAt": 1765068823704
+              },
+              "workflow_PROD_ORD_007_1_1": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_001"
+                ],
+                "workflowName": [
+                  "Cắt vải"
+                ],
+                "members": [
+                  "WORKER_FIXED_001"
+                ],
+                "isDone": false,
+                "updatedAt": 1765072423704
+              },
+              "workflow_PROD_ORD_007_1_2": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_011",
+                  "WF_012"
+                ],
+                "workflowName": [
+                  "Kiểm tra chất lượng",
+                  "Kiểm tra kích thước"
+                ],
+                "members": [
+                  "WORKER_011",
+                  "WORKER_012"
+                ],
+                "isDone": false,
+                "updatedAt": 1765076023704
+              },
+              "workflow_PROD_ORD_007_1_3": {
+                "departmentCode": "DEPT_002",
+                "workflowCode": [
+                  "WF_004",
+                  "WF_007"
+                ],
+                "workflowName": [
+                  "May thân",
+                  "May đường viền"
+                ],
+                "members": [
+                  "WORKER_006",
+                  "WORKER_005"
+                ],
+                "isDone": false,
+                "updatedAt": 1765079623704
+              }
+            }
+          },
+          "PROD_ORD_007_2": {
+            "name": "Váy công sở size S",
+            "quantity": 61,
+            "price": 159793,
+            "commissionPercentage": 10.740308139065714,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_007_2_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_007_2_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_007_2_0": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_011"
+                ],
+                "workflowName": [
+                  "Kiểm tra chất lượng"
+                ],
+                "members": [
+                  "WORKER_011"
+                ],
+                "isDone": true,
+                "updatedAt": 1765068823704
+              },
+              "workflow_PROD_ORD_007_2_1": {
+                "departmentCode": "DEPT_002",
+                "workflowCode": [
+                  "WF_007",
+                  "WF_005"
+                ],
+                "workflowName": [
+                  "May đường viền",
+                  "May tay áo"
+                ],
+                "members": [
+                  "WORKER_005",
+                  "WORKER_004"
+                ],
+                "isDone": false,
+                "updatedAt": 1765072423704
+              },
+              "workflow_PROD_ORD_007_2_2": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_016"
+                ],
+                "workflowName": [
+                  "Bọc bảo vệ"
+                ],
+                "members": [
+                  "WORKER_015",
+                  "WORKER_014"
+                ],
+                "isDone": false,
+                "updatedAt": 1765076023704
+              },
+              "workflow_PROD_ORD_007_2_3": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_002"
+                ],
+                "workflowName": [
+                  "Cắt chỉ"
+                ],
+                "members": [
+                  "WORKER_003"
+                ],
+                "isDone": false,
+                "updatedAt": 1765079623704
+              }
+            }
+          },
+          "PROD_ORD_007_3": {
+            "name": "Quần tây nam size 34",
+            "quantity": 30,
+            "price": 258466,
+            "commissionPercentage": 14.630336482017686,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_007_3_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_007_3_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_done_PROD_ORD_007_3_1",
+                "name": "product_done_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_007_3_0": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_011",
+                  "WF_012"
+                ],
+                "workflowName": [
+                  "Kiểm tra chất lượng",
+                  "Kiểm tra kích thước"
+                ],
+                "members": [
+                  "WORKER_011",
+                  "WORKER_010"
+                ],
+                "isDone": true,
+                "updatedAt": 1765068823704
+              },
+              "workflow_PROD_ORD_007_3_1": {
+                "departmentCode": "DEPT_002",
+                "workflowCode": [
+                  "WF_005",
+                  "WF_006"
+                ],
+                "workflowName": [
+                  "May tay áo",
+                  "May cổ áo"
+                ],
+                "members": [
+                  "WORKER_005",
+                  "WORKER_006"
+                ],
+                "isDone": false,
+                "updatedAt": 1765072423704
+              },
+              "workflow_PROD_ORD_007_3_2": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_002",
+                  "WF_003"
+                ],
+                "workflowName": [
+                  "Cắt chỉ",
+                  "Cắt phụ liệu"
+                ],
+                "members": [
+                  "WORKER_003"
+                ],
+                "isDone": false,
+                "updatedAt": 1765076023704
+              }
+            }
+          }
+        },
+        "status": "completed",
+        "totalAmount": 41566926,
+        "discountAmount": 5137485,
+        "subtotal": 46704411,
+        "depositType": "percentage"
+      },
+      "ORD_008": {
+        "code": "ORD20251211008",
+        "customerName": "Đỗ Hùng Linh",
+        "phone": "0975825122",
+        "email": "LDngMinh180@gmail.com",
+        "address": "932 Đường Bùi Thảo Thảo, Quận 4, TP.HCM",
+        "customerSource": "referral",
+        "orderDate": 1764033539118,
+        "deliveryDate": 1764811139118,
+        "createdBy": "SALES_005",
+        "createdByName": "Võ Dũng Linh",
+        "consultantId": "SALES_005",
+        "consultantName": "Võ Dũng Linh",
+        "createdAt": 1764033539118,
+        "updatedAt": 1764097650987,
+        "notes": "Ghi chú cho đơn hàng ORD20251211008",
+        "discount": 71106,
+        "discountType": "amount",
+        "shippingFee": 61965,
+        "products": {
+          "PROD_ORD_008_1": {
+            "name": "Áo sơ mi nam size L",
+            "quantity": 46,
+            "price": 178340,
+            "commissionPercentage": 7.231559004622366,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_008_1_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_008_1_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_008_1_0": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_010",
+                  "WF_009"
+                ],
+                "workflowName": [
+                  "Là ủi hoàn thiện",
+                  "Là ủi tay áo"
+                ],
+                "members": [
+                  "WORKER_007"
+                ],
+                "isDone": true,
+                "updatedAt": 1764033539118
+              },
+              "workflow_PROD_ORD_008_1_1": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_015"
+                ],
+                "workflowName": [
+                  "Dán nhãn"
+                ],
+                "members": [
+                  "WORKER_014"
+                ],
+                "isDone": true,
+                "updatedAt": 1764037139118
+              }
+            }
+          },
+          "PROD_ORD_008_2": {
+            "name": "Quần short nam size 30",
+            "quantity": 95,
+            "price": 419555,
+            "commissionPercentage": 8.653074360726729,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_008_2_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_008_2_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_008_2_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_008_2_0": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_015",
+                  "WF_016"
+                ],
+                "workflowName": [
+                  "Dán nhãn",
+                  "Bọc bảo vệ"
+                ],
+                "members": [
+                  "WORKER_014",
+                  "WORKER_015"
+                ],
+                "isDone": true,
+                "updatedAt": 1764033539118
+              },
+              "workflow_PROD_ORD_008_2_1": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_001",
+                  "WF_002"
+                ],
+                "workflowName": [
+                  "Cắt vải",
+                  "Cắt chỉ"
+                ],
+                "members": [
+                  "WORKER_001",
+                  "WORKER_FIXED_001"
+                ],
+                "isDone": false,
+                "updatedAt": 1764037139118
+              }
+            }
+          },
+          "PROD_ORD_008_3": {
+            "name": "Váy công sở size S",
+            "quantity": 14,
+            "price": 356646,
+            "commissionPercentage": 6.517869490357299,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_008_3_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_008_3_0": {
+                "departmentCode": "DEPT_002",
+                "workflowCode": [
+                  "WF_007",
+                  "WF_005"
+                ],
+                "workflowName": [
+                  "May đường viền",
+                  "May tay áo"
+                ],
+                "members": [
+                  "WORKER_006"
+                ],
+                "isDone": true,
+                "updatedAt": 1764033539118
+              },
+              "workflow_PROD_ORD_008_3_1": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_002",
+                  "WF_003"
+                ],
+                "workflowName": [
+                  "Cắt chỉ",
+                  "Cắt phụ liệu"
+                ],
+                "members": [
+                  "WORKER_002"
+                ],
+                "isDone": true,
+                "updatedAt": 1764037139118
+              },
+              "workflow_PROD_ORD_008_3_2": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_010"
+                ],
+                "workflowName": [
+                  "Là ủi hoàn thiện"
+                ],
+                "members": [
+                  "WORKER_008"
+                ],
+                "isDone": false,
+                "updatedAt": 1764040739118
+              }
+            }
+          }
+        },
+        "status": "pending",
+        "totalAmount": 53045268,
+        "discountAmount": 71106,
+        "subtotal": 53054409,
+        "depositType": "percentage"
+      },
+      "ORD_009": {
+        "code": "ORD20251211009",
+        "customerName": "Hoàng Hồng Thảo",
+        "phone": "0999043381",
+        "email": "HongMinhAnh89@gmail.com",
+        "address": "847 Đường Nguyễn Thảo Dũng, Quận 12, TP.HCM",
+        "customerSource": "facebook",
+        "orderDate": 1763654947147,
+        "deliveryDate": 1764691747147,
+        "createdBy": "SALES_001",
+        "createdByName": "Trần Dũng Thảo",
+        "createdAt": 1763654947147,
+        "updatedAt": 1763680707521,
+        "notes": "Ghi chú cho đơn hàng ORD20251211009",
+        "discount": 102191,
+        "discountType": "amount",
+        "shippingFee": 50079,
+        "products": {
+          "PROD_ORD_009_1": {
+            "name": "Áo thun nữ size M",
+            "quantity": 66,
+            "price": 311313,
+            "commissionPercentage": 10.895258472240817,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_009_1_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_009_1_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_009_1_0": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_001"
+                ],
+                "workflowName": [
+                  "Cắt vải"
+                ],
+                "members": [
+                  "WORKER_003",
+                  "WORKER_FIXED_001"
+                ],
+                "isDone": true,
+                "updatedAt": 1763654947147
+              },
+              "workflow_PROD_ORD_009_1_1": {
+                "departmentCode": "DEPT_002",
+                "workflowCode": [
+                  "WF_005",
+                  "WF_006"
+                ],
+                "workflowName": [
+                  "May tay áo",
+                  "May cổ áo"
+                ],
+                "members": [
+                  "WORKER_004"
+                ],
+                "isDone": true,
+                "updatedAt": 1763658547147
+              },
+              "workflow_PROD_ORD_009_1_2": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_008",
+                  "WF_010"
+                ],
+                "workflowName": [
+                  "Là ủi thân",
+                  "Là ủi hoàn thiện"
+                ],
+                "members": [
+                  "WORKER_009",
+                  "WORKER_007"
+                ],
+                "isDone": false,
+                "updatedAt": 1763662147147
+              }
+            }
+          }
+        },
+        "status": "on_hold",
+        "totalAmount": 20494546,
+        "discountAmount": 102191,
+        "subtotal": 20546658,
+        "depositType": "percentage"
+      },
+      "ORD_010": {
+        "code": "ORD20251211010",
+        "customerName": "Võ Thị Thị",
+        "phone": "0982410328",
+        "email": "VHngTho751@gmail.com",
+        "address": "113 Đường Trần Thị Minh, Quận 4, TP.HCM",
+        "customerSource": "referral",
+        "orderDate": 1764033435354,
+        "deliveryDate": 1764638235354,
+        "createdBy": "SALES_FIXED_001",
+        "createdByName": "Bán hàng",
+        "createdAt": 1764033435354,
+        "updatedAt": 1764072968829,
+        "notes": "Ghi chú cho đơn hàng ORD20251211010",
+        "discountType": "percentage",
+        "shippingFee": 22851,
+        "products": {
+          "PROD_ORD_010_1": {
+            "name": "Quần jeans nam size 32",
+            "quantity": 102,
+            "price": 252627,
+            "commissionPercentage": 13.28973001473533,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_010_1_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_010_1_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_done_PROD_ORD_010_1_1",
+                "name": "product_done_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_010_1_0": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_015",
+                  "WF_016"
+                ],
+                "workflowName": [
+                  "Dán nhãn",
+                  "Bọc bảo vệ"
+                ],
+                "members": [
+                  "WORKER_015"
+                ],
+                "isDone": true,
+                "updatedAt": 1764033435354
+              },
+              "workflow_PROD_ORD_010_1_1": {
+                "departmentCode": "DEPT_002",
+                "workflowCode": [
+                  "WF_004"
+                ],
+                "workflowName": [
+                  "May thân"
+                ],
+                "members": [
+                  "WORKER_006"
+                ],
+                "isDone": true,
+                "updatedAt": 1764037035354
+              }
+            }
+          },
+          "PROD_ORD_010_2": {
+            "name": "Áo sơ mi nam size L",
+            "quantity": 29,
+            "price": 138210,
+            "commissionPercentage": 9.969380700029383,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_010_2_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_010_2_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_010_2_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_010_2_0": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_011",
+                  "WF_012"
+                ],
+                "workflowName": [
+                  "Kiểm tra chất lượng",
+                  "Kiểm tra kích thước"
+                ],
+                "members": [
+                  "WORKER_011",
+                  "WORKER_012"
+                ],
+                "isDone": true,
+                "updatedAt": 1764033435354
+              },
+              "workflow_PROD_ORD_010_2_1": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_015",
+                  "WF_016"
+                ],
+                "workflowName": [
+                  "Dán nhãn",
+                  "Bọc bảo vệ"
+                ],
+                "members": [
+                  "WORKER_013",
+                  "WORKER_014"
+                ],
+                "isDone": true,
+                "updatedAt": 1764037035354
+              },
+              "workflow_PROD_ORD_010_2_2": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_009"
+                ],
+                "workflowName": [
+                  "Là ủi tay áo"
+                ],
+                "members": [
+                  "WORKER_007",
+                  "WORKER_008"
+                ],
+                "isDone": false,
+                "updatedAt": 1764040635354
+              },
+              "workflow_PROD_ORD_010_2_3": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_001"
+                ],
+                "workflowName": [
+                  "Cắt vải"
+                ],
+                "members": [
+                  "WORKER_002"
+                ],
+                "isDone": false,
+                "updatedAt": 1764044235354
+              }
+            }
+          }
+        },
+        "status": "cancelled",
+        "totalAmount": 29798895,
+        "subtotal": 29776044,
+        "deposit": 54,
+        "depositType": "percentage",
+        "depositAmount": 16091403,
+        "isDepositPaid": true
+      },
+      "ORD_011": {
+        "code": "ORD20251211011",
+        "customerName": "Bùi Dũng Thị",
+        "phone": "0936309213",
+        "email": "VLinhTho70@gmail.com",
+        "address": "362 Đường Võ Anh Linh, Quận 11, TP.HCM",
+        "customerSource": "referral",
+        "orderDate": 1764658158129,
+        "deliveryDate": 1765522158129,
+        "createdBy": "SALES_003",
+        "createdByName": "Trần Hồng Thảo",
+        "consultantId": "SALES_001",
+        "consultantName": "Trần Dũng Thảo",
+        "createdAt": 1764658158129,
+        "updatedAt": 1764708646918,
+        "notes": "Ghi chú cho đơn hàng ORD20251211011",
+        "discount": 9,
+        "discountType": "percentage",
+        "shippingFee": 40523,
+        "products": {
+          "PROD_ORD_011_1": {
+            "name": "Áo thun nữ size M",
+            "quantity": 14,
+            "price": 501209,
+            "commissionPercentage": 12.27772921512758,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_011_1_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_011_1_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_011_1_0": {
+                "departmentCode": "DEPT_002",
+                "workflowCode": [
+                  "WF_005"
+                ],
+                "workflowName": [
+                  "May tay áo"
+                ],
+                "members": [
+                  "WORKER_004"
+                ],
+                "isDone": true,
+                "updatedAt": 1764658158129
+              },
+              "workflow_PROD_ORD_011_1_1": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_011",
+                  "WF_012"
+                ],
+                "workflowName": [
+                  "Kiểm tra chất lượng",
+                  "Kiểm tra kích thước"
+                ],
+                "members": [
+                  "WORKER_011",
+                  "WORKER_010"
+                ],
+                "isDone": false,
+                "updatedAt": 1764661758129
+              },
+              "workflow_PROD_ORD_011_1_2": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_008",
+                  "WF_010"
+                ],
+                "workflowName": [
+                  "Là ủi thân",
+                  "Là ủi hoàn thiện"
+                ],
+                "members": [
+                  "WORKER_009"
+                ],
+                "isDone": false,
+                "updatedAt": 1764665358129
+              },
+              "workflow_PROD_ORD_011_1_3": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_016",
+                  "WF_014"
+                ],
+                "workflowName": [
+                  "Bọc bảo vệ",
+                  "Đóng gói"
+                ],
+                "members": [
+                  "WORKER_015"
+                ],
+                "isDone": false,
+                "updatedAt": 1764668958129
+              }
+            }
+          }
+        },
+        "status": "completed",
+        "totalAmount": 6425926,
+        "discountAmount": 631523,
+        "subtotal": 7016926,
+        "depositType": "percentage"
+      },
+      "ORD_012": {
+        "code": "ORD20251211012",
+        "customerName": "Đỗ Văn Văn",
+        "phone": "0975671124",
+        "email": "TrnMinhMinh84@gmail.com",
+        "address": "915 Đường Đặng Minh Thảo, Quận 1, TP.HCM",
+        "customerSource": "tiktok",
+        "orderDate": 1763542147440,
+        "deliveryDate": 1764492547440,
+        "createdBy": "SALES_005",
+        "createdByName": "Võ Dũng Linh",
+        "consultantId": "SALES_004",
+        "consultantName": "Trần Thảo Hồng",
+        "createdAt": 1763542147440,
+        "updatedAt": 1763618932087,
+        "notes": "Ghi chú cho đơn hàng ORD20251211012",
+        "discountType": "percentage",
+        "shippingFee": 68160,
+        "products": {
+          "PROD_ORD_012_1": {
+            "name": "Quần tây nam size 34",
+            "quantity": 30,
+            "price": 317838,
+            "commissionPercentage": 8.051786247482102,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_012_1_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_012_1_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_012_1_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_012_1_0": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_001",
+                  "WF_002"
+                ],
+                "workflowName": [
+                  "Cắt vải",
+                  "Cắt chỉ"
+                ],
+                "members": [
+                  "WORKER_FIXED_001"
+                ],
+                "isDone": true,
+                "updatedAt": 1763542147440
+              },
+              "workflow_PROD_ORD_012_1_1": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_010"
+                ],
+                "workflowName": [
+                  "Là ủi hoàn thiện"
+                ],
+                "members": [
+                  "WORKER_009",
+                  "WORKER_007"
+                ],
+                "isDone": false,
+                "updatedAt": 1763545747440
+              },
+              "workflow_PROD_ORD_012_1_2": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_015"
+                ],
+                "workflowName": [
+                  "Dán nhãn"
+                ],
+                "members": [
+                  "WORKER_014",
+                  "WORKER_013"
+                ],
+                "isDone": false,
+                "updatedAt": 1763549347440
+              }
+            }
+          },
+          "PROD_ORD_012_2": {
+            "name": "Váy công sở size S",
+            "quantity": 78,
+            "price": 251870,
+            "commissionPercentage": 5.1378426673013005,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_012_2_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_012_2_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_012_2_2",
+                "name": "product_3.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_012_2_0": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_001"
+                ],
+                "workflowName": [
+                  "Cắt vải"
+                ],
+                "members": [
+                  "WORKER_001",
+                  "WORKER_003"
+                ],
+                "isDone": false,
+                "updatedAt": 1763542147440
+              },
+              "workflow_PROD_ORD_012_2_1": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_010",
+                  "WF_009"
+                ],
+                "workflowName": [
+                  "Là ủi hoàn thiện",
+                  "Là ủi tay áo"
+                ],
+                "members": [
+                  "WORKER_009",
+                  "WORKER_007"
+                ],
+                "isDone": true,
+                "updatedAt": 1763545747440
+              }
+            }
+          }
+        },
+        "status": "confirmed",
+        "totalAmount": 29249160,
+        "subtotal": 29181000,
+        "depositType": "percentage"
+      },
+      "ORD_013": {
+        "code": "ORD20251211013",
+        "customerName": "Hoàng Văn Thị",
+        "phone": "0931531870",
+        "email": "HongHngDng859@gmail.com",
+        "address": "517 Đường Hoàng Thảo Hồng, Quận 7, TP.HCM",
+        "customerSource": "website",
+        "orderDate": 1763051178462,
+        "deliveryDate": 1764001578462,
+        "createdBy": "SALES_003",
+        "createdByName": "Trần Hồng Thảo",
+        "consultantId": "SALES_002",
+        "consultantName": "Đỗ Thị Hùng",
+        "createdAt": 1763051178462,
+        "updatedAt": 1763059068225,
+        "notes": "Ghi chú cho đơn hàng ORD20251211013",
+        "discountType": "amount",
+        "shippingFee": 61658,
+        "products": {
+          "PROD_ORD_013_1": {
+            "name": "Quần tây nam size 34",
+            "quantity": 88,
+            "price": 418443,
+            "commissionPercentage": 7.867717857341235,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_013_1_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_013_1_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_013_1_2",
+                "name": "product_3.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_013_1_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_013_1_0": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_015"
+                ],
+                "workflowName": [
+                  "Dán nhãn"
+                ],
+                "members": [
+                  "WORKER_015",
+                  "WORKER_013"
+                ],
+                "isDone": true,
+                "updatedAt": 1763051178462
+              },
+              "workflow_PROD_ORD_013_1_1": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_008"
+                ],
+                "workflowName": [
+                  "Là ủi thân"
+                ],
+                "members": [
+                  "WORKER_009",
+                  "WORKER_008"
+                ],
+                "isDone": true,
+                "updatedAt": 1763054778462
+              },
+              "workflow_PROD_ORD_013_1_2": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_013"
+                ],
+                "workflowName": [
+                  "Kiểm tra đường may"
+                ],
+                "members": [
+                  "WORKER_012",
+                  "WORKER_011"
+                ],
+                "isDone": false,
+                "updatedAt": 1763058378462
+              }
+            }
+          },
+          "PROD_ORD_013_2": {
+            "name": "Quần short nam size 30",
+            "quantity": 26,
+            "price": 277433,
+            "commissionPercentage": 6.042548113040075,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_013_2_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_013_2_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_013_2_0": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_015"
+                ],
+                "workflowName": [
+                  "Dán nhãn"
+                ],
+                "members": [
+                  "WORKER_014",
+                  "WORKER_013"
+                ],
+                "isDone": true,
+                "updatedAt": 1763051178462
+              },
+              "workflow_PROD_ORD_013_2_1": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_001"
+                ],
+                "workflowName": [
+                  "Cắt vải"
+                ],
+                "members": [
+                  "WORKER_003"
+                ],
+                "isDone": false,
+                "updatedAt": 1763054778462
+              }
+            }
+          },
+          "PROD_ORD_013_3": {
+            "name": "Quần tây nam size 34",
+            "quantity": 16,
+            "price": 74055,
+            "commissionPercentage": 5.405319441315027,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_013_3_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_013_3_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_done_PROD_ORD_013_3_1",
+                "name": "product_done_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_013_3_0": {
+                "departmentCode": "DEPT_002",
+                "workflowCode": [
+                  "WF_004"
+                ],
+                "workflowName": [
+                  "May thân"
+                ],
+                "members": [
+                  "WORKER_004"
+                ],
+                "isDone": false,
+                "updatedAt": 1763051178462
+              },
+              "workflow_PROD_ORD_013_3_1": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_010"
+                ],
+                "workflowName": [
+                  "Là ủi hoàn thiện"
+                ],
+                "members": [
+                  "WORKER_007"
+                ],
+                "isDone": true,
+                "updatedAt": 1763054778462
+              },
+              "workflow_PROD_ORD_013_3_2": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_001"
+                ],
+                "workflowName": [
+                  "Cắt vải"
+                ],
+                "members": [
+                  "WORKER_FIXED_001",
+                  "WORKER_001"
+                ],
+                "isDone": false,
+                "updatedAt": 1763058378462
+              },
+              "workflow_PROD_ORD_013_3_3": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_016"
+                ],
+                "workflowName": [
+                  "Bọc bảo vệ"
+                ],
+                "members": [
+                  "WORKER_015"
+                ],
+                "isDone": false,
+                "updatedAt": 1763061978462
+              }
+            }
+          }
+        },
+        "status": "pending",
+        "totalAmount": 45282780,
+        "subtotal": 45221122,
+        "deposit": 48,
+        "depositType": "percentage",
+        "depositAmount": 21735734,
+        "isDepositPaid": true
+      },
+      "ORD_014": {
+        "code": "ORD20251211014",
+        "customerName": "Đặng Dũng Minh",
+        "phone": "0902185687",
+        "email": "BiThoLan427@gmail.com",
+        "address": "168 Đường Nguyễn Linh Anh, Quận 10, TP.HCM",
+        "customerSource": "zalo",
+        "orderDate": 1764042133237,
+        "deliveryDate": 1764733333237,
+        "createdBy": "SALES_005",
+        "createdByName": "Võ Dũng Linh",
+        "createdAt": 1764042133237,
+        "updatedAt": 1764081638974,
+        "notes": "Ghi chú cho đơn hàng ORD20251211014",
+        "discount": 187668,
+        "discountType": "amount",
+        "shippingFee": 26951,
+        "products": {
+          "PROD_ORD_014_1": {
+            "name": "Áo len nữ size L",
+            "quantity": 42,
+            "price": 505225,
+            "commissionPercentage": 7.918224211834931,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_014_1_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_014_1_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_014_1_2",
+                "name": "product_3.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_014_1_0": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_013"
+                ],
+                "workflowName": [
+                  "Kiểm tra đường may"
+                ],
+                "members": [
+                  "WORKER_011",
+                  "WORKER_012"
+                ],
+                "isDone": true,
+                "updatedAt": 1764042133237
+              },
+              "workflow_PROD_ORD_014_1_1": {
+                "departmentCode": "DEPT_002",
+                "workflowCode": [
+                  "WF_004",
+                  "WF_007"
+                ],
+                "workflowName": [
+                  "May thân",
+                  "May đường viền"
+                ],
+                "members": [
+                  "WORKER_004",
+                  "WORKER_005"
+                ],
+                "isDone": true,
+                "updatedAt": 1764045733237
+              },
+              "workflow_PROD_ORD_014_1_2": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_016",
+                  "WF_014"
+                ],
+                "workflowName": [
+                  "Bọc bảo vệ",
+                  "Đóng gói"
+                ],
+                "members": [
+                  "WORKER_013"
+                ],
+                "isDone": false,
+                "updatedAt": 1764049333237
+              }
+            }
+          }
+        },
+        "status": "cancelled",
+        "totalAmount": 21058733,
+        "discountAmount": 187668,
+        "subtotal": 21219450,
+        "depositType": "percentage"
+      },
+      "ORD_015": {
+        "code": "ORD20251211015",
+        "customerName": "Trần Hùng Văn",
+        "phone": "0987878551",
+        "email": "HongDngTho559@gmail.com",
+        "address": "355 Đường Hồ Minh Thảo, Quận 10, TP.HCM",
+        "customerSource": "website",
+        "orderDate": 1764186837841,
+        "deliveryDate": 1764705237841,
+        "createdBy": "SALES_001",
+        "createdByName": "Trần Dũng Thảo",
+        "createdAt": 1764186837841,
+        "updatedAt": 1764222829325,
+        "notes": "Ghi chú cho đơn hàng ORD20251211015",
+        "discount": 8,
+        "discountType": "percentage",
+        "products": {
+          "PROD_ORD_015_1": {
+            "name": "Quần short nam size 30",
+            "quantity": 57,
+            "price": 247878,
+            "commissionPercentage": 9.89927466057477,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_015_1_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_015_1_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_015_1_0": {
+                "departmentCode": "DEPT_002",
+                "workflowCode": [
+                  "WF_004",
+                  "WF_007"
+                ],
+                "workflowName": [
+                  "May thân",
+                  "May đường viền"
+                ],
+                "members": [
+                  "WORKER_006",
+                  "WORKER_005"
+                ],
+                "isDone": true,
+                "updatedAt": 1764186837841
+              },
+              "workflow_PROD_ORD_015_1_1": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_011"
+                ],
+                "workflowName": [
+                  "Kiểm tra chất lượng"
+                ],
+                "members": [
+                  "WORKER_011"
+                ],
+                "isDone": true,
+                "updatedAt": 1764190437841
+              }
+            }
+          },
+          "PROD_ORD_015_2": {
+            "name": "Quần tây nam size 34",
+            "quantity": 89,
+            "price": 349482,
+            "commissionPercentage": 11.45900502438527,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_015_2_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_015_2_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_015_2_2",
+                "name": "product_3.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_015_2_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_done_PROD_ORD_015_2_1",
+                "name": "product_done_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_015_2_0": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_016",
+                  "WF_014"
+                ],
+                "workflowName": [
+                  "Bọc bảo vệ",
+                  "Đóng gói"
+                ],
+                "members": [
+                  "WORKER_015"
+                ],
+                "isDone": false,
+                "updatedAt": 1764186837841
+              },
+              "workflow_PROD_ORD_015_2_1": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_011",
+                  "WF_012"
+                ],
+                "workflowName": [
+                  "Kiểm tra chất lượng",
+                  "Kiểm tra kích thước"
+                ],
+                "members": [
+                  "WORKER_010"
+                ],
+                "isDone": true,
+                "updatedAt": 1764190437841
+              }
+            }
+          },
+          "PROD_ORD_015_3": {
+            "name": "Quần short nam size 30",
+            "quantity": 81,
+            "price": 485359,
+            "commissionPercentage": 6.049392625405705,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_015_3_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_015_3_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_done_PROD_ORD_015_3_1",
+                "name": "product_done_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_015_3_0": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_009"
+                ],
+                "workflowName": [
+                  "Là ủi tay áo"
+                ],
+                "members": [
+                  "WORKER_008",
+                  "WORKER_009"
+                ],
+                "isDone": true,
+                "updatedAt": 1764186837841
+              },
+              "workflow_PROD_ORD_015_3_1": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_014",
+                  "WF_015"
+                ],
+                "workflowName": [
+                  "Đóng gói",
+                  "Dán nhãn"
+                ],
+                "members": [
+                  "WORKER_015",
+                  "WORKER_014"
+                ],
+                "isDone": false,
+                "updatedAt": 1764190437841
+              },
+              "workflow_PROD_ORD_015_3_2": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_002"
+                ],
+                "workflowName": [
+                  "Cắt chỉ"
+                ],
+                "members": [
+                  "WORKER_FIXED_001"
+                ],
+                "isDone": false,
+                "updatedAt": 1764194037841
+              },
+              "workflow_PROD_ORD_015_3_3": {
+                "departmentCode": "DEPT_002",
+                "workflowCode": [
+                  "WF_005",
+                  "WF_006"
+                ],
+                "workflowName": [
+                  "May tay áo",
+                  "May cổ áo"
+                ],
+                "members": [
+                  "WORKER_004"
+                ],
+                "isDone": false,
+                "updatedAt": 1764197637841
+              }
+            }
+          }
+        },
+        "status": "on_hold",
+        "totalAmount": 77783262,
+        "discountAmount": 6763761,
+        "subtotal": 84547023,
+        "deposit": 50,
+        "depositType": "percentage",
+        "depositAmount": 38891631
+      },
+      "ORD_016": {
+        "code": "ORD20251211016",
+        "customerName": "Nguyễn Hùng Hùng",
+        "phone": "0908254254",
+        "email": "LThHng416@gmail.com",
+        "address": "547 Đường Lê Anh Hùng, Quận 12, TP.HCM",
+        "customerSource": "website",
+        "orderDate": 1763439034447,
+        "deliveryDate": 1764216634447,
+        "createdBy": "SALES_002",
+        "createdByName": "Đỗ Thị Hùng",
+        "consultantId": "SALES_003",
+        "consultantName": "Trần Hồng Thảo",
+        "createdAt": 1763439034447,
+        "updatedAt": 1763444288086,
+        "notes": "Ghi chú cho đơn hàng ORD20251211016",
+        "discountType": "amount",
+        "shippingFee": 62120,
+        "products": {
+          "PROD_ORD_016_1": {
+            "name": "Áo khoác nữ size M",
+            "quantity": 46,
+            "price": 290129,
+            "commissionPercentage": 6.347485766148598,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_016_1_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_016_1_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_016_1_0": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_012",
+                  "WF_013"
+                ],
+                "workflowName": [
+                  "Kiểm tra kích thước",
+                  "Kiểm tra đường may"
+                ],
+                "members": [
+                  "WORKER_012"
+                ],
+                "isDone": true,
+                "updatedAt": 1763439034447
+              },
+              "workflow_PROD_ORD_016_1_1": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_008",
+                  "WF_010"
+                ],
+                "workflowName": [
+                  "Là ủi thân",
+                  "Là ủi hoàn thiện"
+                ],
+                "members": [
+                  "WORKER_009"
+                ],
+                "isDone": true,
+                "updatedAt": 1763442634447
+              },
+              "workflow_PROD_ORD_016_1_2": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_015"
+                ],
+                "workflowName": [
+                  "Dán nhãn"
+                ],
+                "members": [
+                  "WORKER_013",
+                  "WORKER_015"
+                ],
+                "isDone": false,
+                "updatedAt": 1763446234447
+              },
+              "workflow_PROD_ORD_016_1_3": {
+                "departmentCode": "DEPT_002",
+                "workflowCode": [
+                  "WF_004",
+                  "WF_007"
+                ],
+                "workflowName": [
+                  "May thân",
+                  "May đường viền"
+                ],
+                "members": [
+                  "WORKER_005"
+                ],
+                "isDone": false,
+                "updatedAt": 1763449834447
+              }
+            }
+          },
+          "PROD_ORD_016_2": {
+            "name": "Áo khoác nữ size M",
+            "quantity": 47,
+            "price": 524229,
+            "commissionPercentage": 12.655044798092641,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_016_2_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_016_2_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_016_2_2",
+                "name": "product_3.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_016_2_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_done_PROD_ORD_016_2_1",
+                "name": "product_done_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_016_2_0": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_009"
+                ],
+                "workflowName": [
+                  "Là ủi tay áo"
+                ],
+                "members": [
+                  "WORKER_007",
+                  "WORKER_009"
+                ],
+                "isDone": true,
+                "updatedAt": 1763439034447
+              },
+              "workflow_PROD_ORD_016_2_1": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_002",
+                  "WF_003"
+                ],
+                "workflowName": [
+                  "Cắt chỉ",
+                  "Cắt phụ liệu"
+                ],
+                "members": [
+                  "WORKER_001",
+                  "WORKER_003"
+                ],
+                "isDone": true,
+                "updatedAt": 1763442634447
+              },
+              "workflow_PROD_ORD_016_2_2": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_013"
+                ],
+                "workflowName": [
+                  "Kiểm tra đường may"
+                ],
+                "members": [
+                  "WORKER_010",
+                  "WORKER_012"
+                ],
+                "isDone": false,
+                "updatedAt": 1763446234447
+              },
+              "workflow_PROD_ORD_016_2_3": {
+                "departmentCode": "DEPT_002",
+                "workflowCode": [
+                  "WF_005",
+                  "WF_006"
+                ],
+                "workflowName": [
+                  "May tay áo",
+                  "May cổ áo"
+                ],
+                "members": [
+                  "WORKER_005",
+                  "WORKER_004"
+                ],
+                "isDone": false,
+                "updatedAt": 1763449834447
+              }
+            }
+          }
+        },
+        "status": "confirmed",
+        "totalAmount": 38046817,
+        "subtotal": 37984697,
+        "depositType": "percentage"
+      },
+      "ORD_017": {
+        "code": "ORD20251211017",
+        "customerName": "Phạm Hùng Lan",
+        "phone": "0978788839",
+        "email": "NguynAnhTho139@gmail.com",
+        "address": "651 Đường Hoàng Minh Dũng, Quận 4, TP.HCM",
+        "customerSource": "phone",
+        "orderDate": 1763676031987,
+        "deliveryDate": 1764021631987,
+        "createdBy": "SALES_001",
+        "createdByName": "Trần Dũng Thảo",
+        "createdAt": 1763676031987,
+        "updatedAt": 1763754548339,
+        "notes": "Ghi chú cho đơn hàng ORD20251211017",
+        "discount": 8,
+        "discountType": "percentage",
+        "shippingFee": 45811,
+        "products": {
+          "PROD_ORD_017_1": {
+            "name": "Váy công sở size S",
+            "quantity": 31,
+            "price": 516440,
+            "commissionPercentage": 6.672959709187742,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_017_1_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_017_1_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_017_1_2",
+                "name": "product_3.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_017_1_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_done_PROD_ORD_017_1_1",
+                "name": "product_done_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_017_1_0": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_015",
+                  "WF_016"
+                ],
+                "workflowName": [
+                  "Dán nhãn",
+                  "Bọc bảo vệ"
+                ],
+                "members": [
+                  "WORKER_014"
+                ],
+                "isDone": true,
+                "updatedAt": 1763676031987
+              },
+              "workflow_PROD_ORD_017_1_1": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_013"
+                ],
+                "workflowName": [
+                  "Kiểm tra đường may"
+                ],
+                "members": [
+                  "WORKER_011"
+                ],
+                "isDone": true,
+                "updatedAt": 1763679631987
+              }
+            }
+          },
+          "PROD_ORD_017_2": {
+            "name": "Áo khoác nữ size M",
+            "quantity": 18,
+            "price": 106507,
+            "commissionPercentage": 11.517323279359593,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_017_2_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_017_2_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_017_2_0": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_013",
+                  "WF_011"
+                ],
+                "workflowName": [
+                  "Kiểm tra đường may",
+                  "Kiểm tra chất lượng"
+                ],
+                "members": [
+                  "WORKER_012"
+                ],
+                "isDone": true,
+                "updatedAt": 1763676031987
+              },
+              "workflow_PROD_ORD_017_2_1": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_016",
+                  "WF_014"
+                ],
+                "workflowName": [
+                  "Bọc bảo vệ",
+                  "Đóng gói"
+                ],
+                "members": [
+                  "WORKER_013"
+                ],
+                "isDone": true,
+                "updatedAt": 1763679631987
+              }
+            }
+          }
+        },
+        "status": "in_progress",
+        "totalAmount": 16538436,
+        "discountAmount": 1434141,
+        "subtotal": 17926766,
+        "deposit": 48,
+        "depositType": "percentage",
+        "depositAmount": 7938449,
+        "isDepositPaid": true
+      },
+      "ORD_018": {
+        "code": "ORD20251211018",
+        "customerName": "Võ Hùng Hùng",
+        "phone": "0975113104",
+        "email": "VHngHng592@gmail.com",
+        "address": "965 Đường Hoàng Hồng Lan, Quận 1, TP.HCM",
+        "customerSource": "website",
+        "orderDate": 1764538165006,
+        "deliveryDate": 1764970165006,
+        "createdBy": "SALES_002",
+        "createdByName": "Đỗ Thị Hùng",
+        "consultantId": "SALES_001",
+        "consultantName": "Trần Dũng Thảo",
+        "createdAt": 1764538165006,
+        "updatedAt": 1764561635368,
+        "notes": "Ghi chú cho đơn hàng ORD20251211018",
+        "discountType": "amount",
+        "shippingFee": 55011,
+        "products": {
+          "PROD_ORD_018_1": {
+            "name": "Váy công sở size S",
+            "quantity": 73,
+            "price": 452808,
+            "commissionPercentage": 10.277701997710126,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_018_1_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_018_1_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_018_1_0": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_009",
+                  "WF_008"
+                ],
+                "workflowName": [
+                  "Là ủi tay áo",
+                  "Là ủi thân"
+                ],
+                "members": [
+                  "WORKER_007",
+                  "WORKER_009"
+                ],
+                "isDone": true,
+                "updatedAt": 1764538165006
+              },
+              "workflow_PROD_ORD_018_1_1": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_002"
+                ],
+                "workflowName": [
+                  "Cắt chỉ"
+                ],
+                "members": [
+                  "WORKER_003",
+                  "WORKER_FIXED_001"
+                ],
+                "isDone": false,
+                "updatedAt": 1764541765006
+              }
+            }
+          }
+        },
+        "status": "confirmed",
+        "totalAmount": 33109995,
+        "subtotal": 33054984,
+        "deposit": 62,
+        "depositType": "percentage",
+        "depositAmount": 20528196,
+        "isDepositPaid": true
+      },
+      "ORD_019": {
+        "code": "ORD20251211019",
+        "customerName": "Lê Hùng Thảo",
+        "phone": "0976273340",
+        "email": "ngHngMinh861@gmail.com",
+        "address": "745 Đường Võ Linh Dũng, Quận 12, TP.HCM",
+        "customerSource": "phone",
+        "orderDate": 1763989008108,
+        "deliveryDate": 1764853008108,
+        "createdBy": "SALES_002",
+        "createdByName": "Đỗ Thị Hùng",
+        "createdAt": 1763989008108,
+        "updatedAt": 1763992669215,
+        "notes": "Ghi chú cho đơn hàng ORD20251211019",
+        "discountType": "amount",
+        "shippingFee": 65923,
+        "products": {
+          "PROD_ORD_019_1": {
+            "name": "Áo thun nữ size M",
+            "quantity": 101,
+            "price": 223679,
+            "commissionPercentage": 8.163491581734634,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_019_1_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_019_1_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_019_1_2",
+                "name": "product_3.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_019_1_0": {
+                "departmentCode": "DEPT_002",
+                "workflowCode": [
+                  "WF_004"
+                ],
+                "workflowName": [
+                  "May thân"
+                ],
+                "members": [
+                  "WORKER_004",
+                  "WORKER_005"
+                ],
+                "isDone": true,
+                "updatedAt": 1763989008108
+              },
+              "workflow_PROD_ORD_019_1_1": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_001",
+                  "WF_002"
+                ],
+                "workflowName": [
+                  "Cắt vải",
+                  "Cắt chỉ"
+                ],
+                "members": [
+                  "WORKER_003"
+                ],
+                "isDone": false,
+                "updatedAt": 1763992608108
+              }
+            }
+          },
+          "PROD_ORD_019_2": {
+            "name": "Quần tây nam size 34",
+            "quantity": 45,
+            "price": 173034,
+            "commissionPercentage": 13.072072050295846,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_019_2_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_019_2_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_019_2_2",
+                "name": "product_3.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_019_2_0": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_001",
+                  "WF_002"
+                ],
+                "workflowName": [
+                  "Cắt vải",
+                  "Cắt chỉ"
+                ],
+                "members": [
+                  "WORKER_003",
+                  "WORKER_002"
+                ],
+                "isDone": true,
+                "updatedAt": 1763989008108
+              },
+              "workflow_PROD_ORD_019_2_1": {
+                "departmentCode": "DEPT_002",
+                "workflowCode": [
+                  "WF_004",
+                  "WF_007"
+                ],
+                "workflowName": [
+                  "May thân",
+                  "May đường viền"
+                ],
+                "members": [
+                  "WORKER_004",
+                  "WORKER_005"
+                ],
+                "isDone": true,
+                "updatedAt": 1763992608108
+              }
+            }
+          },
+          "PROD_ORD_019_3": {
+            "name": "Quần short nam size 30",
+            "quantity": 45,
+            "price": 379277,
+            "commissionPercentage": 14.925826652177248,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_019_3_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_019_3_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_019_3_2",
+                "name": "product_3.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_019_3_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_done_PROD_ORD_019_3_1",
+                "name": "product_done_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_019_3_0": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_010",
+                  "WF_009"
+                ],
+                "workflowName": [
+                  "Là ủi hoàn thiện",
+                  "Là ủi tay áo"
+                ],
+                "members": [
+                  "WORKER_007"
+                ],
+                "isDone": false,
+                "updatedAt": 1763989008108
+              },
+              "workflow_PROD_ORD_019_3_1": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_002"
+                ],
+                "workflowName": [
+                  "Cắt chỉ"
+                ],
+                "members": [
+                  "WORKER_001",
+                  "WORKER_003"
+                ],
+                "isDone": true,
+                "updatedAt": 1763992608108
+              },
+              "workflow_PROD_ORD_019_3_2": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_011",
+                  "WF_012"
+                ],
+                "workflowName": [
+                  "Kiểm tra chất lượng",
+                  "Kiểm tra kích thước"
+                ],
+                "members": [
+                  "WORKER_012"
+                ],
+                "isDone": false,
+                "updatedAt": 1763996208108
+              },
+              "workflow_PROD_ORD_019_3_3": {
+                "departmentCode": "DEPT_002",
+                "workflowCode": [
+                  "WF_004"
+                ],
+                "workflowName": [
+                  "May thân"
+                ],
+                "members": [
+                  "WORKER_004",
+                  "WORKER_005"
+                ],
+                "isDone": false,
+                "updatedAt": 1763999808108
+              }
+            }
+          }
+        },
+        "status": "completed",
+        "totalAmount": 47511497,
+        "subtotal": 47445574,
+        "deposit": 37,
+        "depositType": "percentage",
+        "depositAmount": 17579253,
+        "isDepositPaid": true
+      },
+      "ORD_020": {
+        "code": "ORD20251211020",
+        "customerName": "Lê Anh Lan",
+        "phone": "0900246188",
+        "email": "VVnMinh559@gmail.com",
+        "address": "749 Đường Đỗ Hùng Dũng, Quận 4, TP.HCM",
+        "customerSource": "phone",
+        "orderDate": 1764976436354,
+        "deliveryDate": 1765494836354,
+        "createdBy": "SALES_004",
+        "createdByName": "Trần Thảo Hồng",
+        "createdAt": 1764976436354,
+        "updatedAt": 1765037440500,
+        "notes": "Ghi chú cho đơn hàng ORD20251211020",
+        "discountType": "percentage",
+        "shippingFee": 36715,
+        "products": {
+          "PROD_ORD_020_1": {
+            "name": "Áo thun nữ size M",
+            "quantity": 37,
+            "price": 137962,
+            "commissionPercentage": 6.927836246782524,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_020_1_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_020_1_0": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_011",
+                  "WF_012"
+                ],
+                "workflowName": [
+                  "Kiểm tra chất lượng",
+                  "Kiểm tra kích thước"
+                ],
+                "members": [
+                  "WORKER_011",
+                  "WORKER_012"
+                ],
+                "isDone": true,
+                "updatedAt": 1764976436354
+              },
+              "workflow_PROD_ORD_020_1_1": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_010",
+                  "WF_009"
+                ],
+                "workflowName": [
+                  "Là ủi hoàn thiện",
+                  "Là ủi tay áo"
+                ],
+                "members": [
+                  "WORKER_009",
+                  "WORKER_007"
+                ],
+                "isDone": false,
+                "updatedAt": 1764980036354
+              },
+              "workflow_PROD_ORD_020_1_2": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_015"
+                ],
+                "workflowName": [
+                  "Dán nhãn"
+                ],
+                "members": [
+                  "WORKER_013"
+                ],
+                "isDone": false,
+                "updatedAt": 1764983636354
+              },
+              "workflow_PROD_ORD_020_1_3": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_002",
+                  "WF_003"
+                ],
+                "workflowName": [
+                  "Cắt chỉ",
+                  "Cắt phụ liệu"
+                ],
+                "members": [
+                  "WORKER_003",
+                  "WORKER_FIXED_001"
+                ],
+                "isDone": false,
+                "updatedAt": 1764987236354
+              }
+            }
+          }
+        },
+        "status": "pending",
+        "totalAmount": 5141309,
+        "subtotal": 5104594,
+        "depositType": "percentage"
+      }
+    },
+    "warrantyClaims": {
+      "WC_001": {
+        "id": "WC_001",
+        "code": "WC20251211001",
+        "originalOrderId": "ORD_012",
+        "originalOrderCode": "ORD20251211012",
+        "customerName": "Đỗ Văn Văn",
+        "phone": "0975671124",
+        "email": "TrnMinhMinh84@gmail.com",
+        "address": "915 Đường Đặng Minh Thảo, Quận 1, TP.HCM",
+        "customerSource": "tiktok",
+        "orderDate": 1763542147440,
+        "deliveryDate": 1764492547440,
+        "createdBy": "SALES_005",
+        "createdByName": "Võ Dũng Linh",
+        "products": {
+          "PROD_ORD_012_1": {
+            "name": "Quần tây nam size 34",
+            "quantity": 30,
+            "price": 317838,
+            "commissionPercentage": 8.051786247482102,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_012_1_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_012_1_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_012_1_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_012_1_0": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_001",
+                  "WF_002"
+                ],
+                "workflowName": [
+                  "Cắt vải",
+                  "Cắt chỉ"
+                ],
+                "members": [
+                  "WORKER_FIXED_001"
+                ],
+                "isDone": true,
+                "updatedAt": 1763542147440
+              },
+              "workflow_PROD_ORD_012_1_1": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_010"
+                ],
+                "workflowName": [
+                  "Là ủi hoàn thiện"
+                ],
+                "members": [
+                  "WORKER_009",
+                  "WORKER_007"
+                ],
+                "isDone": false,
+                "updatedAt": 1763545747440
+              },
+              "workflow_PROD_ORD_012_1_2": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_015"
+                ],
+                "workflowName": [
+                  "Dán nhãn"
+                ],
+                "members": [
+                  "WORKER_014",
+                  "WORKER_013"
+                ],
+                "isDone": false,
+                "updatedAt": 1763549347440
+              }
+            }
+          },
+          "PROD_ORD_012_2": {
+            "name": "Váy công sở size S",
+            "quantity": 78,
+            "price": 251870,
+            "commissionPercentage": 5.1378426673013005,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_012_2_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_012_2_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_012_2_2",
+                "name": "product_3.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_012_2_0": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_001"
+                ],
+                "workflowName": [
+                  "Cắt vải"
+                ],
+                "members": [
+                  "WORKER_001",
+                  "WORKER_003"
+                ],
+                "isDone": false,
+                "updatedAt": 1763542147440
+              },
+              "workflow_PROD_ORD_012_2_1": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_010",
+                  "WF_009"
+                ],
+                "workflowName": [
+                  "Là ủi hoàn thiện",
+                  "Là ủi tay áo"
+                ],
+                "members": [
+                  "WORKER_009",
+                  "WORKER_007"
+                ],
+                "isDone": true,
+                "updatedAt": 1763545747440
+              }
+            }
+          }
+        },
+        "status": "confirmed",
+        "totalAmount": 29249160,
+        "notes": "Khiếu nại cho đơn hàng ORD20251211012",
+        "issues": [
+          "Lỗi sản phẩm",
+          "Không đúng mẫu"
+        ],
+        "createdAt": 1763804375147,
+        "updatedAt": 1763573958912
+      },
+      "WC_002": {
+        "id": "WC_002",
+        "code": "WC20251211002",
+        "originalOrderId": "ORD_007",
+        "originalOrderCode": "ORD20251211007",
+        "customerName": "Hồ Hùng Lan",
+        "phone": "0935210542",
+        "email": "BiHngHng454@gmail.com",
+        "address": "197 Đường Nguyễn Anh Văn, Quận 10, TP.HCM",
+        "customerSource": "walk_in",
+        "orderDate": 1765068823704,
+        "deliveryDate": 1765673623704,
+        "createdBy": "SALES_003",
+        "createdByName": "Trần Hồng Thảo",
+        "products": {
+          "PROD_ORD_007_1": {
+            "name": "Áo len nữ size L",
+            "quantity": 58,
+            "price": 503501,
+            "commissionPercentage": 7.275304091079933,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_007_1_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_007_1_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_007_1_2",
+                "name": "product_3.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_007_1_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_007_1_0": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_009",
+                  "WF_008"
+                ],
+                "workflowName": [
+                  "Là ủi tay áo",
+                  "Là ủi thân"
+                ],
+                "members": [
+                  "WORKER_009"
+                ],
+                "isDone": true,
+                "updatedAt": 1765068823704
+              },
+              "workflow_PROD_ORD_007_1_1": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_001"
+                ],
+                "workflowName": [
+                  "Cắt vải"
+                ],
+                "members": [
+                  "WORKER_FIXED_001"
+                ],
+                "isDone": false,
+                "updatedAt": 1765072423704
+              },
+              "workflow_PROD_ORD_007_1_2": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_011",
+                  "WF_012"
+                ],
+                "workflowName": [
+                  "Kiểm tra chất lượng",
+                  "Kiểm tra kích thước"
+                ],
+                "members": [
+                  "WORKER_011",
+                  "WORKER_012"
+                ],
+                "isDone": false,
+                "updatedAt": 1765076023704
+              },
+              "workflow_PROD_ORD_007_1_3": {
+                "departmentCode": "DEPT_002",
+                "workflowCode": [
+                  "WF_004",
+                  "WF_007"
+                ],
+                "workflowName": [
+                  "May thân",
+                  "May đường viền"
+                ],
+                "members": [
+                  "WORKER_006",
+                  "WORKER_005"
+                ],
+                "isDone": false,
+                "updatedAt": 1765079623704
+              }
+            }
+          },
+          "PROD_ORD_007_2": {
+            "name": "Váy công sở size S",
+            "quantity": 61,
+            "price": 159793,
+            "commissionPercentage": 10.740308139065714,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_007_2_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_PROD_ORD_007_2_1",
+                "name": "product_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_007_2_0": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_011"
+                ],
+                "workflowName": [
+                  "Kiểm tra chất lượng"
+                ],
+                "members": [
+                  "WORKER_011"
+                ],
+                "isDone": true,
+                "updatedAt": 1765068823704
+              },
+              "workflow_PROD_ORD_007_2_1": {
+                "departmentCode": "DEPT_002",
+                "workflowCode": [
+                  "WF_007",
+                  "WF_005"
+                ],
+                "workflowName": [
+                  "May đường viền",
+                  "May tay áo"
+                ],
+                "members": [
+                  "WORKER_005",
+                  "WORKER_004"
+                ],
+                "isDone": false,
+                "updatedAt": 1765072423704
+              },
+              "workflow_PROD_ORD_007_2_2": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_016"
+                ],
+                "workflowName": [
+                  "Bọc bảo vệ"
+                ],
+                "members": [
+                  "WORKER_015",
+                  "WORKER_014"
+                ],
+                "isDone": false,
+                "updatedAt": 1765076023704
+              },
+              "workflow_PROD_ORD_007_2_3": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_002"
+                ],
+                "workflowName": [
+                  "Cắt chỉ"
+                ],
+                "members": [
+                  "WORKER_003"
+                ],
+                "isDone": false,
+                "updatedAt": 1765079623704
+              }
+            }
+          },
+          "PROD_ORD_007_3": {
+            "name": "Quần tây nam size 34",
+            "quantity": 30,
+            "price": 258466,
+            "commissionPercentage": 14.630336482017686,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_007_3_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_007_3_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_done_PROD_ORD_007_3_1",
+                "name": "product_done_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_007_3_0": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_011",
+                  "WF_012"
+                ],
+                "workflowName": [
+                  "Kiểm tra chất lượng",
+                  "Kiểm tra kích thước"
+                ],
+                "members": [
+                  "WORKER_011",
+                  "WORKER_010"
+                ],
+                "isDone": true,
+                "updatedAt": 1765068823704
+              },
+              "workflow_PROD_ORD_007_3_1": {
+                "departmentCode": "DEPT_002",
+                "workflowCode": [
+                  "WF_005",
+                  "WF_006"
+                ],
+                "workflowName": [
+                  "May tay áo",
+                  "May cổ áo"
+                ],
+                "members": [
+                  "WORKER_005",
+                  "WORKER_006"
+                ],
+                "isDone": false,
+                "updatedAt": 1765072423704
+              },
+              "workflow_PROD_ORD_007_3_2": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_002",
+                  "WF_003"
+                ],
+                "workflowName": [
+                  "Cắt chỉ",
+                  "Cắt phụ liệu"
+                ],
+                "members": [
+                  "WORKER_003"
+                ],
+                "isDone": false,
+                "updatedAt": 1765076023704
+              }
+            }
+          }
+        },
+        "status": "cancelled",
+        "totalAmount": 41566926,
+        "notes": "Khiếu nại cho đơn hàng ORD20251211007",
+        "issues": [
+          "Lỗi sản phẩm",
+          "Không đúng mẫu"
+        ],
+        "createdAt": 1765211314652,
+        "updatedAt": 1765832031452
+      },
+      "WC_003": {
+        "id": "WC_003",
+        "code": "WC20251211003",
+        "originalOrderId": "ORD_018",
+        "originalOrderCode": "ORD20251211018",
+        "customerName": "Võ Hùng Hùng",
+        "phone": "0975113104",
+        "email": "VHngHng592@gmail.com",
+        "address": "965 Đường Hoàng Hồng Lan, Quận 1, TP.HCM",
+        "customerSource": "website",
+        "orderDate": 1764538165006,
+        "deliveryDate": 1764970165006,
+        "createdBy": "SALES_002",
+        "createdByName": "Đỗ Thị Hùng",
+        "products": {
+          "PROD_ORD_018_1": {
+            "name": "Váy công sở size S",
+            "quantity": 73,
+            "price": 452808,
+            "commissionPercentage": 10.277701997710126,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_018_1_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_018_1_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_018_1_0": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_009",
+                  "WF_008"
+                ],
+                "workflowName": [
+                  "Là ủi tay áo",
+                  "Là ủi thân"
+                ],
+                "members": [
+                  "WORKER_007",
+                  "WORKER_009"
+                ],
+                "isDone": true,
+                "updatedAt": 1764538165006
+              },
+              "workflow_PROD_ORD_018_1_1": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_002"
+                ],
+                "workflowName": [
+                  "Cắt chỉ"
+                ],
+                "members": [
+                  "WORKER_003",
+                  "WORKER_FIXED_001"
+                ],
+                "isDone": false,
+                "updatedAt": 1764541765006
+              }
+            }
+          }
+        },
+        "status": "pending",
+        "totalAmount": 33109995,
+        "notes": "Khiếu nại cho đơn hàng ORD20251211018",
+        "issues": [
+          "Lỗi sản phẩm",
+          "Không đúng mẫu"
+        ],
+        "createdAt": 1764615234953,
+        "updatedAt": 1765182608864
+      },
+      "WC_004": {
+        "id": "WC_004",
+        "code": "WC20251211004",
+        "originalOrderId": "ORD_005",
+        "originalOrderCode": "ORD20251211005",
+        "customerName": "Nguyễn Anh Hồng",
+        "phone": "0927680684",
+        "email": "PhmVnMinh386@gmail.com",
+        "address": "736 Đường Bùi Minh Anh, Quận 11, TP.HCM",
+        "customerSource": "facebook",
+        "orderDate": 1764495088272,
+        "deliveryDate": 1764840688272,
+        "createdBy": "SALES_001",
+        "createdByName": "Trần Dũng Thảo",
+        "products": {
+          "PROD_ORD_005_1": {
+            "name": "Áo khoác nữ size M",
+            "quantity": 89,
+            "price": 496564,
+            "commissionPercentage": 6.1584173485797296,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_005_1_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "imagesDone": [
+              {
+                "uid": "img_done_PROD_ORD_005_1_0",
+                "name": "product_done_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              },
+              {
+                "uid": "img_done_PROD_ORD_005_1_1",
+                "name": "product_done_2.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_005_1_0": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_011"
+                ],
+                "workflowName": [
+                  "Kiểm tra chất lượng"
+                ],
+                "members": [
+                  "WORKER_012"
+                ],
+                "isDone": true,
+                "updatedAt": 1764495088272
+              },
+              "workflow_PROD_ORD_005_1_1": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_009"
+                ],
+                "workflowName": [
+                  "Là ủi tay áo"
+                ],
+                "members": [
+                  "WORKER_007"
+                ],
+                "isDone": true,
+                "updatedAt": 1764498688272
+              }
+            }
+          }
+        },
+        "status": "on_hold",
+        "totalAmount": 44219640,
+        "notes": "Khiếu nại cho đơn hàng ORD20251211005",
+        "issues": [
+          "Lỗi sản phẩm",
+          "Không đúng mẫu"
+        ],
+        "createdAt": 1764781035701,
+        "updatedAt": 1765145683563
+      },
+      "WC_005": {
+        "id": "WC_005",
+        "code": "WC20251211005",
+        "originalOrderId": "ORD_020",
+        "originalOrderCode": "ORD20251211020",
+        "customerName": "Lê Anh Lan",
+        "phone": "0900246188",
+        "email": "VVnMinh559@gmail.com",
+        "address": "749 Đường Đỗ Hùng Dũng, Quận 4, TP.HCM",
+        "customerSource": "phone",
+        "orderDate": 1764976436354,
+        "deliveryDate": 1765494836354,
+        "createdBy": "SALES_004",
+        "createdByName": "Trần Thảo Hồng",
+        "products": {
+          "PROD_ORD_020_1": {
+            "name": "Áo thun nữ size M",
+            "quantity": 37,
+            "price": 137962,
+            "commissionPercentage": 6.927836246782524,
+            "images": [
+              {
+                "uid": "img_PROD_ORD_020_1_0",
+                "name": "product_1.jpg",
+                "url": "https://firebasestorage.googleapis.com/v0/b/morata-8e8e4.appspot.com/o/images%2Fproduct.jpg?alt=media\u0026token=2d68623c-9ee8-4c1d-905b-c5155ba427ed"
+              }
+            ],
+            "workflows": {
+              "workflow_PROD_ORD_020_1_0": {
+                "departmentCode": "DEPT_004",
+                "workflowCode": [
+                  "WF_011",
+                  "WF_012"
+                ],
+                "workflowName": [
+                  "Kiểm tra chất lượng",
+                  "Kiểm tra kích thước"
+                ],
+                "members": [
+                  "WORKER_011",
+                  "WORKER_012"
+                ],
+                "isDone": true,
+                "updatedAt": 1764976436354
+              },
+              "workflow_PROD_ORD_020_1_1": {
+                "departmentCode": "DEPT_003",
+                "workflowCode": [
+                  "WF_010",
+                  "WF_009"
+                ],
+                "workflowName": [
+                  "Là ủi hoàn thiện",
+                  "Là ủi tay áo"
+                ],
+                "members": [
+                  "WORKER_009",
+                  "WORKER_007"
+                ],
+                "isDone": false,
+                "updatedAt": 1764980036354
+              },
+              "workflow_PROD_ORD_020_1_2": {
+                "departmentCode": "DEPT_005",
+                "workflowCode": [
+                  "WF_015"
+                ],
+                "workflowName": [
+                  "Dán nhãn"
+                ],
+                "members": [
+                  "WORKER_013"
+                ],
+                "isDone": false,
+                "updatedAt": 1764983636354
+              },
+              "workflow_PROD_ORD_020_1_3": {
+                "departmentCode": "DEPT_001",
+                "workflowCode": [
+                  "WF_002",
+                  "WF_003"
+                ],
+                "workflowName": [
+                  "Cắt chỉ",
+                  "Cắt phụ liệu"
+                ],
+                "members": [
+                  "WORKER_003",
+                  "WORKER_FIXED_001"
+                ],
+                "isDone": false,
+                "updatedAt": 1764987236354
+              }
+            }
+          }
+        },
+        "status": "completed",
+        "totalAmount": 5141309,
+        "notes": "Khiếu nại cho đơn hàng ORD20251211020",
+        "issues": [
+          "Lỗi sản phẩm",
+          "Không đúng mẫu"
+        ],
+        "createdAt": 1765326962790,
+        "updatedAt": 1765199604782
+      }
+    },
+    "categories": {
+      "CAT_001": {
+        "code": "CAT_001",
+        "name": "Vải",
+        "description": "Danh mục Vải",
+        "color": "#1890ff",
+        "createdAt": 1764850010626,
+        "updatedAt": 1763674465512
+      },
+      "CAT_002": {
+        "code": "CAT_002",
+        "name": "Phụ liệu",
+        "description": "Danh mục Phụ liệu",
+        "color": "#52c41a",
+        "createdAt": 1762967938681,
+        "updatedAt": 1763925617987
+      },
+      "CAT_003": {
+        "code": "CAT_003",
+        "name": "Da",
+        "description": "Danh mục Da",
+        "color": "#faad14",
+        "createdAt": 1764455973620,
+        "updatedAt": 1763996822721
+      },
+      "CAT_004": {
+        "code": "CAT_004",
+        "name": "Hóa chất",
+        "description": "Danh mục Hóa chất",
+        "color": "#f5222d",
+        "createdAt": 1763332702263,
+        "updatedAt": 1765084803035
+      },
+      "CAT_005": {
+        "code": "CAT_005",
+        "name": "Bao bì",
+        "description": "Danh mục Bao bì",
+        "color": "#722ed1",
+        "createdAt": 1765042876314,
+        "updatedAt": 1763014771603
+      }
+    },
+    "materials": {
+      "MAT_000001": {
+        "id": "MAT_000001",
+        "name": "Vải cotton",
+        "category": "Vải",
+        "stockQuantity": 914,
+        "unit": "m2",
+        "minThreshold": 93,
+        "maxCapacity": 2339,
+        "supplier": "Nhà cung cấp Phụ liệu XYZ",
+        "importPrice": 14126,
+        "lastUpdated": "2025-12-05",
+        "longStockAlertDays": 81,
+        "createdAt": 1764096016549,
+        "updatedAt": 1764853350534
+      },
+      "MAT_000002": {
+        "id": "MAT_000002",
+        "name": "Vải denim",
+        "category": "Vải",
+        "stockQuantity": 656,
+        "unit": "m2",
+        "minThreshold": 96,
+        "maxCapacity": 1852,
+        "supplier": "Công ty Da DEF",
+        "importPrice": 50824,
+        "lastUpdated": "2025-12-02",
+        "longStockAlertDays": 48,
+        "createdAt": 1762149011875,
+        "updatedAt": 1765200989321
+      },
+      "MAT_000003": {
+        "id": "MAT_000003",
+        "name": "Vải lụa",
+        "category": "Vải",
+        "stockQuantity": 341,
+        "unit": "m2",
+        "minThreshold": 65,
+        "maxCapacity": 1217,
+        "supplier": "Công ty Bao bì JKL",
+        "importPrice": 27436,
+        "lastUpdated": "2025-11-15",
+        "longStockAlertDays": 51,
+        "createdAt": 1760648575858,
+        "updatedAt": 1764993094366
+      },
+      "MAT_000004": {
+        "id": "MAT_000004",
+        "name": "Chỉ may",
+        "category": "Phụ liệu",
+        "stockQuantity": 766,
+        "unit": "cuon",
+        "minThreshold": 75,
+        "maxCapacity": 1650,
+        "supplier": "Nhà cung cấp Hóa chất GHI",
+        "importPrice": 65636,
+        "lastUpdated": "2025-11-16",
+        "longStockAlertDays": 53,
+        "createdAt": 1764781635004,
+        "updatedAt": 1764878671468
+      },
+      "MAT_000005": {
+        "id": "MAT_000005",
+        "name": "Khóa kéo",
+        "category": "Phụ liệu",
+        "stockQuantity": 287,
+        "unit": "cai",
+        "minThreshold": 113,
+        "maxCapacity": 1079,
+        "supplier": "Công ty Da DEF",
+        "importPrice": 22477,
+        "lastUpdated": "2025-12-02",
+        "longStockAlertDays": 82,
+        "createdAt": 1763059833365,
+        "updatedAt": 1765100896069
+      },
+      "MAT_000006": {
+        "id": "MAT_000006",
+        "name": "Khuy áo",
+        "category": "Phụ liệu",
+        "stockQuantity": 749,
+        "unit": "cai",
+        "minThreshold": 84,
+        "maxCapacity": 1629,
+        "supplier": "Nhà cung cấp Phụ liệu XYZ",
+        "importPrice": 53705,
+        "lastUpdated": "2025-11-21",
+        "longStockAlertDays": 78,
+        "createdAt": 1764118087688,
+        "updatedAt": 1765401282562
+      },
+      "MAT_000007": {
+        "id": "MAT_000007",
+        "name": "Da bò",
+        "category": "Da",
+        "stockQuantity": 831,
+        "unit": "m2",
+        "minThreshold": 122,
+        "maxCapacity": 1840,
+        "supplier": "Công ty Vải ABC",
+        "importPrice": 29510,
+        "lastUpdated": "2025-12-10",
+        "longStockAlertDays": 55,
+        "createdAt": 1762864350352,
+        "updatedAt": 1765324875139
+      },
+      "MAT_000008": {
+        "id": "MAT_000008",
+        "name": "Vải thun",
+        "category": "Vải",
+        "stockQuantity": 598,
+        "unit": "m2",
+        "minThreshold": 107,
+        "maxCapacity": 1101,
+        "supplier": "Công ty Da DEF",
+        "importPrice": 88284,
+        "lastUpdated": "2025-11-23",
+        "longStockAlertDays": 66,
+        "createdAt": 1760437168065,
+        "updatedAt": 1765298341490
+      },
+      "MAT_000009": {
+        "id": "MAT_000009",
+        "name": "Bông vải",
+        "category": "Vải",
+        "stockQuantity": 655,
+        "unit": "kg",
+        "minThreshold": 85,
+        "maxCapacity": 2044,
+        "supplier": "Nhà cung cấp Phụ liệu XYZ",
+        "importPrice": 106911,
+        "lastUpdated": "2025-12-01",
+        "longStockAlertDays": 77,
+        "createdAt": 1764734970964,
+        "updatedAt": 1765108615798
+      },
+      "MAT_000010": {
+        "id": "MAT_000010",
+        "name": "Túi vải",
+        "category": "Bao bì",
+        "stockQuantity": 730,
+        "unit": "cai",
+        "minThreshold": 88,
+        "maxCapacity": 1899,
+        "supplier": "Công ty Vải ABC",
+        "importPrice": 61802,
+        "lastUpdated": "2025-12-10",
+        "longStockAlertDays": 41,
+        "createdAt": 1763243119737,
+        "updatedAt": 1765406895526
+      }
+    },
+    "inventoryTransactions": {
+      "TXN_000001": {
+        "code": "TXN_000001",
+        "materialId": "MAT_000001",
+        "materialName": "Vải cotton",
+        "type": "export",
+        "quantity": 100,
+        "unit": "m2",
+        "price": 14126,
+        "totalAmount": 1412600,
+        "date": "2025-12-02",
+        "supplier": "Nhà cung cấp Phụ liệu XYZ",
+        "reason": "Bán hàng",
+        "note": "Giao dịch export cho Vải cotton",
+        "createdAt": 1764678124000
+      },
+      "TXN_000002": {
+        "code": "TXN_000002",
+        "materialId": "MAT_000009",
+        "materialName": "Bông vải",
+        "type": "import",
+        "quantity": 16,
+        "unit": "kg",
+        "price": 106911,
+        "totalAmount": 1710576,
+        "date": "2025-11-12",
+        "supplier": "Nhà cung cấp Phụ liệu XYZ",
+        "note": "Giao dịch import cho Bông vải",
+        "createdAt": 1762950124000
+      },
+      "TXN_000003": {
+        "code": "TXN_000003",
+        "materialId": "MAT_000010",
+        "materialName": "Túi vải",
+        "type": "import",
+        "quantity": 16,
+        "unit": "cai",
+        "price": 61802,
+        "totalAmount": 988832,
+        "date": "2025-11-24",
+        "supplier": "Công ty Vải ABC",
+        "note": "Giao dịch import cho Túi vải",
+        "createdAt": 1763986924000
+      },
+      "TXN_000004": {
+        "code": "TXN_000004",
+        "materialId": "MAT_000009",
+        "materialName": "Bông vải",
+        "type": "import",
+        "quantity": 57,
+        "unit": "kg",
+        "price": 106911,
+        "totalAmount": 6093927,
+        "date": "2025-12-01",
+        "supplier": "Nhà cung cấp Phụ liệu XYZ",
+        "note": "Giao dịch import cho Bông vải",
+        "createdAt": 1764591724000
+      },
+      "TXN_000005": {
+        "code": "TXN_000005",
+        "materialId": "MAT_000008",
+        "materialName": "Vải thun",
+        "type": "import",
+        "quantity": 83,
+        "unit": "m2",
+        "price": 88284,
+        "totalAmount": 7327572,
+        "date": "2025-12-02",
+        "supplier": "Công ty Da DEF",
+        "note": "Giao dịch import cho Vải thun",
+        "createdAt": 1764678124000
+      },
+      "TXN_000006": {
+        "code": "TXN_000006",
+        "materialId": "MAT_000003",
+        "materialName": "Vải lụa",
+        "type": "export",
+        "quantity": 64,
+        "unit": "m2",
+        "price": 27436,
+        "totalAmount": 1755904,
+        "date": "2025-11-23",
+        "supplier": "Công ty Bao bì JKL",
+        "reason": "Bán hàng",
+        "note": "Giao dịch export cho Vải lụa",
+        "createdAt": 1763900524000
+      },
+      "TXN_000007": {
+        "code": "TXN_000007",
+        "materialId": "MAT_000008",
+        "materialName": "Vải thun",
+        "type": "import",
+        "quantity": 70,
+        "unit": "m2",
+        "price": 88284,
+        "totalAmount": 6179880,
+        "date": "2025-12-09",
+        "supplier": "Công ty Da DEF",
+        "note": "Giao dịch import cho Vải thun",
+        "createdAt": 1765282924000
+      },
+      "TXN_000008": {
+        "code": "TXN_000008",
+        "materialId": "MAT_000006",
+        "materialName": "Khuy áo",
+        "type": "export",
+        "quantity": 11,
+        "unit": "cai",
+        "price": 53705,
+        "totalAmount": 590755,
+        "date": "2025-12-07",
+        "supplier": "Nhà cung cấp Phụ liệu XYZ",
+        "reason": "Bán hàng",
+        "note": "Giao dịch export cho Khuy áo",
+        "createdAt": 1765110124000
+      },
+      "TXN_000009": {
+        "code": "TXN_000009",
+        "materialId": "MAT_000007",
+        "materialName": "Da bò",
+        "type": "import",
+        "quantity": 51,
+        "unit": "m2",
+        "price": 29510,
+        "totalAmount": 1505010,
+        "date": "2025-11-21",
+        "supplier": "Công ty Vải ABC",
+        "note": "Giao dịch import cho Da bò",
+        "createdAt": 1763727724000
+      },
+      "TXN_000010": {
+        "code": "TXN_000010",
+        "materialId": "MAT_000005",
+        "materialName": "Khóa kéo",
+        "type": "import",
+        "quantity": 79,
+        "unit": "cai",
+        "price": 22477,
+        "totalAmount": 1775683,
+        "date": "2025-11-28",
+        "supplier": "Công ty Da DEF",
+        "note": "Giao dịch import cho Khóa kéo",
+        "createdAt": 1764332524000
+      },
+      "TXN_000011": {
+        "code": "TXN_000011",
+        "materialId": "MAT_000001",
+        "materialName": "Vải cotton",
+        "type": "import",
+        "quantity": 65,
+        "unit": "m2",
+        "price": 14126,
+        "totalAmount": 918190,
+        "date": "2025-11-20",
+        "supplier": "Nhà cung cấp Phụ liệu XYZ",
+        "note": "Giao dịch import cho Vải cotton",
+        "createdAt": 1763641324000
+      },
+      "TXN_000012": {
+        "code": "TXN_000012",
+        "materialId": "MAT_000007",
+        "materialName": "Da bò",
+        "type": "import",
+        "quantity": 58,
+        "unit": "m2",
+        "price": 29510,
+        "totalAmount": 1711580,
+        "date": "2025-11-12",
+        "supplier": "Công ty Vải ABC",
+        "note": "Giao dịch import cho Da bò",
+        "createdAt": 1762950124000
+      },
+      "TXN_000013": {
+        "code": "TXN_000013",
+        "materialId": "MAT_000003",
+        "materialName": "Vải lụa",
+        "type": "export",
+        "quantity": 63,
+        "unit": "m2",
+        "price": 27436,
+        "totalAmount": 1728468,
+        "date": "2025-11-15",
+        "supplier": "Công ty Bao bì JKL",
+        "reason": "Bán hàng",
+        "note": "Giao dịch export cho Vải lụa",
+        "createdAt": 1763209324000
+      },
+      "TXN_000014": {
+        "code": "TXN_000014",
+        "materialId": "MAT_000002",
+        "materialName": "Vải denim",
+        "type": "import",
+        "quantity": 20,
+        "unit": "m2",
+        "price": 50824,
+        "totalAmount": 1016480,
+        "date": "2025-11-14",
+        "supplier": "Công ty Da DEF",
+        "note": "Giao dịch import cho Vải denim",
+        "createdAt": 1763122924000
+      },
+      "TXN_000015": {
+        "code": "TXN_000015",
+        "materialId": "MAT_000003",
+        "materialName": "Vải lụa",
+        "type": "import",
+        "quantity": 69,
+        "unit": "m2",
+        "price": 27436,
+        "totalAmount": 1893084,
+        "date": "2025-11-18",
+        "supplier": "Công ty Bao bì JKL",
+        "note": "Giao dịch import cho Vải lụa",
+        "createdAt": 1763468524000
+      },
+      "TXN_000016": {
+        "code": "TXN_000016",
+        "materialId": "MAT_000006",
+        "materialName": "Khuy áo",
+        "type": "import",
+        "quantity": 84,
+        "unit": "cai",
+        "price": 53705,
+        "totalAmount": 4511220,
+        "date": "2025-12-03",
+        "supplier": "Nhà cung cấp Phụ liệu XYZ",
+        "note": "Giao dịch import cho Khuy áo",
+        "createdAt": 1764764524000
+      },
+      "TXN_000017": {
+        "code": "TXN_000017",
+        "materialId": "MAT_000001",
+        "materialName": "Vải cotton",
+        "type": "import",
+        "quantity": 52,
+        "unit": "m2",
+        "price": 14126,
+        "totalAmount": 734552,
+        "date": "2025-11-16",
+        "supplier": "Nhà cung cấp Phụ liệu XYZ",
+        "note": "Giao dịch import cho Vải cotton",
+        "createdAt": 1763295724000
+      },
+      "TXN_000018": {
+        "code": "TXN_000018",
+        "materialId": "MAT_000004",
+        "materialName": "Chỉ may",
+        "type": "export",
+        "quantity": 31,
+        "unit": "cuon",
+        "price": 65636,
+        "totalAmount": 2034716,
+        "date": "2025-11-12",
+        "supplier": "Nhà cung cấp Hóa chất GHI",
+        "reason": "Bán hàng",
+        "note": "Giao dịch export cho Chỉ may",
+        "createdAt": 1762950124000
+      },
+      "TXN_000019": {
+        "code": "TXN_000019",
+        "materialId": "MAT_000010",
+        "materialName": "Túi vải",
+        "type": "import",
+        "quantity": 89,
+        "unit": "cai",
+        "price": 61802,
+        "totalAmount": 5500378,
+        "date": "2025-11-29",
+        "supplier": "Công ty Vải ABC",
+        "note": "Giao dịch import cho Túi vải",
+        "createdAt": 1764418924000
+      },
+      "TXN_000020": {
+        "code": "TXN_000020",
+        "materialId": "MAT_000010",
+        "materialName": "Túi vải",
+        "type": "export",
+        "quantity": 25,
+        "unit": "cai",
+        "price": 61802,
+        "totalAmount": 1545050,
+        "date": "2025-12-10",
+        "supplier": "Công ty Vải ABC",
+        "reason": "Bán hàng",
+        "note": "Giao dịch export cho Túi vải",
+        "createdAt": 1765369324000
+      }
+    },
+    "financeTransactions": {
+      "FIN_000001": {
+        "id": "FIN_000001",
+        "date": 1763983308362,
+        "type": "income",
+        "category": "order",
+        "amount": 35725045,
+        "description": "Đơn hàng ORD20251211002",
+        "reference": "ORD20251211002",
+        "sourceId": "ORD_002",
+        "sourceType": "order",
+        "createdAt": 1763983308362,
+        "updatedAt": 1764028755259
+      },
+      "FIN_000002": {
+        "id": "FIN_000002",
+        "date": 1765067802931,
+        "type": "income",
+        "category": "order",
+        "amount": 22909139,
+        "description": "Đơn hàng ORD20251211004",
+        "reference": "ORD20251211004",
+        "sourceId": "ORD_004",
+        "sourceType": "order",
+        "createdAt": 1765067802931,
+        "updatedAt": 1765133546180
+      },
+      "FIN_000003": {
+        "id": "FIN_000003",
+        "date": 1763309245027,
+        "type": "income",
+        "category": "order",
+        "amount": 37834497,
+        "description": "Đơn hàng ORD20251211001",
+        "reference": "ORD20251211001",
+        "sourceId": "ORD_001",
+        "sourceType": "order",
+        "createdAt": 1763309245027,
+        "updatedAt": 1763340917772
+      },
+      "FIN_000004": {
+        "id": "FIN_000004",
+        "date": 1764495088272,
+        "type": "income",
+        "category": "order",
+        "amount": 44219640,
+        "description": "Đơn hàng ORD20251211005",
+        "reference": "ORD20251211005",
+        "sourceId": "ORD_005",
+        "sourceType": "order",
+        "createdAt": 1764495088272,
+        "updatedAt": 1764498454523
+      },
+      "FIN_000005": {
+        "id": "FIN_000005",
+        "date": 1765068823704,
+        "type": "income",
+        "category": "order",
+        "amount": 41566926,
+        "description": "Đơn hàng ORD20251211007",
+        "reference": "ORD20251211007",
+        "sourceId": "ORD_007",
+        "sourceType": "order",
+        "createdAt": 1765068823704,
+        "updatedAt": 1765092435505
+      },
+      "FIN_000006": {
+        "id": "FIN_000006",
+        "date": 1764658158129,
+        "type": "income",
+        "category": "order",
+        "amount": 6425926,
+        "description": "Đơn hàng ORD20251211011",
+        "reference": "ORD20251211011",
+        "sourceId": "ORD_011",
+        "sourceType": "order",
+        "createdAt": 1764658158129,
+        "updatedAt": 1764708646918
+      },
+      "FIN_000007": {
+        "id": "FIN_000007",
+        "date": 1764073854453,
+        "type": "income",
+        "category": "order",
+        "amount": 4900161,
+        "description": "Đơn hàng ORD20251211003",
+        "reference": "ORD20251211003",
+        "sourceId": "ORD_003",
+        "sourceType": "order",
+        "createdAt": 1764073854453,
+        "updatedAt": 1764160063336
+      },
+      "FIN_000008": {
+        "id": "FIN_000008",
+        "date": 1763439034447,
+        "type": "income",
+        "category": "order",
+        "amount": 0,
+        "description": "Đơn hàng ORD20251211016",
+        "reference": "ORD20251211016",
+        "sourceId": "ORD_016",
+        "sourceType": "order",
+        "createdAt": 1763439034447,
+        "updatedAt": 1763444288086
+      },
+      "FIN_000009": {
+        "id": "FIN_000009",
+        "date": 1764538165006,
+        "type": "income",
+        "category": "order",
+        "amount": 20528196,
+        "description": "Đơn hàng ORD20251211018",
+        "reference": "ORD20251211018",
+        "sourceId": "ORD_018",
+        "sourceType": "order",
+        "createdAt": 1764538165006,
+        "updatedAt": 1764561635368
+      },
+      "FIN_000010": {
+        "id": "FIN_000010",
+        "date": 1763989008108,
+        "type": "income",
+        "category": "order",
+        "amount": 29932244,
+        "description": "Đơn hàng ORD20251211019",
+        "reference": "ORD20251211019",
+        "sourceId": "ORD_019",
+        "sourceType": "order",
+        "createdAt": 1763989008108,
+        "updatedAt": 1763992669215
+      },
+      "FIN_000011": {
+        "id": "FIN_000011",
+        "date": 1763542147440,
+        "type": "income",
+        "category": "order",
+        "amount": 0,
+        "description": "Đơn hàng ORD20251211012",
+        "reference": "ORD20251211012",
+        "sourceId": "ORD_012",
+        "sourceType": "order",
+        "createdAt": 1763542147440,
+        "updatedAt": 1763618932087
+      },
+      "FIN_000012": {
+        "id": "FIN_000012",
+        "date": 1763727724000,
+        "type": "expense",
+        "category": "inventory",
+        "amount": 1505010,
+        "description": "Nhập kho Da bò",
+        "reference": "TXN_000009",
+        "sourceId": "MAT_000007",
+        "sourceType": "inventory",
+        "createdAt": 1763727724000,
+        "updatedAt": 1763727724000
+      },
+      "FIN_000013": {
+        "id": "FIN_000013",
+        "date": 1763122924000,
+        "type": "expense",
+        "category": "inventory",
+        "amount": 1016480,
+        "description": "Nhập kho Vải denim",
+        "reference": "TXN_000014",
+        "sourceId": "MAT_000002",
+        "sourceType": "inventory",
+        "createdAt": 1763122924000,
+        "updatedAt": 1763122924000
+      },
+      "FIN_000014": {
+        "id": "FIN_000014",
+        "date": 1763295724000,
+        "type": "expense",
+        "category": "inventory",
+        "amount": 734552,
+        "description": "Nhập kho Vải cotton",
+        "reference": "TXN_000017",
+        "sourceId": "MAT_000001",
+        "sourceType": "inventory",
+        "createdAt": 1763295724000,
+        "updatedAt": 1763295724000
+      },
+      "FIN_000015": {
+        "id": "FIN_000015",
+        "date": 1764418924000,
+        "type": "expense",
+        "category": "inventory",
+        "amount": 5500378,
+        "description": "Nhập kho Túi vải",
+        "reference": "TXN_000019",
+        "sourceId": "MAT_000010",
+        "sourceType": "inventory",
+        "createdAt": 1764418924000,
+        "updatedAt": 1764418924000
+      },
+      "FIN_000016": {
+        "id": "FIN_000016",
+        "date": 1764591724000,
+        "type": "expense",
+        "category": "inventory",
+        "amount": 6093927,
+        "description": "Nhập kho Bông vải",
+        "reference": "TXN_000004",
+        "sourceId": "MAT_000009",
+        "sourceType": "inventory",
+        "createdAt": 1764591724000,
+        "updatedAt": 1764591724000
+      },
+      "FIN_000017": {
+        "id": "FIN_000017",
+        "date": 1764678124000,
+        "type": "expense",
+        "category": "inventory",
+        "amount": 7327572,
+        "description": "Nhập kho Vải thun",
+        "reference": "TXN_000005",
+        "sourceId": "MAT_000008",
+        "sourceType": "inventory",
+        "createdAt": 1764678124000,
+        "updatedAt": 1764678124000
+      },
+      "FIN_000018": {
+        "id": "FIN_000018",
+        "date": 1763641324000,
+        "type": "expense",
+        "category": "inventory",
+        "amount": 918190,
+        "description": "Nhập kho Vải cotton",
+        "reference": "TXN_000011",
+        "sourceId": "MAT_000001",
+        "sourceType": "inventory",
+        "createdAt": 1763641324000,
+        "updatedAt": 1763641324000
+      },
+      "FIN_000019": {
+        "id": "FIN_000019",
+        "date": 1762950124000,
+        "type": "expense",
+        "category": "inventory",
+        "amount": 1711580,
+        "description": "Nhập kho Da bò",
+        "reference": "TXN_000012",
+        "sourceId": "MAT_000007",
+        "sourceType": "inventory",
+        "createdAt": 1762950124000,
+        "updatedAt": 1762950124000
+      },
+      "FIN_000020": {
+        "id": "FIN_000020",
+        "date": 1763468524000,
+        "type": "expense",
+        "category": "inventory",
+        "amount": 1893084,
+        "description": "Nhập kho Vải lụa",
+        "reference": "TXN_000015",
+        "sourceId": "MAT_000003",
+        "sourceType": "inventory",
+        "createdAt": 1763468524000,
+        "updatedAt": 1763468524000
+      },
+      "FIN_000021": {
+        "id": "FIN_000021",
+        "date": 1764764524000,
+        "type": "expense",
+        "category": "inventory",
+        "amount": 4511220,
+        "description": "Nhập kho Khuy áo",
+        "reference": "TXN_000016",
+        "sourceId": "MAT_000006",
+        "sourceType": "inventory",
+        "createdAt": 1764764524000,
+        "updatedAt": 1764764524000
+      },
+      "FIN_000022": {
+        "id": "FIN_000022",
+        "date": 1762950124000,
+        "type": "expense",
+        "category": "inventory",
+        "amount": 1710576,
+        "description": "Nhập kho Bông vải",
+        "reference": "TXN_000002",
+        "sourceId": "MAT_000009",
+        "sourceType": "inventory",
+        "createdAt": 1762950124000,
+        "updatedAt": 1762950124000
+      },
+      "FIN_000023": {
+        "id": "FIN_000023",
+        "date": 1763986924000,
+        "type": "expense",
+        "category": "inventory",
+        "amount": 988832,
+        "description": "Nhập kho Túi vải",
+        "reference": "TXN_000003",
+        "sourceId": "MAT_000010",
+        "sourceType": "inventory",
+        "createdAt": 1763986924000,
+        "updatedAt": 1763986924000
+      },
+      "FIN_000024": {
+        "id": "FIN_000024",
+        "date": 1765282924000,
+        "type": "expense",
+        "category": "inventory",
+        "amount": 6179880,
+        "description": "Nhập kho Vải thun",
+        "reference": "TXN_000007",
+        "sourceId": "MAT_000008",
+        "sourceType": "inventory",
+        "createdAt": 1765282924000,
+        "updatedAt": 1765282924000
+      },
+      "FIN_000025": {
+        "id": "FIN_000025",
+        "date": 1764332524000,
+        "type": "expense",
+        "category": "inventory",
+        "amount": 1775683,
+        "description": "Nhập kho Khóa kéo",
+        "reference": "TXN_000010",
+        "sourceId": "MAT_000005",
+        "sourceType": "inventory",
+        "createdAt": 1764332524000,
+        "updatedAt": 1764332524000
+      }
+    },
+    "refunds": {
+      "RF_001": {
+        "id": "RF_001",
+        "orderId": "ORD_018",
+        "orderCode": "ORD20251211018",
+        "amount": 20528196,
+        "reason": "Khách hàng yêu cầu hoàn tiền",
+        "type": "partial",
+        "status": "approved",
+        "requestedBy": "SALES_002",
+        "requestedByName": "Đỗ Thị Hùng",
+        "requestedAt": 1765052994095,
+        "approvedBy": "ADMIN_002",
+        "approvedByName": "Nguyễn Dũng Minh",
+        "approvedAt": 1765073291052,
+        "notes": "Ghi chú cho yêu cầu hoàn tiền RF20251211001",
+        "createdAt": 1765052994095,
+        "updatedAt": 1765180616486
+      },
+      "RF_002": {
+        "id": "RF_002",
+        "orderId": "ORD_016",
+        "orderCode": "ORD20251211016",
+        "amount": 19023408,
+        "reason": "Khách hàng yêu cầu hoàn tiền",
+        "type": "full",
+        "status": "processed",
+        "requestedBy": "SALES_002",
+        "requestedByName": "Đỗ Thị Hùng",
+        "requestedAt": 1763621887386,
+        "approvedBy": "ADMIN_002",
+        "approvedByName": "Nguyễn Dũng Minh",
+        "approvedAt": 1763664227185,
+        "processedBy": "ADMIN_FIXED_001",
+        "processedByName": "Quản trị",
+        "processedDate": 1763849417973,
+        "notes": "Ghi chú cho yêu cầu hoàn tiền RF20251211002",
+        "createdAt": 1763621887386,
+        "updatedAt": 1763849417973
+      },
+      "RF_003": {
+        "id": "RF_003",
+        "orderId": "ORD_019",
+        "orderCode": "ORD20251211019",
+        "amount": 17579253,
+        "reason": "Khách hàng yêu cầu hoàn tiền",
+        "type": "compensation",
+        "status": "approved",
+        "requestedBy": "SALES_002",
+        "requestedByName": "Đỗ Thị Hùng",
+        "requestedAt": 1764100379522,
+        "approvedBy": "ADMIN_FIXED_001",
+        "approvedByName": "Quản trị",
+        "approvedAt": 1764167120677,
+        "notes": "Ghi chú cho yêu cầu hoàn tiền RF20251211003",
+        "createdAt": 1764100379522,
+        "updatedAt": 1764124630572
+      }
+    },
+    "feedbacks": {
+      "FB_001": {
+        "id": "FB_001",
+        "orderId": "ORD_019",
+        "orderCode": "ORD20251211019",
+        "customerName": "Lê Hùng Thảo",
+        "customerPhone": "0976273340",
+        "feedbackType": "Khen",
+        "rating": 4,
+        "notes": "Feedback cho đơn hàng ORD20251211019",
+        "collectedBy": "SALES_002",
+        "collectedByName": "Đỗ Thị Hùng",
+        "collectedAt": 1764968138753,
+        "createdAt": 1764951536582,
+        "updatedAt": 1764869712856
+      },
+      "FB_002": {
+        "id": "FB_002",
+        "orderId": "ORD_010",
+        "orderCode": "ORD20251211010",
+        "customerName": "Võ Thị Thị",
+        "customerPhone": "0982410328",
+        "feedbackType": "Bức xúc",
+        "rating": 1,
+        "notes": "Feedback cho đơn hàng ORD20251211010",
+        "collectedBy": "SALES_FIXED_001",
+        "collectedByName": "Bán hàng",
+        "collectedAt": 1764868668386,
+        "createdAt": 1764870317676,
+        "updatedAt": 1764732584914
+      },
+      "FB_003": {
+        "id": "FB_003",
+        "orderId": "ORD_020",
+        "orderCode": "ORD20251211020",
+        "customerName": "Lê Anh Lan",
+        "customerPhone": "0900246188",
+        "feedbackType": "Khen",
+        "rating": 5,
+        "notes": "Feedback cho đơn hàng ORD20251211020",
+        "collectedBy": "SALES_004",
+        "collectedByName": "Trần Thảo Hồng",
+        "collectedAt": 1765589119914,
+        "createdAt": 1765577073814,
+        "updatedAt": 1765670713924
+      },
+      "FB_004": {
+        "id": "FB_004",
+        "orderId": "ORD_017",
+        "orderCode": "ORD20251211017",
+        "customerName": "Phạm Hùng Lan",
+        "customerPhone": "0978788839",
+        "feedbackType": "Khen",
+        "rating": 3,
+        "notes": "Feedback cho đơn hàng ORD20251211017",
+        "collectedBy": "SALES_001",
+        "collectedByName": "Trần Dũng Thảo",
+        "collectedAt": 1764126731355,
+        "createdAt": 1764126146555,
+        "updatedAt": 1764187865880
+      },
+      "FB_005": {
+        "id": "FB_005",
+        "orderId": "ORD_005",
+        "orderCode": "ORD20251211005",
+        "customerName": "Nguyễn Anh Hồng",
+        "customerPhone": "0927680684",
+        "feedbackType": "Khen",
+        "rating": 5,
+        "notes": "Feedback cho đơn hàng ORD20251211005",
+        "collectedBy": "SALES_001",
+        "collectedByName": "Trần Dũng Thảo",
+        "collectedAt": 1765054130553,
+        "createdAt": 1764880785766,
+        "updatedAt": 1764852645905
+      },
+      "FB_006": {
+        "id": "FB_006",
+        "orderId": "ORD_003",
+        "orderCode": "ORD20251211003",
+        "customerName": "Nguyễn Hùng Linh",
+        "customerPhone": "0920651064",
+        "feedbackType": "Bức xúc",
+        "rating": 1,
+        "notes": "Feedback cho đơn hàng ORD20251211003",
+        "collectedBy": "SALES_002",
+        "collectedByName": "Đỗ Thị Hùng",
+        "collectedAt": 1764627035983,
+        "createdAt": 1764633700478,
+        "updatedAt": 1764680061126
+      },
+      "FB_007": {
+        "id": "FB_007",
+        "orderId": "ORD_004",
+        "orderCode": "ORD20251211004",
+        "customerName": "Đặng Dũng Hồng",
+        "customerPhone": "0911723259",
+        "feedbackType": "Góp ý",
+        "rating": 3,
+        "notes": "Feedback cho đơn hàng ORD20251211004",
+        "collectedBy": "SALES_001",
+        "collectedByName": "Trần Dũng Thảo",
+        "collectedAt": 1765839151620,
+        "createdAt": 1765846634668,
+        "updatedAt": 1765826708526
+      },
+      "FB_008": {
+        "id": "FB_008",
+        "orderId": "ORD_002",
+        "orderCode": "ORD20251211002",
+        "customerName": "Trần Dũng Thảo",
+        "customerPhone": "0907820766",
+        "feedbackType": "Khen",
+        "rating": 5,
+        "notes": "Feedback cho đơn hàng ORD20251211002",
+        "collectedBy": "SALES_001",
+        "collectedByName": "Trần Dũng Thảo",
+        "collectedAt": 1764691675562,
+        "createdAt": 1764649794320,
+        "updatedAt": 1764571921392
+      },
+      "FB_009": {
+        "id": "FB_009",
+        "orderId": "ORD_007",
+        "orderCode": "ORD20251211007",
+        "customerName": "Hồ Hùng Lan",
+        "customerPhone": "0935210542",
+        "feedbackType": "Chê",
+        "rating": 1,
+        "notes": "Feedback cho đơn hàng ORD20251211007",
+        "collectedBy": "SALES_003",
+        "collectedByName": "Trần Hồng Thảo",
+        "collectedAt": 1765827030772,
+        "createdAt": 1765702343614,
+        "updatedAt": 1765892147844
+      },
+      "FB_010": {
+        "id": "FB_010",
+        "orderId": "ORD_011",
+        "orderCode": "ORD20251211011",
+        "customerName": "Bùi Dũng Thị",
+        "customerPhone": "0936309213",
+        "feedbackType": "Bức xúc",
+        "rating": 1,
+        "notes": "Feedback cho đơn hàng ORD20251211011",
+        "collectedBy": "SALES_003",
+        "collectedByName": "Trần Hồng Thảo",
+        "collectedAt": 1765759523396,
+        "createdAt": 1765756398736,
+        "updatedAt": 1765611884521
+      }
+    }
+  }
+}
