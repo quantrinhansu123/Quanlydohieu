@@ -9,14 +9,17 @@ import {
   FeedbackType,
   FeedbackTypeLabels,
   FeedbackTypeOptions,
+  FeedbackStatus,
+  FeedbackStatusLabels,
+  FeedbackStatusOptions,
   type CustomerFeedback,
 } from "@/types/feedback";
-import { EyeOutlined } from "@ant-design/icons";
+import { EyeOutlined, EditOutlined, DeleteOutlined, StarFilled } from "@ant-design/icons";
 import type { TableColumnsType } from "antd";
-import { App, Button, Modal, Tag, Typography } from "antd";
+import { App, Button, Card, Col, Modal, Rate, Row, Space, Statistic, Tag, Typography } from "antd";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const { Text } = Typography;
 
@@ -44,63 +47,100 @@ const FeedbackDetails: React.FC<PropRowDetails<CustomerFeedback>> = ({
 
   return (
     <div className="space-y-4">
-      <div>
-        <h3 className="text-lg font-semibold mb-4">Chi tiết Feedback</h3>
-        <div className="grid grid-cols-1 gap-3">
+      <h3 className="text-lg font-semibold mb-4">Chi tiết Feedback</h3>
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <span className="font-medium text-gray-500 text-sm">Mã đơn hàng:</span>
+          <p className="font-medium mt-1">
+            <Button 
+              type="link" 
+              onClick={() => window.open(`/sale/orders/${data.orderCode}`, '_blank')}
+              style={{ padding: 0, height: 'auto' }}
+            >
+              {data.orderCode}
+            </Button>
+          </p>
+        </div>
+        <div>
+          <span className="font-medium text-gray-500 text-sm">Khách hàng:</span>
+          <p className="font-medium mt-1">{data.customerName}</p>
+        </div>
+        <div>
+          <span className="font-medium text-gray-500 text-sm">Số điện thoại:</span>
+          <p className="font-medium mt-1">{data.customerPhone}</p>
+        </div>
+        <div>
+          <span className="font-medium text-gray-500 text-sm">Loại feedback:</span>
+          <p className="mt-1">
+            <Tag color={getFeedbackColor(data.feedbackType)}>
+              {FeedbackTypeLabels[data.feedbackType]}
+            </Tag>
+          </p>
+        </div>
+        {data.rating && (
           <div>
-            <span className="font-medium">Mã đơn hàng:</span>
-            <p className="text-gray-600">{data.orderCode}</p>
+            <span className="font-medium text-gray-500 text-sm">Đánh giá:</span>
+            <div className="mt-1">
+              <Rate disabled value={data.rating} style={{ fontSize: "16px" }} />
+              <Text className="ml-2">{data.rating} / 5</Text>
+            </div>
           </div>
+        )}
+        {data.saleName && (
           <div>
-            <span className="font-medium">Khách hàng:</span>
-            <p className="text-gray-600">{data.customerName}</p>
+            <span className="font-medium text-gray-500 text-sm">Sale phụ trách:</span>
+            <p className="font-medium mt-1">{data.saleName}</p>
           </div>
-          <div>
-            <span className="font-medium">Số điện thoại:</span>
-            <p className="text-gray-600">{data.customerPhone}</p>
-          </div>
-          <div>
-            <span className="font-medium">Loại feedback:</span>
-            <p className="mt-1">
-              <Tag color={getFeedbackColor(data.feedbackType)}>
-                {FeedbackTypeLabels[data.feedbackType]}
-              </Tag>
+        )}
+        <div>
+          <span className="font-medium text-gray-500 text-sm">Thu thập bởi:</span>
+          <p className="font-medium mt-1">{data.collectedByName || "N/A"}</p>
+        </div>
+        <div>
+          <span className="font-medium text-gray-500 text-sm">Ngày thu thập:</span>
+          <p className="font-medium mt-1">
+            {dayjs(data.collectedAt).format("DD/MM/YYYY HH:mm")}
+          </p>
+        </div>
+        <div className="col-span-2">
+          <span className="font-medium text-gray-500 text-sm">Trạng thái:</span>
+          <p className="mt-1">
+            <Tag color={
+              data.status === FeedbackStatus.GOOD ? "green" :
+              data.status === FeedbackStatus.NEED_REPROCESS ? "red" :
+              data.status === FeedbackStatus.PROCESSING ? "orange" :
+              data.status === FeedbackStatus.RESOLVED ? "blue" :
+              data.status === FeedbackStatus.PENDING ? "default" :
+              (data.requiresReService ? "red" : "green")
+            }>
+              {data.status ? FeedbackStatusLabels[data.status] : 
+               (data.requiresReService ? "Xử lý lại" : "Tốt")}
+            </Tag>
+          </p>
+          {data.reServiceOrderId && (
+            <p className="text-sm mt-1">
+              Đơn xử lý lại: {data.reServiceOrderId}
             </p>
-          </div>
-          {data.rating && (
-            <div>
-              <span className="font-medium">Đánh giá:</span>
-              <p className="text-gray-600">{data.rating} / 5 sao</p>
-            </div>
-          )}
-          {data.notes && (
-            <div>
-              <span className="font-medium">Ghi chú:</span>
-              <p className="text-gray-600">{data.notes}</p>
-            </div>
-          )}
-          <div>
-            <span className="font-medium">Thu thập bởi:</span>
-            <p className="text-gray-600">{data.collectedByName || "N/A"}</p>
-          </div>
-          <div>
-            <span className="font-medium">Ngày thu thập:</span>
-            <p className="text-gray-600">
-              {dayjs(data.collectedAt).format("DD/MM/YYYY HH:mm")}
-            </p>
-          </div>
-          {data.requiresReService && (
-            <div>
-              <span className="font-medium">Yêu cầu xử lý lại:</span>
-              <p className="text-red-600 font-semibold">Có</p>
-              {data.reServiceOrderId && (
-                <p className="text-gray-600 text-sm">
-                  Đơn xử lý lại: {data.reServiceOrderId}
-                </p>
-              )}
-            </div>
           )}
         </div>
+        {data.content && (
+          <div className="col-span-2">
+            <span className="font-medium text-gray-500 text-sm">Nội dung:</span>
+            <p className="mt-1 whitespace-pre-wrap">{data.content}</p>
+          </div>
+        )}
+        {data.solution && (
+          <div className="col-span-2">
+            <span className="font-medium text-gray-500 text-sm">Phương án giải quyết:</span>
+            <p className="mt-1 whitespace-pre-wrap">{data.solution}</p>
+          </div>
+        )}
+        {data.notes && (
+          <div className="col-span-2">
+            <span className="font-medium text-gray-500 text-sm">Ghi chú:</span>
+            <p className="mt-1 whitespace-pre-wrap">{data.notes}</p>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -113,10 +153,49 @@ export default function FeedbackPage() {
   const [editingFeedback, setEditingFeedback] = useState<
     CustomerFeedback | undefined
   >();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const router = useRouter();
   const { query, applyFilter, updateQueries, reset } = useFilter();
   const filteredFeedbacks = applyFilter(feedbacks);
+
+  // Calculate statistics
+  const stats = useMemo(() => {
+    const source = Array.isArray(filteredFeedbacks) ? filteredFeedbacks : [];
+    
+    // Count by feedback type
+    const byType = FeedbackTypeOptions.reduce((acc, option) => {
+      acc[option.value] = source.filter(
+        (f) => f.feedbackType === option.value
+      ).length;
+      return acc;
+    }, {} as Record<string, number>);
+
+    // Count by status
+    const byStatus = FeedbackStatusOptions.reduce((acc, option) => {
+      acc[option.value] = source.filter(
+        (f) => f.status === option.value || 
+        (option.value === FeedbackStatus.NEED_REPROCESS && f.requiresReService) ||
+        (option.value === FeedbackStatus.GOOD && !f.status && !f.requiresReService)
+      ).length;
+      return acc;
+    }, {} as Record<string, number>);
+
+    // Count by rating
+    const byRating = {
+      5: source.filter((f) => f.rating === 5).length,
+      4: source.filter((f) => f.rating === 4).length,
+      3: source.filter((f) => f.rating === 3).length,
+      2: source.filter((f) => f.rating === 2).length,
+      1: source.filter((f) => f.rating === 1).length,
+    };
+
+    return {
+      total: source.length,
+      byType,
+      byStatus,
+      byRating,
+    };
+  }, [filteredFeedbacks]);
 
   useEffect(() => {
     const unsubscribe = FeedbackService.onSnapshot((data) => {
@@ -146,17 +225,6 @@ export default function FeedbackPage() {
 
   const columns: TableColumnsType<CustomerFeedback> = [
     {
-      title: "Mã đơn hàng",
-      dataIndex: "orderCode",
-      key: "orderCode",
-      sorter: true,
-      render: (code: string, record) => (
-        <Button type="link" onClick={() => router.push(`/sale/orders/${code}`)}>
-          {code}
-        </Button>
-      ),
-    },
-    {
       title: "Khách hàng",
       dataIndex: "customerName",
       key: "customerName",
@@ -179,7 +247,15 @@ export default function FeedbackPage() {
       title: "Đánh giá",
       dataIndex: "rating",
       key: "rating",
-      render: (rating?: number) => (rating ? `${rating}/5` : "N/A"),
+      render: (rating?: number) => {
+        if (!rating) return "N/A";
+        return (
+          <Space>
+            <Rate disabled value={rating} style={{ fontSize: "14px" }} />
+            <Text type="secondary">({rating}/5)</Text>
+          </Space>
+        );
+      },
     },
     {
       title: "Ngày thu thập",
@@ -189,28 +265,111 @@ export default function FeedbackPage() {
       sorter: true,
     },
     {
-      title: "Yêu cầu xử lý lại",
-      dataIndex: "requiresReService",
-      key: "requiresReService",
-      render: (requires: boolean) => (
-        <Tag color={requires ? "red" : "green"}>
-          {requires ? "Có" : "Không"}
-        </Tag>
+      title: "Nội dung",
+      dataIndex: "content",
+      key: "content",
+      render: (content?: string) => (
+        <Text ellipsis={{ tooltip: content }} style={{ maxWidth: 200 }}>
+          {content || "-"}
+        </Text>
       ),
+    },
+    {
+      title: "Phương án giải quyết",
+      dataIndex: "solution",
+      key: "solution",
+      render: (solution?: string) => (
+        <Text ellipsis={{ tooltip: solution }} style={{ maxWidth: 200 }}>
+          {solution || "-"}
+        </Text>
+      ),
+    },
+    {
+      title: "Sale phụ trách",
+      dataIndex: "saleName",
+      key: "saleName",
+      render: (saleName?: string) => saleName || "-",
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
+      key: "status",
+      render: (status?: FeedbackStatus, record?: CustomerFeedback) => {
+        // Fallback to requiresReService for backward compatibility
+        const actualStatus = status || 
+          (record?.requiresReService ? FeedbackStatus.NEED_REPROCESS : FeedbackStatus.GOOD);
+        
+        const getStatusColor = (s: FeedbackStatus) => {
+          switch (s) {
+            case FeedbackStatus.GOOD:
+              return "green";
+            case FeedbackStatus.NEED_REPROCESS:
+              return "red";
+            case FeedbackStatus.PROCESSING:
+              return "orange";
+            case FeedbackStatus.RESOLVED:
+              return "blue";
+            case FeedbackStatus.PENDING:
+              return "default";
+            default:
+              return "default";
+          }
+        };
+
+        return (
+          <Tag color={getStatusColor(actualStatus)}>
+            {FeedbackStatusLabels[actualStatus]}
+          </Tag>
+        );
+      },
     },
     {
       title: "Thao tác",
       key: "action",
-      width: 120,
+      width: 180,
       render: (_, record) => (
         <div className="flex gap-2">
           <Button
             type="text"
             icon={<EyeOutlined />}
+            onClick={(e) => {
+              e.stopPropagation();
+              // CommonTable will handle the drawer via onRowClick
+            }}
+            title="Xem"
+          />
+          <Button
+            type="text"
+            icon={<EditOutlined />}
             onClick={() => {
               setEditingFeedback(record);
               setFormVisible(true);
             }}
+            title="Sửa"
+          />
+          <Button
+            type="text"
+            danger
+            icon={<DeleteOutlined />}
+            onClick={() => {
+              modal.confirm({
+                title: "Xác nhận xóa",
+                content: `Bạn có chắc chắn muốn xóa feedback của ${record.customerName}?`,
+                okText: "Xóa",
+                okType: "danger",
+                cancelText: "Hủy",
+                onOk: async () => {
+                  try {
+                    await FeedbackService.delete(record.id);
+                    message.success("Đã xóa feedback thành công!");
+                  } catch (error) {
+                    console.error("Error deleting feedback:", error);
+                    message.error("Có lỗi xảy ra khi xóa feedback!");
+                  }
+                },
+              });
+            }}
+            title="Xóa"
           />
         </div>
       ),
@@ -222,7 +381,7 @@ export default function FeedbackPage() {
       header={{
         searchInput: {
           placeholder: "Tìm kiếm feedback...",
-          filterKeys: ["orderCode", "customerName", "customerPhone", "notes"],
+          filterKeys: ["orderCode", "customerName", "customerPhone", "notes", "content", "solution", "saleName"],
         },
         filters: {
           fields: [
@@ -233,13 +392,12 @@ export default function FeedbackPage() {
               options: [{ label: "Tất cả", value: "" }, ...FeedbackTypeOptions],
             },
             {
-              label: "Yêu cầu xử lý lại",
-              name: "requiresReService",
+              label: "Trạng thái",
+              name: "status",
               type: "select",
               options: [
                 { label: "Tất cả", value: "" },
-                { label: "Có", value: true },
-                { label: "Không", value: false },
+                ...FeedbackStatusOptions,
               ],
             },
           ],
@@ -250,17 +408,87 @@ export default function FeedbackPage() {
       }}
       isLoading={loading}
     >
-      <CommonTable
-        dataSource={filteredFeedbacks.reverse()}
-        columns={columns}
-        loading={loading}
-        DrawerDetails={FeedbackDetails}
-        paging={true}
-        rank={true}
-      />
+      <div className="space-y-4">
+        {/* Statistics Report */}
+        <div className="space-y-3">
+          <Text strong className="text-base">Báo cáo thống kê</Text>
+          
+          {/* By Feedback Type */}
+          <div>
+            <Text type="secondary" className="text-sm mb-2 block">Theo loại feedback</Text>
+            <Row gutter={[8, 8]}>
+              {FeedbackTypeOptions.map((type) => (
+                <Col span={6} key={type.value}>
+                  <Card size="small" style={{ textAlign: "center", padding: "8px" }}>
+                    <div className="flex flex-col items-center gap-1">
+                      <Tag color={getFeedbackColor(type.value)}>{type.label}</Tag>
+                      <Text strong style={{ fontSize: "18px" }}>{stats.byType[type.value] || 0}</Text>
+                    </div>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+          </div>
+
+          {/* By Status */}
+          <div>
+            <Text type="secondary" className="text-sm mb-2 block">Theo trạng thái</Text>
+            <Row gutter={[8, 8]}>
+              {FeedbackStatusOptions.map((status) => {
+                const getStatusColor = (s: FeedbackStatus) => {
+                  switch (s) {
+                    case FeedbackStatus.GOOD: return "green";
+                    case FeedbackStatus.NEED_REPROCESS: return "red";
+                    case FeedbackStatus.PROCESSING: return "orange";
+                    case FeedbackStatus.RESOLVED: return "blue";
+                    case FeedbackStatus.PENDING: return "default";
+                    default: return "default";
+                  }
+                };
+                return (
+                  <Col span={5} key={status.value}>
+                    <Card size="small" style={{ textAlign: "center", padding: "8px" }}>
+                      <div className="flex flex-col items-center gap-1">
+                        <Tag color={getStatusColor(status.value)}>{status.label}</Tag>
+                        <Text strong style={{ fontSize: "18px" }}>{stats.byStatus[status.value] || 0}</Text>
+                      </div>
+                    </Card>
+                  </Col>
+                );
+              })}
+            </Row>
+          </div>
+
+          {/* By Rating */}
+          <div>
+            <Text type="secondary" className="text-sm mb-2 block">Theo đánh giá sao</Text>
+            <Row gutter={[8, 8]}>
+              {[5, 4, 3, 2, 1].map((rating) => (
+                <Col span={5} key={rating}>
+                  <Card size="small" style={{ textAlign: "center", padding: "8px" }}>
+                    <div className="flex flex-col items-center gap-1">
+                      <Rate disabled value={rating} style={{ fontSize: "14px" }} />
+                      <Text strong style={{ fontSize: "18px" }}>{stats.byRating[rating as keyof typeof stats.byRating] || 0}</Text>
+                    </div>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+          </div>
+        </div>
+
+        <CommonTable
+          dataSource={filteredFeedbacks.reverse()}
+          columns={columns}
+          loading={loading}
+          DrawerDetails={FeedbackDetails}
+          paging={true}
+          rank={true}
+        />
+      </div>
 
       <Modal
-        title={editingFeedback ? "Chi tiết Feedback" : "Thêm Feedback"}
+        title={editingFeedback ? "Sửa Feedback" : "Thêm Feedback"}
         open={formVisible}
         onCancel={() => {
           setFormVisible(false);

@@ -2,19 +2,22 @@
 
 import CommonTable from "@/components/CommonTable";
 import WrapperContent from "@/components/WrapperContent";
+import { useFirebaseApp } from "@/firebase";
 import { useRealtimeList } from "@/firebase/hooks/useRealtime";
 import useColumn from "@/hooks/useColumn";
 import useFilter from "@/hooks/useFilter";
+import { deleteOrder } from "@/services/workflowService";
 import { IMembers } from "@/types/members";
 import { FirebaseOrderData, OrderStatus } from "@/types/order";
 import { genCode } from "@/utils/genCode";
-import { EyeOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined } from "@ant-design/icons";
 import type { TableColumnsType } from "antd";
 import {
     App,
     Button,
     Card,
     Col,
+    Popconfirm,
     Row,
     Space,
     Statistic,
@@ -71,6 +74,7 @@ const getStatusInfo = (status: OrderStatus) => {
 export default function OrderListPage() {
     const { message, modal } = App.useApp();
     const router = useRouter();
+    const firebaseApp = useFirebaseApp();
     const { data: ordersData, isLoading: ordersLoading } =
         useRealtimeList<FirebaseOrderData>("xoxo/orders");
     const { data: staffData, isLoading: staffLoading } =
@@ -117,6 +121,16 @@ export default function OrderListPage() {
 
     const handleViewDetails = (orderCode: string) => {
         router.push(`/sale/orders/${orderCode}`);
+    };
+
+    const handleDelete = async (orderId: string) => {
+        try {
+            await deleteOrder(firebaseApp, orderId);
+            message.success("Xóa đơn hàng thành công!");
+        } catch (error) {
+            console.error("Error deleting order:", error);
+            message.error("Có lỗi xảy ra khi xóa đơn hàng!");
+        }
     };
 
     const defaultColumns: TableColumnsType<FirebaseOrderData> = useMemo(
@@ -205,26 +219,26 @@ export default function OrderListPage() {
             },
             {
                 title: "Lưu ý",
-                dataIndex: "issues",
-                key: "issues",
-                width: 120,
+                dataIndex: "notes",
+                key: "notes",
+                width: 200,
                 fixed: "right",
-                render: (issues: string[] | undefined) => {
-                    if (!issues || issues.length === 0) {
+                ellipsis: false,
+                render: (notes: string | undefined) => {
+                    if (!notes || notes.trim() === "") {
                         return "-";
                     }
                     return (
-                        <div className="flex flex-col gap-1 overflow-y-auto max-h-20">
-                            {issues.map((issue) => {
-                                return (
-                                    <Tag
-                                        color="purple"
-                                        key={`issue-${issue}-${genCode("REACTKEY")}`}
-                                    >
-                                        {issue}
-                                    </Tag>
-                                );
-                            })}
+                        <div 
+                            className="overflow-y-auto"
+                            style={{
+                                maxHeight: "100px",
+                                maxWidth: "200px",
+                                wordBreak: "break-word",
+                                whiteSpace: "pre-wrap",
+                            }}
+                        >
+                            <Text>{notes}</Text>
                         </div>
                     );
                 },
@@ -232,15 +246,45 @@ export default function OrderListPage() {
             {
                 title: "Thao tác",
                 key: "action",
-                width: 100,
+                width: 150,
                 fixed: "right",
                 align: "center",
                 render: (_, record) => (
-                    <Button
-                        type="text"
-                        icon={<EyeOutlined />}
-                        onClick={() => handleViewDetails(record.code)}
-                    />
+                    <div className="flex gap-2 justify-center">
+                        <Button
+                            type="text"
+                            icon={<EyeOutlined />}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleViewDetails(record.code);
+                            }}
+                        />
+                        <Button
+                            type="text"
+                            icon={<EditOutlined />}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                router.push(`/sale/orders/${record.code}/update`);
+                            }}
+                        />
+                        <Popconfirm
+                            title="Xác nhận xóa"
+                            description="Bạn có chắc chắn muốn xóa đơn hàng này?"
+                            onConfirm={(e) => {
+                                e?.stopPropagation();
+                                handleDelete(record.id);
+                            }}
+                            okText="Xóa"
+                            cancelText="Hủy"
+                        >
+                            <Button
+                                type="text"
+                                danger
+                                icon={<DeleteOutlined />}
+                                onClick={(e) => e.stopPropagation()}
+                            />
+                        </Popconfirm>
+                    </div>
                 ),
             },
         ],
@@ -367,7 +411,7 @@ export default function OrderListPage() {
         >
             <div className="space-y-4">
                 <Row gutter={16}>
-                    <Col span={3}>
+                    <Col span={6}>
                         <Card style={{ textAlign: "center" }}>
                             <Statistic
                                 title="Tổng đơn"
@@ -378,7 +422,7 @@ export default function OrderListPage() {
                             />
                         </Card>
                     </Col>
-                    <Col span={3}>
+                    <Col span={6}>
                         <Card style={{ textAlign: "center" }}>
                             <Statistic
                                 title="Chờ"
@@ -390,7 +434,7 @@ export default function OrderListPage() {
                             />
                         </Card>
                     </Col>
-                    <Col span={3}>
+                    <Col span={6}>
                         <Card style={{ textAlign: "center" }}>
                             <Statistic
                                 title="Lên đơn"
@@ -402,7 +446,7 @@ export default function OrderListPage() {
                             />
                         </Card>
                     </Col>
-                    <Col span={3}>
+                    <Col span={6}>
                         <Card style={{ textAlign: "center" }}>
                             <Statistic
                                 title="Sản xuất"
@@ -414,7 +458,9 @@ export default function OrderListPage() {
                             />
                         </Card>
                     </Col>
-                    <Col span={3}>
+                </Row>
+                <Row gutter={16}>
+                    <Col span={6}>
                         <Card style={{ textAlign: "center" }}>
                             <Statistic
                                 title="Thanh toán"
@@ -426,7 +472,7 @@ export default function OrderListPage() {
                             />
                         </Card>
                     </Col>
-                    <Col span={3}>
+                    <Col span={6}>
                         <Card style={{ textAlign: "center" }}>
                             <Statistic
                                 title="CSKH"
@@ -438,7 +484,7 @@ export default function OrderListPage() {
                             />
                         </Card>
                     </Col>
-                    <Col span={3}>
+                    <Col span={6}>
                         <Card style={{ textAlign: "center" }}>
                             <Statistic
                                 title="Hoàn tiền"
@@ -450,7 +496,7 @@ export default function OrderListPage() {
                             />
                         </Card>
                     </Col>
-                    <Col span={3}>
+                    <Col span={6}>
                         <Card style={{ textAlign: "center" }}>
                             <Statistic
                                 title="Đã huỷ"

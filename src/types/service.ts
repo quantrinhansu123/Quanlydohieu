@@ -9,6 +9,7 @@ export interface ServiceCategory {
     childCode?: string; // Nhóm con
     grandchildCode?: string; // Nhóm cháu
     attributes?: string[]; // ML, KG, GRAM, CÁI, CHIẾC...
+    children?: ServiceCategory[]; // Not stored in DB, only for display/tree building
     createdAt: number;
     updatedAt: number;
 }
@@ -24,9 +25,10 @@ export interface Service {
     categoryCode?: string; // Nhóm hàng
     brandCode?: string; // Thương hiệu
     sellingPrice?: number; // Giá bán
-    faceValue?: number; // Mệnh giá sử dụng
-    paymentScope?: string; // Phạm vi thanh toán
+    priceFrom?: number; // Từ khoảng giá
+    priceTo?: number; // Tới khoảng giá
     images?: string[]; // URLs of images
+    imageNotes?: string; // Ghi chú hình ảnh
     description?: string; // Rich text description
     notes?: string; // Ghi chú
     createdAt: number;

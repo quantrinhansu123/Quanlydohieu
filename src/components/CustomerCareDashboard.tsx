@@ -5,6 +5,7 @@ import { useRealtimeList } from "@/firebase/hooks/useRealtime";
 import { useUser } from "@/firebase/provider";
 import useFilter from "@/hooks/useFilter";
 import { AppointmentService } from "@/services/appointmentService";
+import { FeedbackService } from "@/services/feedbackService";
 import { RefundService } from "@/services/refundService";
 import { WarrantyClaimService } from "@/services/warrantyClaimService";
 import { FilterField } from "@/types";
@@ -12,6 +13,7 @@ import { type Appointment } from "@/types/appointment";
 import { IMembers } from "@/types/members";
 import { FirebaseOrderData, OrderStatus } from "@/types/order";
 import { type RefundRequest } from "@/types/refund";
+import { type CustomerFeedback } from "@/types/feedback";
 import { WarrantyClaimStatus, type WarrantyClaim } from "@/types/warrantyClaim";
 import {
   ClockCircleOutlined,
@@ -24,7 +26,11 @@ import {
   Button,
   Card,
   Descriptions,
+  Form,
+  Input,
+  Modal,
   Popconfirm,
+  Select,
   Space,
   Statistic,
   Tag,
@@ -73,6 +79,7 @@ interface CareItem {
     caredAt?: number;
     careCount?: number;
     originalOrderCode?: string;
+    feedbackId?: string; // Link to feedback
   };
 }
 
@@ -100,24 +107,20 @@ const renderStatusTag = (status: CareStatus, label: string, color: string) => (
 );
 
 /**
- * Renders notes/issues as Tags if array, or as text if string
+ * Renders notes/issues as plain text only
  */
 const renderNotes = (notes?: string | string[]) => {
   if (!notes) return "-";
 
   if (Array.isArray(notes)) {
     return (
-      <div className="flex flex-col gap-1">
-        {notes.map((issue, index) => (
-          <Tag key={index} color="purple" className="m-0">
-            {issue}
-          </Tag>
-        ))}
+      <div className="whitespace-pre-wrap">
+        {notes.join("\n")}
       </div>
     );
   }
 
-  return <Text ellipsis>{notes}</Text>;
+  return <div className="whitespace-pre-wrap">{notes}</div>;
 };
 
 /**
@@ -138,8 +141,14 @@ const shouldIncludeWarrantyClaim = (claim: WarrantyClaim): boolean => {
   return isCompleted && hasIssues;
 };
 
-const CareDetail: React.FC<PropRowDetails<CareItem>> = ({ data, onClose }) => {
+const CareDetail: React.FC<PropRowDetails<CareItem> & { feedbacks?: CustomerFeedback[] }> = ({ data, onClose, feedbacks = [] }) => {
+  const router = useRouter();
   if (!data) return null;
+
+  // Find related feedback if feedbackId exists
+  const relatedFeedback = data.extra?.feedbackId
+    ? feedbacks.find((f) => f.id === data.extra?.feedbackId)
+    : null;
 
   return (
     <div className="space-y-4">
@@ -194,6 +203,63 @@ const CareDetail: React.FC<PropRowDetails<CareItem>> = ({ data, onClose }) => {
           </>
         )}
       </Descriptions>
+
+      {/* Feedback Information */}
+      {relatedFeedback && (
+        <Card title="Thông tin Feedback" size="small">
+          <Descriptions bordered column={1} size="small">
+            <Descriptions.Item label="Loại feedback">
+              <Tag color={
+                relatedFeedback.feedbackType === "praise" ? "green" :
+                relatedFeedback.feedbackType === "complaint" ? "red" :
+                relatedFeedback.feedbackType === "angry" ? "magenta" : "default"
+              }>
+                {relatedFeedback.feedbackType === "praise" ? "Khen" :
+                 relatedFeedback.feedbackType === "complaint" ? "Chê" :
+                 relatedFeedback.feedbackType === "angry" ? "Bức xúc" : "Tàm tạm"}
+              </Tag>
+            </Descriptions.Item>
+            {relatedFeedback.rating && (
+              <Descriptions.Item label="Đánh giá">
+                {relatedFeedback.rating}/5
+              </Descriptions.Item>
+            )}
+            {relatedFeedback.content && (
+              <Descriptions.Item label="Nội dung">
+                <div className="whitespace-pre-wrap">{relatedFeedback.content}</div>
+              </Descriptions.Item>
+            )}
+            {relatedFeedback.solution && (
+              <Descriptions.Item label="Phương án giải quyết">
+                <div className="whitespace-pre-wrap">{relatedFeedback.solution}</div>
+              </Descriptions.Item>
+            )}
+            {relatedFeedback.status && (
+              <Descriptions.Item label="Trạng thái">
+                <Tag color={
+                  relatedFeedback.status === "good" ? "green" :
+                  relatedFeedback.status === "need_reprocess" ? "red" :
+                  relatedFeedback.status === "resolved" ? "blue" : "default"
+                }>
+                  {relatedFeedback.status === "good" ? "Tốt" :
+                   relatedFeedback.status === "need_reprocess" ? "Xử lý lại" :
+                   relatedFeedback.status === "resolved" ? "Đã giải quyết" :
+                   relatedFeedback.status === "processing" ? "Đang xử lý" : "Chờ xử lý"}
+                </Tag>
+              </Descriptions.Item>
+            )}
+          </Descriptions>
+          <div className="mt-4">
+            <Button
+              type="primary"
+              onClick={() => router.push(`/customers/feedback`)}
+            >
+              Xem chi tiết feedback
+            </Button>
+          </div>
+        </Card>
+      )}
+
       <div className="flex justify-end gap-2">
         <Button onClick={onClose}>Đóng</Button>
         {data.customerPhone && (
@@ -211,8 +277,21 @@ const CareDetail: React.FC<PropRowDetails<CareItem>> = ({ data, onClose }) => {
   );
 };
 
+// Care status options
+const CARE_STATUS_OPTIONS = [
+  { label: "Đã liên hệ", value: "contacted" },
+  { label: "Khách hài lòng", value: "satisfied" },
+  { label: "Khách cần hỗ trợ", value: "needs_support" },
+  { label: "Khách không phản hồi", value: "no_response" },
+  { label: "Đã giải quyết", value: "resolved" },
+  { label: "Chờ phản hồi", value: "waiting_response" },
+];
+
 export default function CustomerCareDashboard() {
   const { message } = App.useApp();
+  const [careModalVisible, setCareModalVisible] = useState(false);
+  const [selectedOrderCode, setSelectedOrderCode] = useState<string | null>(null);
+  const [careForm] = Form.useForm();
   const router = useRouter();
   const { user } = useUser();
   const {
@@ -236,6 +315,7 @@ export default function CustomerCareDashboard() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [refunds, setRefunds] = useState<RefundRequest[]>([]);
   const [warrantyClaims, setWarrantyClaims] = useState<WarrantyClaim[]>([]);
+  const [feedbacks, setFeedbacks] = useState<CustomerFeedback[]>([]);
 
   useEffect(() => {
     const unsubAppt = AppointmentService.onSnapshot((data) => {
@@ -247,10 +327,14 @@ export default function CustomerCareDashboard() {
     const unsubWarranty = WarrantyClaimService.onSnapshot((data) => {
       setWarrantyClaims(data);
     });
+    const unsubFeedback = FeedbackService.onSnapshot((data) => {
+      setFeedbacks(data);
+    });
     return () => {
       unsubAppt?.();
       unsubRefund?.();
       unsubWarranty?.();
+      unsubFeedback?.();
     };
   }, []);
 
@@ -299,27 +383,35 @@ export default function CustomerCareDashboard() {
    */
   const transformOrdersToCareItems = useCallback(
     (orders: FirebaseOrderData[]): CareItem[] => {
-      return orders.filter(shouldIncludeOrder).map((order) => ({
-        key: `order-${order.code}`,
-        type: "order" as const,
-        status: "completed" as CareStatus,
-        statusLabel: "Hoàn thành",
-        statusColor: "green",
-        customerName: order.customerName,
-        customerPhone: order.phone,
-        orderCode: order.code,
-        title: "Đơn hàng đã hoàn thành",
-        notes: order.issues || [],
-        dueDate: order.updatedAt,
-        extra: {
-          caredBy: order.caredBy,
-          caredByName: order.caredByName,
-          caredAt: order.caredAt,
-          careCount: order.careCount || 0,
-        },
-      }));
+      return orders.filter(shouldIncludeOrder).map((order) => {
+        // Find related feedback by orderCode
+        const relatedFeedback = feedbacks.find(
+          (f) => f.orderCode === order.code
+        );
+        
+        return {
+          key: `order-${order.code}`,
+          type: "order" as const,
+          status: "completed" as CareStatus,
+          statusLabel: "Hoàn thành",
+          statusColor: "green",
+          customerName: order.customerName,
+          customerPhone: order.phone,
+          orderCode: order.code,
+          title: "Đơn hàng đã hoàn thành",
+          notes: order.issues || [],
+          dueDate: order.updatedAt,
+          extra: {
+            caredBy: order.caredBy,
+            caredByName: order.caredByName,
+            caredAt: order.caredAt,
+            careCount: order.careCount || 0,
+            feedbackId: relatedFeedback?.id,
+          },
+        };
+      });
     },
-    []
+    [feedbacks]
   );
 
   /**
@@ -476,37 +568,75 @@ export default function CustomerCareDashboard() {
   /**
    * Handles updating care count for an order (unified handler)
    */
-  const handleUpdateCareCount = useCallback(
-    async (orderCode: string) => {
-      try {
-        const order = ordersData?.find((o) => o.code === orderCode);
-        if (!order) {
-          message.error("Không tìm thấy đơn hàng");
-          return;
-        }
+  const handleOpenCareModal = (orderCode: string) => {
+    setSelectedOrderCode(orderCode);
+    setCareModalVisible(true);
+    careForm.resetFields();
+  };
 
-        const currentCareCount = order.careCount || 0;
-        const newCareCount = currentCareCount + 1;
-        const orderRef = dbRef(getDatabase(), `xoxo/orders/${orderCode}`);
-        await update(orderRef, {
-          careCount: newCareCount,
-          caredBy: user?.uid || "",
-          caredByName:
-            user?.displayName || user?.email || "Người dùng hiện tại",
-          caredAt: new Date().getTime(),
-          updatedAt: new Date().getTime(),
-        });
-        message.success(
-          `Đã cập nhật số lần chăm sóc: ${newCareCount} ${
-            newCareCount === 1 ? "lần" : "lần"
-          }`
-        );
-      } catch (err) {
-        message.error("Không thể cập nhật số lần chăm sóc");
-        console.error("Error updating care count:", err);
+  const handleCloseCareModal = () => {
+    setCareModalVisible(false);
+    setSelectedOrderCode(null);
+    careForm.resetFields();
+  };
+
+  const handleSubmitCare = async () => {
+    try {
+      const values = await careForm.validateFields();
+      if (!selectedOrderCode) return;
+
+      const order = ordersData?.find((o) => o.code === selectedOrderCode);
+      if (!order) {
+        message.error("Không tìm thấy đơn hàng");
+        return;
       }
+
+      const currentCareCount = order.careCount || 0;
+      const newCareCount = currentCareCount + 1;
+      const orderRef = dbRef(getDatabase(), `xoxo/orders/${selectedOrderCode}`);
+      
+      // Get existing care notes array or create new one
+      const existingCareNotes = order.careNotes || [];
+      const newCareNote = {
+        status: values.status,
+        note: values.note || "",
+        caredBy: user?.uid || "",
+        caredByName: user?.displayName || user?.email || "Người dùng hiện tại",
+        caredAt: new Date().getTime(),
+      };
+
+      await update(orderRef, {
+        careCount: newCareCount,
+        caredBy: user?.uid || "",
+        caredByName:
+          user?.displayName || user?.email || "Người dùng hiện tại",
+        caredAt: new Date().getTime(),
+        careNotes: [...existingCareNotes, newCareNote],
+        careStatus: values.status, // Latest care status
+        updatedAt: new Date().getTime(),
+      });
+      
+      message.success(
+        `Đã cập nhật số lần chăm sóc: ${newCareCount} ${
+          newCareCount === 1 ? "lần" : "lần"
+        }`
+      );
+      handleCloseCareModal();
+    } catch (err) {
+      if (err?.errorFields) {
+        // Form validation errors
+        return;
+      }
+      message.error("Không thể cập nhật số lần chăm sóc");
+      console.error("Error updating care count:", err);
+    }
+  };
+
+  const handleUpdateCareCount = useCallback(
+    (orderCode: string) => {
+      handleOpenCareModal(orderCode);
     },
-    [ordersData, user, message]
+    []
   );
 
   /**
@@ -612,14 +742,13 @@ export default function CustomerCareDashboard() {
         render: (_: unknown, record: CareItem) => (
           <Space size="small" vertical>
             {record.type === "followup" && record.status === "pending" && (
-              <Popconfirm
-                title="Xác nhận đã chăm sóc đơn hàng này?"
-                onConfirm={() => handleUpdateCareCount(record.orderCode!)}
+              <Button
+                size="small"
+                type="primary"
+                onClick={() => handleUpdateCareCount(record.orderCode!)}
               >
-                <Button size="small" type="primary">
-                  Chăm sóc
-                </Button>
-              </Popconfirm>
+                Chăm sóc
+              </Button>
             )}
             {record.customerPhone && (
               <ButtonCall phone={record.customerPhone} size="small" />
@@ -627,14 +756,13 @@ export default function CustomerCareDashboard() {
             {record.type === "order" && record.orderCode && (
               <>
                 {!record.extra?.caredBy ? (
-                  <Popconfirm
-                    title="Xác nhận đã chăm sóc đơn hàng này?"
-                    onConfirm={() => handleMarkOrderAsCared(record.orderCode!)}
+                  <Button
+                    size="small"
+                    type="primary"
+                    onClick={() => handleMarkOrderAsCared(record.orderCode!)}
                   >
-                    <Button size="small" type="primary">
-                      Đã chăm sóc
-                    </Button>
-                  </Popconfirm>
+                    Đã chăm sóc
+                  </Button>
                 ) : (
                   <Button size="small" type="link" disabled>
                     Đã chăm sóc
@@ -785,6 +913,49 @@ export default function CustomerCareDashboard() {
           rowKey="key"
         />
       </Space>
+
+      {/* Care Modal */}
+      <Modal
+        title="Chăm sóc khách hàng"
+        open={careModalVisible}
+        onOk={handleSubmitCare}
+        onCancel={handleCloseCareModal}
+        okText="Xác nhận"
+        cancelText="Hủy"
+        width={600}
+      >
+        <Form
+          form={careForm}
+          layout="vertical"
+          className="mt-4"
+        >
+          <Form.Item
+            label="Trạng thái"
+            name="status"
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng chọn trạng thái!",
+              },
+            ]}
+          >
+            <Select
+              placeholder="Chọn trạng thái chăm sóc"
+              options={CARE_STATUS_OPTIONS}
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Ghi chú"
+            name="note"
+          >
+            <Input.TextArea
+              placeholder="Nhập ghi chú về việc chăm sóc..."
+              rows={4}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
     </WrapperContent>
   );
 }

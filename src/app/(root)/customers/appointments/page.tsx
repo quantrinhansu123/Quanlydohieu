@@ -346,7 +346,6 @@ export default function AppointmentsPage() {
     const [appointments, setAppointments] = useState<Appointment[]>([]);
     const [loading, setLoading] = useState(true);
     const [formVisible, setFormVisible] = useState(false);
-    const [calendarView, setCalendarView] = useState(false);
     const [editingAppointment, setEditingAppointment] = useState<
         Appointment | undefined
     >();
@@ -478,13 +477,6 @@ export default function AppointmentsPage() {
                 buttonEnds: [
                     {
                         can: true,
-                        type: "default",
-                        name: calendarView ? "Xem danh sách" : "Xem lịch",
-                        icon: <CalendarOutlined />,
-                        onClick: () => setCalendarView(!calendarView),
-                    },
-                    {
-                        can: true,
                         type: "primary",
                         name: "Tạo lịch hẹn",
                         icon: <PlusOutlined />,
@@ -497,36 +489,12 @@ export default function AppointmentsPage() {
             }}
             isLoading={loading}
         >
-            {calendarView ? (
-                <AppointmentCalendar
-                    onAppointmentClick={(appt) => {
-                        setEditingAppointment(appt);
-                        setFormVisible(true);
-                    }}
-                />
-            ) : (
-                <CommonTable
-                    rowKey="id"
-                    dataSource={filteredAppointments.sort(
-                        (a, b) => b.scheduledDate - a.scheduledDate,
-                    )}
-                    columns={columns}
-                    loading={loading}
-                    DrawerDetails={({ data, onClose }) => (
-                        <AppointmentDetails
-                            data={data}
-                            onClose={onClose}
-                            onEdit={(appt) => {
-                                setEditingAppointment(appt);
-                                setFormVisible(true);
-                                onClose?.();
-                            }}
-                        />
-                    )}
-                    paging={true}
-                    rank={true}
-                />
-            )}
+            <AppointmentCalendar
+                onAppointmentClick={(appt) => {
+                    setEditingAppointment(appt);
+                    setFormVisible(true);
+                }}
+            />
 
             <AppointmentForm
                 appointment={editingAppointment}

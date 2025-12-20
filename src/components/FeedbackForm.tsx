@@ -2,12 +2,16 @@
 
 import { useUser } from "@/firebase/provider";
 import { FeedbackService } from "@/services/feedbackService";
+import { MemberService } from "@/services/memberService";
+import { IMembers } from "@/types/members";
 import {
   FeedbackType,
   FeedbackTypeOptions,
+  FeedbackStatus,
+  FeedbackStatusOptions,
   type CustomerFeedback,
 } from "@/types/feedback";
-import { App, Button, Form, Input, Radio, Rate, Space, Typography } from "antd";
+import { App, Button, Form, Input, Radio, Rate, Select, Space, Typography } from "antd";
 import { useEffect, useState } from "react";
 
 const { TextArea } = Input;
@@ -36,8 +40,16 @@ export default function FeedbackForm({
 }: FeedbackFormProps) {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [members, setMembers] = useState<IMembers[]>([]);
   const { message } = App.useApp();
   const { user } = useUser();
+
+  useEffect(() => {
+    const unsubscribe = MemberService.onSnapshot((data) => {
+      setMembers(data);
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     if (initialFeedback) {
@@ -45,6 +57,11 @@ export default function FeedbackForm({
         feedbackType: initialFeedback.feedbackType,
         rating: initialFeedback.rating,
         notes: initialFeedback.notes,
+        content: initialFeedback.content,
+        solution: initialFeedback.solution,
+        saleId: initialFeedback.saleId,
+        status: initialFeedback.status || 
+          (initialFeedback.requiresReService ? FeedbackStatus.NEED_REPROCESS : FeedbackStatus.GOOD),
       });
     }
   }, [initialFeedback, form]);
@@ -54,6 +71,8 @@ export default function FeedbackForm({
       setLoading(true);
       const values = await form.validateFields();
 
+      const selectedSale = members.find((m) => m.id === values.saleId);
+      
       const feedbackData: Omit<
         CustomerFeedback,
         "id" | "createdAt" | "updatedAt"
@@ -66,11 +85,20 @@ export default function FeedbackForm({
         feedbackType: values.feedbackType,
         rating: values.rating,
         notes: values.notes,
+        content: values.content,
+        solution: values.solution,
+        saleId: values.saleId,
+        saleName: selectedSale?.name,
         collectedBy: user?.uid,
         collectedByName:
           user?.displayName || user?.email || "Người dùng hiện tại",
-        collectedAt: new Date().getTime(),
-        requiresReService:
+        collectedAt: initialFeedback?.collectedAt || new Date().getTime(),
+        status: values.status || 
+          (values.feedbackType === FeedbackType.COMPLAINT || values.feedbackType === FeedbackType.ANGRY
+            ? FeedbackStatus.NEED_REPROCESS 
+            : FeedbackStatus.GOOD),
+        // Keep requiresReService for backward compatibility
+        requiresReService: values.status === FeedbackStatus.NEED_REPROCESS ||
           values.feedbackType === FeedbackType.COMPLAINT ||
           values.feedbackType === FeedbackType.ANGRY,
       };
@@ -113,13 +141,67 @@ export default function FeedbackForm({
       </Form.Item>
 
       <Form.Item
+        label="Nội dung"
+        name="content"
+        rules={[{ max: 2000, message: "Nội dung không được quá 2000 ký tự!" }]}
+      >
+        <TextArea
+          rows={4}
+          placeholder="Nhập nội dung feedback của khách hàng..."
+          showCount
+          maxLength={2000}
+        />
+      </Form.Item>
+
+      <Form.Item
+        label="Phương án giải quyết"
+        name="solution"
+        rules={[{ max: 2000, message: "Phương án giải quyết không được quá 2000 ký tự!" }]}
+      >
+        <TextArea
+          rows={4}
+          placeholder="Nhập phương án giải quyết..."
+          showCount
+          maxLength={2000}
+        />
+      </Form.Item>
+
+      <Form.Item
+        label="Trạng thái"
+        name="status"
+      >
+        <Select
+          placeholder="Chọn trạng thái"
+          options={FeedbackStatusOptions}
+        />
+      </Form.Item>
+
+      <Form.Item
+        label="Sale phụ trách"
+        name="saleId"
+      >
+        <Select
+          placeholder="Chọn sale phụ trách"
+          showSearch
+          allowClear
+          filterOption={(input, option) =>
+            (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+          }
+          options={members.map((member) => ({
+            label: member.name,
+            value: member.id,
+          }))}
+        />
+      </Form.Item>
+
+      <Form.Item
         label="Ghi chú"
         name="notes"
         rules={[{ max: 1000, message: "Ghi chú không được quá 1000 ký tự!" }]}
       >
         <TextArea
-          rows={4}
-          placeholder="Nhập ghi chú về feedback của khách hàng..."
+          rows={3}
+          placeholder="Nhập ghi chú bổ sung..."
           showCount
           maxLength={1000}
         />

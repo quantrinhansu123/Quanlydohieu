@@ -14,7 +14,7 @@ import {
   RefundTypeOptions,
   type RefundRequest,
 } from "@/types/refund";
-import { EditOutlined } from "@ant-design/icons";
+import { EyeOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import type { TableColumnsType } from "antd";
 import { App, Button, Modal, Tag, Typography } from "antd";
 import dayjs from "dayjs";
@@ -62,15 +62,22 @@ const RefundDetails: React.FC<PropRowDetails<RefundRequest>> = ({
 
   return (
     <div className="space-y-4">
-      <div>
-        <h3 className="text-lg font-semibold mb-4">Chi tiết yêu cầu</h3>
-        <div className="grid grid-cols-1 gap-3">
+      <h3 className="text-lg font-bold mb-4">Chi tiết yêu cầu</h3>
+      <div className="grid grid-cols-2 gap-4">
           <div>
-            <span className="font-medium">Mã đơn hàng:</span>
-            <p className="text-gray-600">{data.orderCode}</p>
+            <span className="font-medium text-gray-500 text-sm">Mã đơn hàng:</span>
+            <p className="font-medium mt-1">
+              <Button 
+                type="link" 
+                onClick={() => window.open(`/sale/orders/${data.orderCode}`, '_blank')}
+                style={{ padding: 0, height: 'auto' }}
+              >
+                {data.orderCode}
+              </Button>
+            </p>
           </div>
           <div>
-            <span className="font-medium">Loại yêu cầu:</span>
+            <span className="font-medium text-gray-500 text-sm">Loại yêu cầu:</span>
             <p className="mt-1">
               <Tag color={getTypeColor(data.type)}>
                 {RefundTypeLabels[data.type]}
@@ -78,42 +85,42 @@ const RefundDetails: React.FC<PropRowDetails<RefundRequest>> = ({
             </p>
           </div>
           <div>
-            <span className="font-medium">Số tiền:</span>
-            <p className="font-semibold text-lg text-red-600">
+            <span className="font-medium text-gray-500 text-sm">Số tiền:</span>
+            <p className="font-semibold text-lg text-red-600 mt-1">
               {data.amount.toLocaleString("vi-VN")} VNĐ
             </p>
           </div>
           <div>
-            <span className="font-medium">Lý do:</span>
-            <p className="text-gray-600">{data.reason}</p>
-          </div>
-          <div>
-            <span className="font-medium">Trạng thái:</span>
+            <span className="font-medium text-gray-500 text-sm">Trạng thái:</span>
             <p className="mt-1">
               <Tag color={getStatusColor(data.status)}>
                 {RefundStatusLabels[data.status]}
               </Tag>
             </p>
           </div>
-          <div>
-            <span className="font-medium">Người yêu cầu:</span>
-            <p className="text-gray-600">{data.requestedByName || "N/A"}</p>
+          <div className="col-span-2">
+            <span className="font-medium text-gray-500 text-sm">Lý do:</span>
+            <p className="mt-1 whitespace-pre-wrap">{data.reason}</p>
           </div>
           <div>
-            <span className="font-medium">Ngày yêu cầu:</span>
-            <p className="text-gray-600">
+            <span className="font-medium text-gray-500 text-sm">Người yêu cầu:</span>
+            <p className="mt-1">{data.requestedByName || "N/A"}</p>
+          </div>
+          <div>
+            <span className="font-medium text-gray-500 text-sm">Ngày yêu cầu:</span>
+            <p className="mt-1">
               {dayjs(data.requestedAt).format("DD/MM/YYYY HH:mm")}
             </p>
           </div>
           {data.approvedBy && (
             <>
               <div>
-                <span className="font-medium">Người duyệt:</span>
-                <p className="text-gray-600">{data.approvedByName || "N/A"}</p>
+                <span className="font-medium text-gray-500 text-sm">Người duyệt:</span>
+                <p className="mt-1">{data.approvedByName || "N/A"}</p>
               </div>
               <div>
-                <span className="font-medium">Ngày duyệt:</span>
-                <p className="text-gray-600">
+                <span className="font-medium text-gray-500 text-sm">Ngày duyệt:</span>
+                <p className="mt-1">
                   {data.approvedAt
                     ? dayjs(data.approvedAt).format("DD/MM/YYYY HH:mm")
                     : "N/A"}
@@ -124,21 +131,21 @@ const RefundDetails: React.FC<PropRowDetails<RefundRequest>> = ({
           {data.rejectedBy && (
             <>
               <div>
-                <span className="font-medium">Người từ chối:</span>
-                <p className="text-gray-600">{data.rejectedByName || "N/A"}</p>
+                <span className="font-medium text-gray-500 text-sm">Người từ chối:</span>
+                <p className="mt-1">{data.rejectedByName || "N/A"}</p>
               </div>
               <div>
-                <span className="font-medium">Ngày từ chối:</span>
-                <p className="text-gray-600">
+                <span className="font-medium text-gray-500 text-sm">Ngày từ chối:</span>
+                <p className="mt-1">
                   {data.rejectedAt
                     ? dayjs(data.rejectedAt).format("DD/MM/YYYY HH:mm")
                     : "N/A"}
                 </p>
               </div>
               {data.rejectionReason && (
-                <div>
-                  <span className="font-medium">Lý do từ chối:</span>
-                  <p className="text-gray-600">{data.rejectionReason}</p>
+                <div className="col-span-2">
+                  <span className="font-medium text-gray-500 text-sm">Lý do từ chối:</span>
+                  <p className="mt-1 whitespace-pre-wrap">{data.rejectionReason}</p>
                 </div>
               )}
             </>
@@ -146,12 +153,12 @@ const RefundDetails: React.FC<PropRowDetails<RefundRequest>> = ({
           {data.processedBy && (
             <>
               <div>
-                <span className="font-medium">Người xử lý:</span>
-                <p className="text-gray-600">{data.processedByName || "N/A"}</p>
+                <span className="font-medium text-gray-500 text-sm">Người xử lý:</span>
+                <p className="mt-1">{data.processedByName || "N/A"}</p>
               </div>
               <div>
-                <span className="font-medium">Ngày xử lý:</span>
-                <p className="text-gray-600">
+                <span className="font-medium text-gray-500 text-sm">Ngày xử lý:</span>
+                <p className="mt-1">
                   {data.processedDate
                     ? dayjs(data.processedDate).format("DD/MM/YYYY HH:mm")
                     : "N/A"}
@@ -160,12 +167,11 @@ const RefundDetails: React.FC<PropRowDetails<RefundRequest>> = ({
             </>
           )}
           {data.notes && (
-            <div>
-              <span className="font-medium">Ghi chú:</span>
-              <p className="text-gray-600">{data.notes}</p>
+            <div className="col-span-2">
+              <span className="font-medium text-gray-500 text-sm">Ghi chú:</span>
+              <p className="mt-1 whitespace-pre-wrap">{data.notes}</p>
             </div>
           )}
-        </div>
       </div>
     </div>
   );
@@ -179,7 +185,7 @@ export default function RefundsPage() {
     RefundRequest | undefined
   >();
   const router = useRouter();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const { query, applyFilter, updateQueries, reset } = useFilter();
   const filteredRefunds = applyFilter(refunds);
 
@@ -290,21 +296,53 @@ export default function RefundsPage() {
     {
       title: "Thao tác",
       key: "action",
-      width: 120,
+      width: 180,
       render: (_, record) => (
         <div className="flex gap-2">
-          {(record.status === RefundStatus.PENDING ||
-            record.status === RefundStatus.APPROVED) && (
-            <Button
-              type="text"
-              icon={<EditOutlined />}
-              onClick={() => {
-                setEditingRefund(record);
-                setRefundModalVisible(true);
-              }}
-              title="Duyệt/Từ chối"
-            />
-          )}
+          <Button
+            type="text"
+            icon={<EyeOutlined />}
+            onClick={(e) => {
+              e.stopPropagation();
+              // CommonTable will handle the drawer via onRowClick
+            }}
+            title="Xem"
+          />
+          <Button
+            type="text"
+            icon={<EditOutlined />}
+            onClick={(e) => {
+              e.stopPropagation();
+              setEditingRefund(record);
+              setRefundModalVisible(true);
+            }}
+            title="Sửa/Duyệt"
+          />
+          <Button
+            type="text"
+            danger
+            icon={<DeleteOutlined />}
+            onClick={(e) => {
+              e.stopPropagation();
+              modal.confirm({
+                title: "Xác nhận xóa",
+                content: `Bạn có chắc chắn muốn xóa yêu cầu hoàn tiền cho đơn hàng ${record.orderCode}?`,
+                okText: "Xóa",
+                okType: "danger",
+                cancelText: "Hủy",
+                onOk: async () => {
+                  try {
+                    await RefundService.delete(record.id);
+                    message.success("Đã xóa yêu cầu hoàn tiền thành công!");
+                  } catch (error) {
+                    console.error("Error deleting refund:", error);
+                    message.error("Có lỗi xảy ra khi xóa yêu cầu hoàn tiền!");
+                  }
+                },
+              });
+            }}
+            title="Xóa"
+          />
         </div>
       ),
     },
