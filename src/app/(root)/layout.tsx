@@ -37,6 +37,20 @@ import { useEffect, useMemo, useState } from "react";
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
 
+// CSS for compact dropdown menu
+const compactMenuStyle = `
+    .compact-dropdown-overlay .ant-dropdown-menu-item {
+        padding: 4px 12px !important;
+        font-size: 12px !important;
+        line-height: 20px !important;
+        min-height: 28px !important;
+    }
+    .compact-dropdown-overlay .ant-dropdown-menu-item .anticon {
+        font-size: 12px !important;
+        margin-right: 6px !important;
+    }
+`;
+
 interface FirebaseUser {
     uid: string;
     displayName: string | null;
@@ -51,6 +65,15 @@ export default function DashboardLayout({
     children: React.ReactNode;
     modal: React.ReactNode;
 }) {
+    // Add compact menu styles
+    useEffect(() => {
+        const style = document.createElement("style");
+        style.textContent = compactMenuStyle;
+        document.head.appendChild(style);
+        return () => {
+            document.head.removeChild(style);
+        };
+    }, []);
     const pageTitle = useSiteTitleStore((state) => state.title);
     const router = useRouter();
     const pathname = usePathname();
@@ -157,10 +180,16 @@ export default function DashboardLayout({
 
     // All other hooks must be called before any conditional returns
     const getBreadcrumbTitle = (path: string) => {
+        // Normalize path (remove trailing slash)
+        const normalizedPath = path.endsWith("/") && path !== "/" ? path.slice(0, -1) : path;
+        
         // Kiểm tra exact match
-        if (breadcrumbMap[path]) {
+        if (breadcrumbMap[normalizedPath]) {
             const parentItem = allMenuItems.find((item) =>
-                item.children?.some((child) => child.href === path),
+                item.children?.some((child) => {
+                    const childPath = child.href?.split("?")[0] || "";
+                    return normalizedPath === childPath || normalizedPath.startsWith(childPath + "/");
+                }),
             );
 
             // Get parent path from first child href
@@ -174,23 +203,75 @@ export default function DashboardLayout({
             }
 
             return {
-                title: breadcrumbMap[path],
-                path: path,
+                title: breadcrumbMap[normalizedPath],
+                path: normalizedPath,
                 parent: parentItem?.title || null,
                 parentPath: parentPath,
             };
         }
 
-        // // Kiểm tra dynamic routes (có /[id]/)
-        // for (const [key, value] of Object.entries(breadcrumbMap)) {
-        //   if (path.startsWith(key + "/")) {
-        //     return {
-        //       title: value,
-        //       path: key,
-        //       parent: value,
-        //     };
-        //   }
-        // }
+        // Kiểm tra dynamic routes (có /[id]/)
+        // Tìm path dài nhất trong breadcrumbMap mà pathname bắt đầu với nó
+        let bestMatch: { key: string; value: string } | null = null;
+        let bestMatchLength = 0;
+
+        for (const [key, value] of Object.entries(breadcrumbMap)) {
+            if (normalizedPath.startsWith(key + "/")) {
+                if (key.length > bestMatchLength) {
+                    bestMatchLength = key.length;
+                    bestMatch = { key, value };
+                }
+            }
+        }
+
+        if (bestMatch) {
+            const parentItem = allMenuItems.find((item) =>
+                item.children?.some((child) => {
+                    const childPath = child.href?.split("?")[0] || "";
+                    const normalizedChildPath = childPath.endsWith("/") && childPath !== "/" ? childPath.slice(0, -1) : childPath;
+                    return bestMatch?.key === normalizedChildPath || bestMatch?.key.startsWith(normalizedChildPath + "/");
+                }),
+            );
+
+            // Get parent path - tìm base path từ breadcrumbMap
+            let parentPath: string | null = null;
+            if (parentItem) {
+                // Tìm base path từ breadcrumbMap (ví dụ: /sale từ /sale/orders)
+                const segments = bestMatch.key.split("/").filter(Boolean);
+                if (segments.length > 1) {
+                    const basePath = `/${segments[0]}`;
+                    if (breadcrumbMap[basePath]) {
+                        parentPath = basePath;
+                    }
+                }
+                // Nếu không tìm thấy base path, sử dụng bestMatch.key làm parentPath
+                if (!parentPath) {
+                    parentPath = bestMatch.key;
+                }
+            } else {
+                // Nếu không tìm thấy parentItem, sử dụng bestMatch.key
+                parentPath = bestMatch.key;
+            }
+
+            // Xử lý các route đặc biệt
+            let title = bestMatch.value;
+            if (normalizedPath.includes("/update")) {
+                if (normalizedPath.includes("/sale/orders/") && normalizedPath.includes("/update")) {
+                    title = "Cập nhật đơn hàng";
+                } else if (normalizedPath.includes("/sale/warranty/") && normalizedPath.includes("/update")) {
+                    title = "Cập nhật phiếu bảo hành";
+                } else {
+                    title = `Cập nhật ${bestMatch.value}`;
+                }
+            }
+
+            return {
+                title: title,
+                path: bestMatch.key, // Link đến trang danh sách thay vì giữ nguyên dynamic route
+                parent: parentItem?.title || null,
+                parentPath: parentPath,
+            };
+        }
 
         return { title: "Trang chủ", path: "/dashboard", parent: null, parentPath: null };
     };
@@ -426,6 +507,7 @@ export default function DashboardLayout({
 
         const items = [
             {
+                key: "root",
                 title: (
                     <Link href={rootPath}>
                         <span className="flex gap-2 items-center">
@@ -452,6 +534,7 @@ export default function DashboardLayout({
             if (breadcrumbInfo.parent && breadcrumbInfo.parent !== rootTitle) {
                 const parentPath = breadcrumbInfo.parentPath || "/center";
                 items.push({
+                    key: `parent-${parentPath}`,
                     title: (
                         <Link href={parentPath}>
                             <span className="flex gap-2 items-center">
@@ -473,6 +556,7 @@ export default function DashboardLayout({
             // Add current page if different from root
             if (breadcrumbInfo.title && breadcrumbInfo.title !== rootTitle) {
                 items.push({
+                    key: `current-${breadcrumbInfo.path}`,
                     title: (
                         <Link href={breadcrumbInfo.path}>
                             <span className="flex gap-2 items-center">
@@ -498,10 +582,11 @@ export default function DashboardLayout({
     const userMenuItems: MenuProps["items"] = [
         {
             key: "logout",
-            icon: <LogoutOutlined />,
-            label: "Đăng xuất",
+            icon: <LogoutOutlined style={{ fontSize: "12px" }} />,
+            label: <span style={{ fontSize: "12px", padding: "0" }}>Đăng xuất</span>,
             onClick: handleLogout,
             danger: true,
+            className: "compact-menu-item",
         },
     ];
 
@@ -808,6 +893,7 @@ export default function DashboardLayout({
                                 ...(pageTitle
                                     ? [
                                         {
+                                            key: `page-title-${pageTitle}`,
                                             title: (
                                                 <span className="font-bold text-primary">
                                                     {pageTitle}
@@ -825,8 +911,13 @@ export default function DashboardLayout({
 
                         {!isMobile && (
                             <Dropdown
-                                menu={{ items: userMenuItems }}
+                                menu={{ 
+                                    items: userMenuItems,
+                                    style: { minWidth: "120px" },
+                                }}
                                 placement="bottomRight"
+                                styles={{ root: { padding: "4px 0" } }}
+                                classNames={{ root: "compact-dropdown-overlay" }}
                             >
                                 <div
                                     style={{

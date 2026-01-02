@@ -1,12 +1,14 @@
 import type { NextConfig } from "next";
 import withPWAInit from 'next-pwa';
 
+const isDev = process.env.NODE_ENV === 'development';
+const isProd = process.env.NODE_ENV === 'production' || process.env.NEXT_ENV === 'production';
 
 const withPWA = withPWAInit({
   dest: 'public',
   register: true,
   skipWaiting: true,
-  disable: process.env.NEXT_ENV === 'development',
+  disable: isDev,
   fallbacks: {
     document: '/offline.html',
     image: '/logo.png',
@@ -15,9 +17,9 @@ const withPWA = withPWAInit({
     font: '/logo.png',
   },
 });
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  // Turbopack configuration for Next.js 16
   turbopack: {},
   images: {
     remotePatterns: [
@@ -33,14 +35,12 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'firebasestorage.googleapis.com',
       },
-
     ],
   },
-   compiler: {
-        removeConsole: process.env.NEXT_ENV === 'production',
-    },
-    ...withPWA,
-     async headers() {
+  compiler: {
+    removeConsole: isProd,
+  },
+  async headers() {
     return [
       {
         source: '/(.*)',
@@ -78,6 +78,6 @@ const nextConfig: NextConfig = {
       },
     ]
   },
-} as NextConfig;
+};
 
 export default withPWA(nextConfig as any);

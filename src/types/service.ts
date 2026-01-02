@@ -31,6 +31,7 @@ export interface Service {
     imageNotes?: string; // Ghi chú hình ảnh
     description?: string; // Rich text description
     notes?: string; // Ghi chú
+    operationalWorkflowIds?: string[]; // Danh sách ID quy trình vận hành
     createdAt: number;
     updatedAt: number;
 }

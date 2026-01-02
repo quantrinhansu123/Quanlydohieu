@@ -267,7 +267,7 @@ export default function AppointmentCalendar({
                     boxShadow: "none",
                     padding: "16px 0"
                 }}
-                bodyStyle={{ padding: 0 }}
+                styles={{ body: { padding: 0 } }}
             >
                 <Row gutter={16} align="middle">
                     <Col flex="auto">

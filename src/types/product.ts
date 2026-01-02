@@ -11,6 +11,7 @@ export interface Product {
     specifications?: string; // Thông số kỹ thuật
     notes?: string; // Ghi chú
     orderCodes?: string[]; // Mã các đơn hàng đã sử dụng sản phẩm này
+    materialId?: string; // ID nguyên liệu từ kho (liên kết với Material)
     createdAt: number;
     updatedAt: number;
 }

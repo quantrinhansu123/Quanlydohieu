@@ -54,7 +54,13 @@ export * from './provider';
 // Export auth hook separately to avoid conflicts
 export { useAuth, type AuthUser, type UseAuthResult } from './hooks/useAuth';
 
-// Export database instance
-export const { database, auth } = getSdks(getApps()[0] || initializeApp(firebaseConfig));
+// Export database instance - lazy initialization to avoid issues on module import
+export function getDatabaseInstance() {
+  return getSdks(getApps()[0] || initializeApp(firebaseConfig)).database;
+}
+
+export function getAuthInstance() {
+  return getSdks(getApps()[0] || initializeApp(firebaseConfig)).auth;
+}
 
 

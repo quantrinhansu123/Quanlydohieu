@@ -98,18 +98,31 @@ Vercel sẽ tự động deploy mỗi khi bạn push code lên branch chính:
 ## Troubleshooting
 
 ### Build Failed:
-- Kiểm tra logs trong Vercel Dashboard
-- Đảm bảo tất cả environment variables đã được cấu hình
+- Kiểm tra logs trong Vercel Dashboard để xem lỗi cụ thể
+- Đảm bảo tất cả environment variables đã được cấu hình (đặc biệt là các biến Firebase)
 - Kiểm tra `package.json` có đúng build script
+- Nếu lỗi liên quan đến PWA, kiểm tra `next.config.ts` đã được cấu hình đúng
 
 ### Environment Variables không hoạt động:
 - Đảm bảo đã chọn đúng môi trường (Production/Preview/Development)
 - Redeploy sau khi thêm/sửa environment variables
 - Kiểm tra tên biến có đúng (phân biệt hoa thường)
+- **Lưu ý**: `NEXT_ENV` có thể được set hoặc để Vercel tự động dùng `NODE_ENV`
 
 ### Firebase Connection Issues:
-- Kiểm tra Firebase config trong `.env`
+- Kiểm tra Firebase config trong environment variables trên Vercel
 - Đảm bảo Firebase project cho phép domain của Vercel
 - Kiểm tra Firebase Realtime Database rules
+- Kiểm tra `FIREBASE_PRIVATE_KEY` có được escape đúng cách (có thể cần thay `\n` thành newline thực sự)
+
+### PWA Issues:
+- PWA sẽ tự động disable trong development mode
+- Trong production, PWA sẽ được enable tự động
+- Kiểm tra file `offline.html` có tồn tại trong thư mục `public/`
+
+### Common Build Errors:
+1. **Module not found**: Kiểm tra `package.json` có đủ dependencies
+2. **TypeScript errors**: Kiểm tra `tsconfig.json` và sửa lỗi type
+3. **Environment variable validation failed**: Kiểm tra tất cả required env vars đã được set trên Vercel
 
 

@@ -28,6 +28,8 @@ import {
 } from "firebase/storage";
 import { useEffect, useState } from "react";
 import RichTextEditor from "./RichTextEditor";
+import { InventoryService } from "@/services/inventoryService";
+import type { Material } from "@/types/inventory";
 
 const { Text } = Typography;
 
@@ -49,6 +51,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [uploading, setUploading] = useState(false);
     const [orders, setOrders] = useState<FirebaseOrderData[]>([]);
+    const [materials, setMaterials] = useState<Material[]>([]);
 
     // Load orders for linking
     useEffect(() => {
@@ -62,6 +65,27 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 ...(order as FirebaseOrderData),
             }));
             setOrders(ordersArray);
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+    // Load materials from inventory
+    useEffect(() => {
+        const loadMaterials = async () => {
+            try {
+                const materialsData = await InventoryService.getAllMaterials();
+                setMaterials(materialsData);
+            } catch (error) {
+                console.error("Error loading materials:", error);
+            }
+        };
+
+        loadMaterials();
+
+        // Subscribe to real-time updates
+        const unsubscribe = InventoryService.onMaterialsSnapshot((materialsData) => {
+            setMaterials(materialsData);
         });
 
         return () => unsubscribe();
@@ -255,6 +279,36 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                                     label: cat,
                                     value: cat,
                                 }))}
+                            />
+                        </Form.Item>
+
+                        <Form.Item 
+                            name="materialId" 
+                            label="Nguyên liệu từ kho"
+                            tooltip="Chọn nguyên liệu từ kho để liên kết với sản phẩm"
+                        >
+                            <Select
+                                placeholder="Chọn nguyên liệu từ kho"
+                                size="large"
+                                showSearch
+                                allowClear
+                                optionFilterProp="label"
+                                options={materials.map((material) => ({
+                                    label: `${material.name} (Tồn: ${material.stockQuantity || 0} ${material.unit || ''})`,
+                                    value: material.id,
+                                }))}
+                                onChange={(value) => {
+                                    if (value) {
+                                        const selectedMaterial = materials.find(m => m.id === value);
+                                        if (selectedMaterial) {
+                                            // Tự động điền một số thông tin từ nguyên liệu
+                                            form.setFieldsValue({
+                                                name: form.getFieldValue('name') || selectedMaterial.name,
+                                                category: form.getFieldValue('category') || selectedMaterial.category,
+                                            });
+                                        }
+                                    }
+                                }}
                             />
                         </Form.Item>
 

@@ -34,6 +34,7 @@ import {
     uploadBytes,
 } from "firebase/storage";
 import { useEffect, useState } from "react";
+import { OperationalWorkflowService, OperationalWorkflow } from "@/services/operationalWorkflowService";
 
 const { Text } = Typography;
 const { Panel } = Collapse;
@@ -66,6 +67,7 @@ const ServiceFormModal: React.FC<ServiceFormModalProps> = ({
     const [selectedChau, setSelectedChau] = useState<string | undefined>();
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [uploading, setUploading] = useState(false);
+    const [operationalWorkflows, setOperationalWorkflows] = useState<OperationalWorkflow[]>([]);
 
     // Load all service categories
     useEffect(() => {
@@ -79,6 +81,15 @@ const ServiceFormModal: React.FC<ServiceFormModalProps> = ({
                 ...(cat as Omit<ServiceCategory, "code">),
             }));
             setAllServiceCategories(categoriesArray);
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+    // Load operational workflows
+    useEffect(() => {
+        const unsubscribe = OperationalWorkflowService.onSnapshot((workflows) => {
+            setOperationalWorkflows(workflows);
         });
 
         return () => unsubscribe();
@@ -132,14 +143,19 @@ const ServiceFormModal: React.FC<ServiceFormModalProps> = ({
                     form.setFieldsValue({
                         ...editingService,
                         ...hierarchyValues,
+                        operationalWorkflowIds: editingService.operationalWorkflowIds || [],
                     });
                 } else {
                     // Set form values without hierarchy
-                    form.setFieldsValue(editingService);
+                    form.setFieldsValue({
+                        ...editingService,
+                        operationalWorkflowIds: editingService.operationalWorkflowIds || [],
+                    });
                 }
             } else {
                 form.setFieldsValue({
                     code: genCode("SVC_"),
+                    operationalWorkflowIds: [],
                 });
             }
         }
@@ -386,6 +402,9 @@ const ServiceFormModal: React.FC<ServiceFormModalProps> = ({
             if (values.imageNotes && values.imageNotes.trim()) {
                 serviceData.imageNotes = values.imageNotes.trim();
             }
+            if (values.operationalWorkflowIds && values.operationalWorkflowIds.length > 0) {
+                serviceData.operationalWorkflowIds = values.operationalWorkflowIds;
+            }
 
             const cleanedData = serviceData as Service;
 
@@ -619,6 +638,87 @@ const ServiceFormModal: React.FC<ServiceFormModalProps> = ({
                                                     allowClear
                                                 />
                                             </Form.Item>
+
+                                            <Form.Item
+                                                name="sellingPrice"
+                                                label="Giá bán"
+                                                tooltip="Nhập giá bán cho dịch vụ này"
+                                            >
+                                                <InputNumber
+                                                    placeholder="Nhập giá bán (VND)"
+                                                    size="large"
+                                                    style={{
+                                                        width: "100%",
+                                                    }}
+                                                    min={0}
+                                                    formatter={(value) =>
+                                                        `${value}`.replace(
+                                                            /\B(?=(\d{3})+(?!\d))/g,
+                                                            ",",
+                                                        )
+                                                    }
+                                                    parser={(value) =>
+                                                        value!.replace(
+                                                            /\$\s?|(,*)/g,
+                                                            "",
+                                                        )
+                                                    }
+                                                />
+                                            </Form.Item>
+
+                                            <Form.Item
+                                                name="operationalWorkflowIds"
+                                                label="Quy trình vận hành"
+                                                tooltip="Chọn nhiều quy trình vận hành theo thứ tự (chọn trước sẽ là bước 1, 2, 3...)"
+                                            >
+                                                <Select
+                                                    mode="multiple"
+                                                    placeholder="Chọn quy trình vận hành (thứ tự chọn sẽ là thứ tự thực hiện)"
+                                                    size="large"
+                                                    allowClear
+                                                    maxTagCount="responsive"
+                                                    tagRender={(props) => {
+                                                        const { label, value, closable, onClose } = props;
+                                                        const selectedValues = form.getFieldValue("operationalWorkflowIds") || [];
+                                                        const index = selectedValues.indexOf(value) + 1;
+                                                        return (
+                                                            <span
+                                                                style={{
+                                                                    display: "inline-flex",
+                                                                    alignItems: "center",
+                                                                    padding: "2px 8px",
+                                                                    margin: "2px",
+                                                                    backgroundColor: "#1677ff",
+                                                                    color: "#fff",
+                                                                    borderRadius: "4px",
+                                                                    fontSize: "14px",
+                                                                }}
+                                                            >
+                                                                {index}. {label}
+                                                                {closable && (
+                                                                    <span
+                                                                        style={{
+                                                                            marginLeft: "4px",
+                                                                            cursor: "pointer",
+                                                                        }}
+                                                                        onMouseDown={(e) => {
+                                                                            e.preventDefault();
+                                                                            e.stopPropagation();
+                                                                        }}
+                                                                        onClick={onClose}
+                                                                    >
+                                                                        ×
+                                                                    </span>
+                                                                )}
+                                                            </span>
+                                                        );
+                                                    }}
+                                                    options={operationalWorkflows.map((workflow) => ({
+                                                        value: workflow.id,
+                                                        label: workflow.workflowName,
+                                                    }))}
+                                                />
+                                            </Form.Item>
                                         </Col>
                                         <Col span={12}>
                                             <Collapse
@@ -631,16 +731,16 @@ const ServiceFormModal: React.FC<ServiceFormModalProps> = ({
                                                     <Form.Item
                                                         name="sellingPrice"
                                                         label="Giá bán"
+                                                        tooltip="Nhập giá bán cho dịch vụ này"
                                                     >
                                                         <InputNumber
-                                                            placeholder="0"
+                                                            placeholder="Nhập giá bán (VND)"
                                                             size="large"
                                                             style={{
                                                                 width: "100%",
                                                             }}
-                                                            formatter={(
-                                                                value,
-                                                            ) =>
+                                                            min={0}
+                                                            formatter={(value) =>
                                                                 `${value}`.replace(
                                                                     /\B(?=(\d{3})+(?!\d))/g,
                                                                     ",",

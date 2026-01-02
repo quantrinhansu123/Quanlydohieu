@@ -7,13 +7,18 @@ import { CategoryService } from "@/services/categoryService";
 import { InventoryService } from "@/services/inventoryService";
 import { Category } from "@/types/category";
 import { Unit, unitOptions } from "@/types/enum";
-import { Material } from "@/types/inventory";
+import { Material, PurchaseRequest, PurchaseRequestItem, InventoryTransaction, Supplier, SupplierOrder, SupplierPayment } from "@/types/inventory";
+import { SupplierService } from "@/services/supplierService";
+import SupplierManagement from "@/components/SupplierManagement";
+import { genCode } from "@/utils/genCode";
 import {
     DeleteOutlined,
     EditOutlined,
     MinusOutlined,
     PlusOutlined,
     WarningOutlined,
+    ShoppingCartOutlined,
+    UploadOutlined,
 } from "@ant-design/icons";
 import type { TableColumnsType } from "antd";
 import {
@@ -34,13 +39,23 @@ import {
     Space,
     Statistic,
     Tag,
+    Table,
     Tooltip,
     Typography,
     message,
+    Tabs,
+    Upload,
+    Image,
 } from "antd";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useUser } from "@/firebase/provider";
+import { useFirebaseApp } from "@/firebase/provider";
+import { getDatabase, ref, set } from "firebase/database";
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
+import { PurchaseRequest, PurchaseRequestItem } from "@/types/inventory";
+import type { UploadFile, RcFile } from "antd/es/upload/interface";
 
 const { Text } = Typography;
 
@@ -60,21 +75,91 @@ const isLongStock = (lastUpdated?: string, alertDays: number = 90): boolean => {
 };
 
 // Material Detail Drawer
-const createMaterialDetailDrawer = (categories: Category[]) => {
+const createMaterialDetailDrawer = (categories: Category[], onShowHistory?: (material: Material) => void) => {
     const MaterialDetailDrawer: React.FC<PropRowDetails<Material>> = ({
         data,
     }) => {
+        const [historyTransactions, setHistoryTransactions] = useState<InventoryTransaction[]>([]);
+        const [historyLoading, setHistoryLoading] = useState(false);
+
+        useEffect(() => {
+            if (data?.id) {
+                const loadHistory = async () => {
+                    try {
+                        setHistoryLoading(true);
+                        const transactions = await InventoryService.getTransactionsByMaterialId(data.id);
+                        setHistoryTransactions(transactions);
+                    } catch (error) {
+                        console.error("Error loading material history:", error);
+                    } finally {
+                        setHistoryLoading(false);
+                    }
+                };
+                loadHistory();
+            }
+        }, [data?.id]);
+
         if (!data) return null;
 
         const isLowStock = data.stockQuantity < data.minThreshold;
+        
+        // Kiểm tra cảnh báo hạn mức (gần 30% của alertThreshold)
+        const isNearAlertThreshold = data.alertThreshold 
+            ? data.stockQuantity >= (data.alertThreshold * 0.7) && data.stockQuantity < data.alertThreshold
+            : false;
+
+        // Tính toán số tồn sau mỗi giao dịch
+        const sortedTransactions = [...historyTransactions].sort((a, b) => b.createdAt - a.createdAt);
+        let currentStock = data.stockQuantity || 0;
+        const transactionsWithStock = sortedTransactions.map((transaction) => {
+            let stockBefore = currentStock;
+            if (transaction.type === "import") {
+                stockBefore = currentStock - transaction.quantity;
+            } else {
+                stockBefore = currentStock + transaction.quantity;
+            }
+            const stockAfter = currentStock;
+            currentStock = Math.max(0, stockBefore);
+            return {
+                ...transaction,
+                stockAfter: stockAfter,
+                stockBefore: Math.max(0, stockBefore),
+            };
+        });
 
         return (
             <div>
                 <Descriptions bordered column={1} size="small">
+                    {data.image && (
+                        <Descriptions.Item label="Ảnh nguyên liệu">
+                            <img 
+                                src={data.image} 
+                                alt={data.name}
+                                style={{ maxWidth: 200, maxHeight: 200, objectFit: "contain" }}
+                            />
+                        </Descriptions.Item>
+                    )}
                     <Descriptions.Item label="Mã NVL">
-                        <Text strong className="font-mono">
+                        <Text 
+                            strong 
+                            className="font-mono"
+                            style={{ 
+                                cursor: onShowHistory ? "pointer" : "default",
+                                color: onShowHistory ? "#1890ff" : "inherit"
+                            }}
+                            onClick={() => {
+                                if (onShowHistory) {
+                                    onShowHistory(data);
+                                }
+                            }}
+                        >
                             NVL-{data.id.slice(-6).toUpperCase()}
                         </Text>
+                        {onShowHistory && (
+                            <Text type="secondary" style={{ marginLeft: 8, fontSize: 12 }}>
+                                (Click để xem lịch sử xuất nhập)
+                            </Text>
+                        )}
                     </Descriptions.Item>
                     <Descriptions.Item label="Tên vật liệu">
                         <Text strong>{data.name}</Text>
@@ -107,24 +192,32 @@ const createMaterialDetailDrawer = (categories: Category[]) => {
                         <Space vertical size="small" style={{}}>
                             <Text
                                 strong
-                                className={`text-lg ${isLowStock ? "text-red-600" : ""}`}
+                                className={`text-lg ${isLowStock || isNearAlertThreshold ? "text-red-600" : ""}`}
                             >
-                                {isLowStock && (
+                                {(isLowStock || isNearAlertThreshold) && (
                                     <WarningOutlined className="mr-2" />
                                 )}
                                 {data.stockQuantity} {getUnitLabel(data.unit)}
+                                {isNearAlertThreshold && (
+                                    <Tag color="red" style={{ marginLeft: 8 }}>
+                                        Gần hạn mức cảnh báo!
+                                    </Tag>
+                                )}
                             </Text>
                             <Progress
                                 percent={Math.round(
                                     (data.stockQuantity / data.maxCapacity) *
                                         100,
                                 )}
-                                status={isLowStock ? "exception" : "normal"}
+                                status={isLowStock || isNearAlertThreshold ? "exception" : "normal"}
                             />
                             <Text className="text-xs text-gray-500">
                                 Mức tối thiểu: {data.minThreshold}{" "}
                                 {getUnitLabel(data.unit)} / Tối đa:{" "}
                                 {data.maxCapacity} {getUnitLabel(data.unit)}
+                                {data.alertThreshold && (
+                                    <> / Hạn mức cảnh báo: {data.alertThreshold} {getUnitLabel(data.unit)}</>
+                                )}
                             </Text>
                         </Space>
                     </Descriptions.Item>
@@ -134,6 +227,201 @@ const createMaterialDetailDrawer = (categories: Category[]) => {
                             : "Chưa cập nhật"}
                     </Descriptions.Item>
                 </Descriptions>
+
+                {/* Lịch sử nhập xuất */}
+                <div style={{ marginTop: 24 }}>
+                    <Tabs
+                        defaultActiveKey="import"
+                        items={[
+                            {
+                                key: "import",
+                                label: (
+                                    <span>
+                                        <Tag color="green" style={{ margin: 0 }}>Nhập</Tag>
+                                        <span style={{ marginLeft: 8 }}>
+                                            ({transactionsWithStock.filter(t => t.type === "import").length})
+                                        </span>
+                                    </span>
+                                ),
+                                children: (
+                                    <Table
+                                        columns={[
+                                            {
+                                                title: "Ngày",
+                                                dataIndex: "date",
+                                                key: "date",
+                                                width: 100,
+                                                sorter: (a: any, b: any) => {
+                                                    const dateA = new Date(a.date).getTime();
+                                                    const dateB = new Date(b.date).getTime();
+                                                    return dateB - dateA;
+                                                },
+                                            },
+                                            {
+                                                title: "Số lượng",
+                                                dataIndex: "quantity",
+                                                key: "quantity",
+                                                width: 120,
+                                                render: (quantity: number, record: InventoryTransaction) => (
+                                                    <Text strong style={{ 
+                                                        color: "#52c41a",
+                                                        fontSize: 12
+                                                    }}>
+                                                        +{quantity} {record.unit}
+                                                    </Text>
+                                                ),
+                                            },
+                                            {
+                                                title: "Tồn kho",
+                                                key: "stockAfter",
+                                                width: 100,
+                                                render: (_: any, record: any) => (
+                                                    <Text strong style={{ 
+                                                        color: record.stockAfter < data.minThreshold ? "#ff4d4f" : "#52c41a",
+                                                        fontSize: 12
+                                                    }}>
+                                                        {record.stockAfter} {record.unit}
+                                                    </Text>
+                                                ),
+                                            },
+                                            {
+                                                title: "Đơn giá",
+                                                dataIndex: "price",
+                                                key: "price",
+                                                width: 120,
+                                                render: (price: number) =>
+                                                    price
+                                                        ? new Intl.NumberFormat("vi-VN", {
+                                                              style: "currency",
+                                                              currency: "VND",
+                                                          }).format(price)
+                                                        : "-",
+                                            },
+                                            {
+                                                title: "Thành tiền",
+                                                dataIndex: "totalAmount",
+                                                key: "totalAmount",
+                                                width: 120,
+                                                render: (totalAmount: number) =>
+                                                    totalAmount
+                                                        ? new Intl.NumberFormat("vi-VN", {
+                                                              style: "currency",
+                                                              currency: "VND",
+                                                          }).format(totalAmount)
+                                                        : "-",
+                                            },
+                                            {
+                                                title: "Nhà cung cấp",
+                                                dataIndex: "supplier",
+                                                key: "supplier",
+                                                width: 150,
+                                                ellipsis: true,
+                                            },
+                                            {
+                                                title: "Ghi chú",
+                                                dataIndex: "note",
+                                                key: "note",
+                                                width: 150,
+                                                ellipsis: true,
+                                            },
+                                        ]}
+                                        dataSource={transactionsWithStock.filter(t => t.type === "import")}
+                                        loading={historyLoading}
+                                        rowKey="code"
+                                        size="small"
+                                        pagination={{
+                                            pageSize: 5,
+                                            showSizeChanger: false,
+                                            showTotal: (total) => `Tổng: ${total} giao dịch nhập`,
+                                            simple: true,
+                                        }}
+                                        scroll={{ y: 250 }}
+                                    />
+                                ),
+                            },
+                            {
+                                key: "export",
+                                label: (
+                                    <span>
+                                        <Tag color="red" style={{ margin: 0 }}>Xuất</Tag>
+                                        <span style={{ marginLeft: 8 }}>
+                                            ({transactionsWithStock.filter(t => t.type === "export").length})
+                                        </span>
+                                    </span>
+                                ),
+                                children: (
+                                    <Table
+                                        columns={[
+                                            {
+                                                title: "Ngày",
+                                                dataIndex: "date",
+                                                key: "date",
+                                                width: 100,
+                                                sorter: (a: any, b: any) => {
+                                                    const dateA = new Date(a.date).getTime();
+                                                    const dateB = new Date(b.date).getTime();
+                                                    return dateB - dateA;
+                                                },
+                                            },
+                                            {
+                                                title: "Số lượng",
+                                                dataIndex: "quantity",
+                                                key: "quantity",
+                                                width: 120,
+                                                render: (quantity: number, record: InventoryTransaction) => (
+                                                    <Text strong style={{ 
+                                                        color: "#ff4d4f",
+                                                        fontSize: 12
+                                                    }}>
+                                                        -{quantity} {record.unit}
+                                                    </Text>
+                                                ),
+                                            },
+                                            {
+                                                title: "Tồn kho",
+                                                key: "stockAfter",
+                                                width: 100,
+                                                render: (_: any, record: any) => (
+                                                    <Text strong style={{ 
+                                                        color: record.stockAfter < data.minThreshold ? "#ff4d4f" : "#52c41a",
+                                                        fontSize: 12
+                                                    }}>
+                                                        {record.stockAfter} {record.unit}
+                                                    </Text>
+                                                ),
+                                            },
+                                            {
+                                                title: "Lý do",
+                                                dataIndex: "reason",
+                                                key: "reason",
+                                                width: 200,
+                                                ellipsis: true,
+                                            },
+                                            {
+                                                title: "Ghi chú",
+                                                dataIndex: "note",
+                                                key: "note",
+                                                width: 200,
+                                                ellipsis: true,
+                                            },
+                                        ]}
+                                        dataSource={transactionsWithStock.filter(t => t.type === "export")}
+                                        loading={historyLoading}
+                                        rowKey="code"
+                                        size="small"
+                                        pagination={{
+                                            pageSize: 5,
+                                            showSizeChanger: false,
+                                            showTotal: (total) => `Tổng: ${total} giao dịch xuất`,
+                                            simple: true,
+                                        }}
+                                        scroll={{ y: 250 }}
+                                    />
+                                ),
+                            },
+                        ]}
+                    />
+                </div>
             </div>
         );
     };
@@ -156,16 +444,26 @@ export default function InventoryManagement() {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isPurchaseRequestModalOpen, setIsPurchaseRequestModalOpen] = useState(false);
+    const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+    const [historyTransactions, setHistoryTransactions] = useState<InventoryTransaction[]>([]);
+    const [historyLoading, setHistoryLoading] = useState(false);
+    const [selectedMaterialForHistory, setSelectedMaterialForHistory] = useState<Material | null>(null);
+    const { user } = useUser();
+    const firebaseApp = useFirebaseApp();
     const [selectedMaterial, setSelectedMaterial] = useState<Material | null>(
         null,
     );
     const [loading, setLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState("inventory");
     const [materialInputType, setMaterialInputType] = useState<
         "new" | "existing"
     >("new");
     const [exportForm] = Form.useForm();
     const [createForm] = Form.useForm();
     const [editForm] = Form.useForm();
+    const [purchaseRequestForm] = Form.useForm();
+    const [imageFileList, setImageFileList] = useState<UploadFile[]>([]);
 
     const selectedExistingMaterialId = Form.useWatch("materialId", createForm);
     const hasExistingSelection =
@@ -284,6 +582,22 @@ export default function InventoryManagement() {
                     }`,
                 );
             } else {
+                // Upload ảnh nếu có
+                let imageUrl: string | undefined = undefined;
+                if (imageFileList.length > 0 && imageFileList[0].originFileObj) {
+                    try {
+                        const storage = getStorage(firebaseApp);
+                        const file = imageFileList[0].originFileObj as RcFile;
+                        const fileName = `materials/${Date.now()}_${file.name}`;
+                        const imageRef = storageRef(storage, fileName);
+                        await uploadBytes(imageRef, file);
+                        imageUrl = await getDownloadURL(imageRef);
+                    } catch (error) {
+                        console.error("Error uploading image:", error);
+                        message.error("Không thể upload ảnh!");
+                    }
+                }
+                
                 // Tạo vật liệu mới và nhập kho
                 const materialData: Omit<
                     Material,
@@ -295,9 +609,11 @@ export default function InventoryManagement() {
                     unit: values.unit,
                     minThreshold: values.minThreshold,
                     maxCapacity: values.maxCapacity,
+                    alertThreshold: values.alertThreshold,
                     supplier: values.supplier,
                     importPrice: values.importPrice,
                     longStockAlertDays: values.longStockAlertDays,
+                    image: imageUrl,
                     lastUpdated: new Date().toISOString().split("T")[0],
                 };
 
@@ -332,6 +648,7 @@ export default function InventoryManagement() {
             setIsCreateModalOpen(false);
             createForm.resetFields();
             setMaterialInputType("new");
+            setImageFileList([]);
         } catch (error) {
             console.error("Create/Import failed:", error);
         }
@@ -343,23 +660,66 @@ export default function InventoryManagement() {
 
         try {
             const values = await editForm.validateFields();
-            await InventoryService.updateMaterial(selectedMaterial.id, {
+            console.log("Edit form values:", values);
+            
+            // Upload ảnh nếu có ảnh mới
+            let imageUrl: string | undefined = selectedMaterial.image;
+            if (imageFileList.length > 0 && imageFileList[0].originFileObj) {
+                try {
+                    const storage = getStorage(firebaseApp);
+                    const file = imageFileList[0].originFileObj as RcFile;
+                    const fileName = `materials/${Date.now()}_${file.name}`;
+                    const imageRef = storageRef(storage, fileName);
+                    await uploadBytes(imageRef, file);
+                    imageUrl = await getDownloadURL(imageRef);
+                    console.log("Image uploaded:", imageUrl);
+                } catch (error) {
+                    console.error("Error uploading image:", error);
+                    message.error("Không thể upload ảnh: " + (error as Error).message);
+                    return;
+                }
+            } else if (imageFileList.length === 0 && selectedMaterial.image) {
+                // Nếu xóa ảnh
+                imageUrl = undefined;
+            }
+            
+            // Remove undefined values
+            const updateData: any = {
                 name: values.name,
                 category: values.category,
                 unit: values.unit,
                 minThreshold: values.minThreshold,
                 maxCapacity: values.maxCapacity,
-                supplier: values.supplier,
-                importPrice: values.importPrice,
-                longStockAlertDays: values.longStockAlertDays,
+                supplier: values.supplier || undefined,
+                image: imageUrl,
+                importPrice: values.importPrice || undefined,
+                longStockAlertDays: values.longStockAlertDays || undefined,
                 lastUpdated: new Date().toISOString().split("T")[0],
+            };
+            
+            // Only include alertThreshold if it has a value
+            if (values.alertThreshold !== undefined && values.alertThreshold !== null) {
+                updateData.alertThreshold = values.alertThreshold;
+            }
+            
+            // Remove undefined values
+            Object.keys(updateData).forEach(key => {
+                if (updateData[key] === undefined || updateData[key] === null) {
+                    delete updateData[key];
+                }
             });
+            
+            console.log("Updating material with data:", updateData);
+            
+            await InventoryService.updateMaterial(selectedMaterial.id, updateData);
             message.success("Cập nhật vật liệu thành công");
             setIsEditModalOpen(false);
             setSelectedMaterial(null);
             editForm.resetFields();
+            setImageFileList([]);
         } catch (error) {
             console.error("Update failed:", error);
+            message.error("Không thể cập nhật vật liệu: " + (error as Error).message);
         }
     };
 
@@ -446,29 +806,90 @@ export default function InventoryManagement() {
     const lowStockCount = materials.filter(
         (m) => m.stockQuantity < m.minThreshold,
     ).length;
+    const nearAlertThresholdCount = materials.filter((m) => {
+        if (!m.alertThreshold) return false;
+        return m.stockQuantity >= (m.alertThreshold * 0.7) && m.stockQuantity < m.alertThreshold;
+    }).length;
     const longStockCount = materials.filter((m) =>
         isLongStock(m.lastUpdated, m.longStockAlertDays || 30),
     ).length;
 
     const updatedColumns: TableColumnsType<Material> = [
         {
-            title: "Mã NVL",
-            dataIndex: "id",
-            key: "id",
-            width: 120,
+            title: "Ảnh",
+            dataIndex: "image",
+            key: "image",
+            width: 100,
             fixed: "left",
-            render: (id: string) => (
-                <Text strong className="font-mono">
-                    NVL-{id.slice(-6).toUpperCase()}
-                </Text>
+            render: (image: string, record: Material) => (
+                image ? (
+                    <div style={{ position: "relative", width: 60, height: 60 }}>
+                        <Image
+                            src={image}
+                            alt={record.name}
+                            width={60}
+                            height={60}
+                            style={{ objectFit: "cover", borderRadius: 4 }}
+                            preview
+                        />
+                        <div style={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            background: "rgba(0, 0, 0, 0.4)",
+                            borderRadius: 4,
+                            pointerEvents: "none"
+                        }}>
+                            <Text style={{
+                                color: "white",
+                                fontSize: 10,
+                                fontWeight: "bold",
+                                textAlign: "center",
+                                padding: "2px 4px",
+                                textShadow: "1px 1px 2px rgba(0,0,0,0.8)"
+                            }}>
+                                {record.name}
+                            </Text>
+                        </div>
+                    </div>
+                ) : (
+                    <div style={{ 
+                        width: 60, 
+                        height: 60, 
+                        backgroundColor: "#f0f0f0", 
+                        borderRadius: 4, 
+                        display: "flex", 
+                        alignItems: "center", 
+                        justifyContent: "center" 
+                    }}>
+                        <ShoppingCartOutlined style={{ fontSize: 24, color: "#999" }} />
+                    </div>
+                )
             ),
         },
         {
             title: "Tên vật liệu",
             dataIndex: "name",
             key: "name",
-            width: 200,
+            width: 250,
             fixed: "left",
+            render: (name: string, record: Material) => (
+                <Text 
+                    style={{ cursor: "pointer", color: "#1890ff" }}
+                    onClick={() => {
+                        setSelectedMaterialForHistory(record);
+                        setIsHistoryModalOpen(true);
+                        loadMaterialHistory(record.id);
+                    }}
+                >
+                    {name}
+                </Text>
+            ),
         },
         {
             title: "Danh mục",
@@ -488,21 +909,32 @@ export default function InventoryManagement() {
             width: 250,
             render: (_: unknown, record: Material) => {
                 const isLowStock = record.stockQuantity < record.minThreshold;
+                // Kiểm tra cảnh báo hạn mức (gần 30% của alertThreshold)
+                const isNearAlertThreshold = record.alertThreshold 
+                    ? record.stockQuantity >= (record.alertThreshold * 0.7) && record.stockQuantity < record.alertThreshold
+                    : false;
+                const shouldAlert = isLowStock || isNearAlertThreshold;
+                
                 return (
                     <Space vertical size="small" style={{}}>
                         <Text
                             strong
-                            className={isLowStock ? "text-red-600" : ""}
+                            className={shouldAlert ? "text-red-600" : ""}
                         >
-                            {isLowStock && <WarningOutlined className="mr-1" />}
+                            {shouldAlert && <WarningOutlined className="mr-1" />}
                             {record.stockQuantity} {getUnitLabel(record.unit)}
+                            {isNearAlertThreshold && (
+                                <Tag color="red" style={{ marginLeft: 4, fontSize: 10 }}>
+                                    Gần hạn mức
+                                </Tag>
+                            )}
                         </Text>
                         <Progress
                             percent={Math.round(
                                 (record.stockQuantity / record.maxCapacity) *
                                     100,
                             )}
-                            status={isLowStock ? "exception" : "normal"}
+                            status={shouldAlert ? "exception" : "normal"}
                             size="small"
                         />
                     </Space>
@@ -574,6 +1006,27 @@ export default function InventoryManagement() {
                             }}
                         />
                     </Tooltip>
+                    <Tooltip title="Đề xuất mua">
+                        <Button
+                            size="small"
+                            icon={<ShoppingCartOutlined />}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                const material = materials.find(
+                                    (m) => m.id === record.id,
+                                );
+                                if (material) {
+                                    purchaseRequestForm.setFieldsValue({
+                                        materialId: record.id,
+                                        unit: material.unit,
+                                        suggestedPrice: material.importPrice || 0,
+                                    });
+                                }
+                                setSelectedMaterial(record);
+                                setIsPurchaseRequestModalOpen(true);
+                            }}
+                        />
+                    </Tooltip>
                     <Tooltip title="Chỉnh sửa">
                         <Button
                             size="small"
@@ -584,6 +1037,17 @@ export default function InventoryManagement() {
                                 editForm.setFieldsValue({
                                     ...record,
                                 });
+                                // Load ảnh hiện tại vào fileList nếu có
+                                if (record.image) {
+                                    setImageFileList([{
+                                        uid: '-1',
+                                        name: 'image.png',
+                                        status: 'done',
+                                        url: record.image,
+                                    }]);
+                                } else {
+                                    setImageFileList([]);
+                                }
                                 setIsEditModalOpen(true);
                             }}
                         />
@@ -659,7 +1123,16 @@ export default function InventoryManagement() {
                 }}
                 isEmpty={!filteredMaterials?.length}
             >
-                <Row gutter={[16, 16]} className="mb-6">
+                <Tabs
+                    activeKey={activeTab}
+                    onChange={setActiveTab}
+                    items={[
+                        {
+                            key: "inventory",
+                            label: "Kho",
+                            children: (
+                                <>
+                                    <Row gutter={[16, 16]} className="mb-6">
                     <Col xs={24} sm={12} lg={6}>
                         <Card>
                             <Statistic
@@ -690,6 +1163,20 @@ export default function InventoryManagement() {
                             />
                         </Card>
                     </Col>
+                    {nearAlertThresholdCount > 0 && (
+                        <Col xs={24} sm={12} lg={6}>
+                            <Card>
+                                <Statistic
+                                    title="Gần hạn mức cảnh báo"
+                                    value={nearAlertThresholdCount}
+                                    styles={{
+                                        content: { color: "#ff4d4f" },
+                                    }}
+                                    prefix={<WarningOutlined />}
+                                />
+                            </Card>
+                        </Col>
+                    )}
                     {longStockCount > 0 && (
                         <Col xs={24} sm={12} lg={6}>
                             <Card>
@@ -716,7 +1203,21 @@ export default function InventoryManagement() {
                     loading={loading}
                     rank
                     paging
-                    DrawerDetails={createMaterialDetailDrawer(categories)}
+                    DrawerDetails={createMaterialDetailDrawer(categories, (material) => {
+                        setSelectedMaterialForHistory(material);
+                        setIsHistoryModalOpen(true);
+                        loadMaterialHistory(material.id);
+                    })}
+                />
+                                </>
+                            ),
+                        },
+                        {
+                            key: "suppliers",
+                            label: "Nhà cung cấp",
+                            children: <SupplierManagement />,
+                        },
+                    ]}
                 />
             </WrapperContent>
 
@@ -1217,6 +1718,54 @@ export default function InventoryManagement() {
                                             />
                                         </Form.Item>
                                     </Col>
+                                    <Col span={8}>
+                                        <Form.Item
+                                            name="alertThreshold"
+                                            label="Hạn mức cảnh báo"
+                                            tooltip="Khi tồn kho gần tới hạn mức này (khoảng 30%) sẽ cảnh báo đỏ"
+                                        >
+                                            <InputNumber
+                                                placeholder="Nhập hạn mức cảnh báo"
+                                                style={{
+                                                    width: "100%",
+                                                }}
+                                                min={0}
+                                            />
+                                        </Form.Item>
+                                    </Col>
+                                    <Col span={24}>
+                                        <Form.Item
+                                            name="image"
+                                            label="Ảnh nguyên liệu"
+                                        >
+                                            <Upload
+                                                listType="picture-card"
+                                                maxCount={1}
+                                                fileList={imageFileList}
+                                                onChange={({ fileList }) => setImageFileList(fileList)}
+                                                beforeUpload={(file) => {
+                                                    const isImage = file.type.startsWith("image/");
+                                                    if (!isImage) {
+                                                        message.error("Chỉ được upload file ảnh!");
+                                                        return Upload.LIST_IGNORE;
+                                                    }
+                                                    const isLt2M = file.size / 1024 / 1024 < 2;
+                                                    if (!isLt2M) {
+                                                        message.error("Ảnh phải nhỏ hơn 2MB!");
+                                                        return Upload.LIST_IGNORE;
+                                                    }
+                                                    return false; // Prevent auto upload
+                                                }}
+                                            >
+                                                {imageFileList.length < 1 && (
+                                                    <div>
+                                                        <UploadOutlined />
+                                                        <div style={{ marginTop: 8 }}>Upload</div>
+                                                    </div>
+                                                )}
+                                            </Upload>
+                                        </Form.Item>
+                                    </Col>
                                     <Col span={12}>
                                         <Form.Item
                                             name="quantity"
@@ -1350,6 +1899,7 @@ export default function InventoryManagement() {
                         setIsEditModalOpen(false);
                         setSelectedMaterial(null);
                         editForm.resetFields();
+                        setImageFileList([]);
                     }}
                     width={700}
                     okText="Cập nhật"
@@ -1358,7 +1908,7 @@ export default function InventoryManagement() {
                 >
                     <Form form={editForm} layout="vertical" className="mt-4">
                         <Row gutter={16}>
-                            <Col span={12}>
+                            <Col span={8}>
                                 <Form.Item
                                     name="name"
                                     label="Tên vật liệu"
@@ -1373,7 +1923,7 @@ export default function InventoryManagement() {
                                     <Input placeholder="Nhập tên vật liệu" />
                                 </Form.Item>
                             </Col>
-                            <Col span={12}>
+                            <Col span={8}>
                                 <Form.Item
                                     name="category"
                                     label="Danh mục"
@@ -1463,7 +2013,7 @@ export default function InventoryManagement() {
                                     />
                                 </Form.Item>
                             </Col>
-                            <Col span={12}>
+                            <Col span={8}>
                                 <Form.Item
                                     name="importPrice"
                                     label="Giá nhập (VND/đơn vị)"
@@ -1491,12 +2041,12 @@ export default function InventoryManagement() {
                                     />
                                 </Form.Item>
                             </Col>
-                            <Col span={12}>
+                            <Col span={8}>
                                 <Form.Item name="supplier" label="Nhà cung cấp">
                                     <Input placeholder="Nhập nhà cung cấp" />
                                 </Form.Item>
                             </Col>
-                            <Col span={12}>
+                            <Col span={8}>
                                 <Form.Item
                                     name="longStockAlertDays"
                                     label="Cảnh báo tồn quá lâu (ngày)"
@@ -1509,6 +2059,47 @@ export default function InventoryManagement() {
                                         }}
                                         min={1}
                                     />
+                                </Form.Item>
+                            </Col>
+                            <Col span={24}>
+                                <Form.Item
+                                    name="image"
+                                    label="Ảnh nguyên liệu"
+                                >
+                                    <Upload
+                                        listType="picture-card"
+                                        maxCount={1}
+                                        fileList={imageFileList}
+                                        onChange={({ fileList }) => {
+                                            setImageFileList(fileList);
+                                            // Set image URL to form if file has URL
+                                            if (fileList.length > 0 && fileList[0].url) {
+                                                editForm.setFieldValue("image", fileList[0].url);
+                                            } else if (fileList.length === 0) {
+                                                editForm.setFieldValue("image", undefined);
+                                            }
+                                        }}
+                                        beforeUpload={(file) => {
+                                            const isImage = file.type.startsWith("image/");
+                                            if (!isImage) {
+                                                message.error("Chỉ được upload file ảnh!");
+                                                return Upload.LIST_IGNORE;
+                                            }
+                                            const isLt2M = file.size / 1024 / 1024 < 2;
+                                            if (!isLt2M) {
+                                                message.error("Ảnh phải nhỏ hơn 2MB!");
+                                                return Upload.LIST_IGNORE;
+                                            }
+                                            return false; // Prevent auto upload
+                                        }}
+                                    >
+                                        {imageFileList.length < 1 && (
+                                            <div>
+                                                <UploadOutlined />
+                                                <div style={{ marginTop: 8 }}>Upload</div>
+                                            </div>
+                                        )}
+                                    </Upload>
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -1747,6 +2338,338 @@ export default function InventoryManagement() {
                     </Form>
                 </Modal>
             )}
+
+            {/* Purchase Request Modal */}
+            {isPurchaseRequestModalOpen && (
+                <Modal
+                    title="Đề xuất mua nguyên liệu"
+                    open={isPurchaseRequestModalOpen}
+                    onOk={async () => {
+                        try {
+                            const values = await purchaseRequestForm.validateFields();
+                            const database = getDatabase(firebaseApp);
+                            const requestId = genCode("PR_");
+                            const now = Date.now();
+
+                            const material = materials.find(
+                                (m) => m.id === values.materialId,
+                            );
+
+                            if (!material) {
+                                message.error("Không tìm thấy vật liệu!");
+                                return;
+                            }
+
+                            const items: PurchaseRequestItem[] = [{
+                                materialId: material.id,
+                                materialName: material.name,
+                                quantity: values.quantity,
+                                unit: material.unit,
+                                suggestedPrice: values.suggestedPrice || 0,
+                                totalPrice: (values.suggestedPrice || 0) * values.quantity,
+                                note: values.note || "",
+                            }];
+
+                            const totalAmount = items.reduce((sum, item) => sum + (item.totalPrice || 0), 0);
+
+                            const purchaseRequest: PurchaseRequest = {
+                                id: requestId,
+                                code: requestId,
+                                items,
+                                totalAmount,
+                                status: "pending",
+                                requestedBy: user?.uid || "",
+                                requestedByName: user?.displayName || user?.email || "Không rõ",
+                                requestedAt: now,
+                                createdAt: now,
+                                updatedAt: now,
+                            };
+
+                            await set(ref(database, `xoxo/purchase_requests/${requestId}`), purchaseRequest);
+
+                            message.success("Đã tạo phiếu đề xuất mua thành công!");
+                            setIsPurchaseRequestModalOpen(false);
+                            purchaseRequestForm.resetFields();
+                        } catch (error) {
+                            console.error("Error creating purchase request:", error);
+                            message.error("Không thể tạo phiếu đề xuất mua!");
+                        }
+                    }}
+                    onCancel={() => {
+                        setIsPurchaseRequestModalOpen(false);
+                        purchaseRequestForm.resetFields();
+                    }}
+                    width={600}
+                    okText="Tạo đề xuất"
+                    cancelText="Hủy"
+                    destroyOnHidden
+                >
+                    <Form form={purchaseRequestForm} layout="vertical" className="mt-4">
+                        <Form.Item
+                            name="materialId"
+                            label="Vật liệu"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Vui lòng chọn vật liệu",
+                                },
+                            ]}
+                        >
+                            <Select
+                                placeholder="Chọn vật liệu"
+                                disabled
+                                options={materials.map((m) => ({
+                                    label: `${m.name} (${m.category}) - Tồn: ${m.stockQuantity} ${m.unit}`,
+                                    value: m.id,
+                                }))}
+                            />
+                        </Form.Item>
+                        <Row gutter={16}>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="quantity"
+                                    label="Số lượng"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Vui lòng nhập số lượng",
+                                        },
+                                        {
+                                            type: "number",
+                                            min: 1,
+                                            message: "Số lượng phải lớn hơn 0",
+                                        },
+                                    ]}
+                                >
+                                    <InputNumber
+                                        placeholder="Nhập số lượng"
+                                        style={{ width: "100%" }}
+                                        min={1}
+                                    />
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item name="unit" label="Đơn vị">
+                                    <Input disabled placeholder="Đơn vị" />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                        <Form.Item
+                            name="suggestedPrice"
+                            label="Giá đề xuất (VND/đơn vị)"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Vui lòng nhập giá đề xuất",
+                                },
+                                {
+                                    type: "number",
+                                    min: 0,
+                                    message: "Giá phải lớn hơn hoặc bằng 0",
+                                },
+                            ]}
+                        >
+                            <InputNumber
+                                placeholder="Nhập giá đề xuất"
+                                style={{ width: "100%" }}
+                                min={0}
+                                formatter={(value) =>
+                                    `${value}`.replace(
+                                        /\B(?=(\d{3})+(?!\d))/g,
+                                        ",",
+                                    )
+                                }
+                                parser={(value) =>
+                                    Number(
+                                        value?.replace(/\$\s?|(,*)/g, "") || 0,
+                                    ) as any
+                                }
+                            />
+                        </Form.Item>
+                        <Form.Item
+                            name="note"
+                            label="Ghi chú"
+                        >
+                            <Input.TextArea
+                                rows={3}
+                                placeholder="Nhập ghi chú (nếu có)"
+                            />
+                        </Form.Item>
+                        <Descriptions bordered column={1} size="small" className="mb-4">
+                            <Descriptions.Item label="Người đề xuất">
+                                {user?.displayName || user?.email || "Chưa xác định"}
+                            </Descriptions.Item>
+                            <Descriptions.Item label="Thời gian">
+                                {dayjs().format("DD/MM/YYYY HH:mm")}
+                            </Descriptions.Item>
+                        </Descriptions>
+                    </Form>
+                </Modal>
+            )}
+
+            {/* Material History Modal */}
+            <Modal
+                title={
+                    <div>
+                        <Text strong>Lịch sử xuất nhập tồn: </Text>
+                        <Text>{selectedMaterialForHistory?.name || ""}</Text>
+                        {selectedMaterialForHistory && (
+                            <div style={{ marginTop: 8 }}>
+                                <Tag color="blue" style={{ fontSize: 14 }}>
+                                    Tồn hiện tại: {selectedMaterialForHistory.stockQuantity} {getUnitLabel(selectedMaterialForHistory.unit)}
+                                </Tag>
+                            </div>
+                        )}
+                    </div>
+                }
+                open={isHistoryModalOpen}
+                onCancel={() => {
+                    setIsHistoryModalOpen(false);
+                    setSelectedMaterialForHistory(null);
+                    setHistoryTransactions([]);
+                }}
+                footer={null}
+                width={1200}
+            >
+                {(() => {
+                    // Tính toán số tồn sau mỗi giao dịch
+                    // Sắp xếp từ mới đến cũ để tính ngược từ tồn hiện tại
+                    const sortedTransactions = [...historyTransactions].sort((a, b) => b.createdAt - a.createdAt);
+                    
+                    // Bắt đầu từ số tồn hiện tại và tính ngược lại
+                    let currentStock = selectedMaterialForHistory?.stockQuantity || 0;
+                    const transactionsWithStock = sortedTransactions.map((transaction) => {
+                        // Tính tồn trước giao dịch này
+                        let stockBefore = currentStock;
+                        if (transaction.type === "import") {
+                            stockBefore = currentStock - transaction.quantity; // Trừ đi số nhập
+                        } else {
+                            stockBefore = currentStock + transaction.quantity; // Cộng lại số xuất
+                        }
+                        
+                        // Tồn sau giao dịch này chính là currentStock
+                        const stockAfter = currentStock;
+                        
+                        // Cập nhật currentStock cho giao dịch tiếp theo (cũ hơn)
+                        currentStock = Math.max(0, stockBefore);
+                        
+                        return {
+                            ...transaction,
+                            stockAfter: stockAfter,
+                            stockBefore: Math.max(0, stockBefore),
+                        };
+                    });
+
+                    return (
+                        <Table
+                            columns={[
+                                {
+                                    title: "Mã giao dịch",
+                                    dataIndex: "code",
+                                    key: "code",
+                                    width: 150,
+                                    fixed: "left",
+                                    render: (code: string) => (
+                                        <Text strong className="font-mono text-xs">
+                                            {code}
+                                        </Text>
+                                    ),
+                                },
+                                {
+                                    title: "Ngày",
+                                    dataIndex: "date",
+                                    key: "date",
+                                    width: 120,
+                                    sorter: (a: any, b: any) => {
+                                        const dateA = new Date(a.date).getTime();
+                                        const dateB = new Date(b.date).getTime();
+                                        return dateB - dateA;
+                                    },
+                                },
+                                {
+                                    title: "Loại",
+                                    dataIndex: "type",
+                                    key: "type",
+                                    width: 100,
+                                    render: (type: string) => (
+                                        <Tag color={type === "import" ? "green" : "red"}>
+                                            {type === "import" ? "Nhập" : "Xuất"}
+                                        </Tag>
+                                    ),
+                                },
+                                {
+                                    title: "Số lượng",
+                                    dataIndex: "quantity",
+                                    key: "quantity",
+                                    width: 120,
+                                    render: (quantity: number, record: InventoryTransaction) => (
+                                        <Text strong={record.type === "export"} style={{ color: record.type === "export" ? "#ff4d4f" : "#52c41a" }}>
+                                            {record.type === "export" ? "-" : "+"}{quantity} {record.unit}
+                                        </Text>
+                                    ),
+                                },
+                                {
+                                    title: "Tồn kho",
+                                    key: "stockAfter",
+                                    width: 120,
+                                    render: (_: any, record: any) => (
+                                        <Text strong style={{ color: record.stockAfter < (selectedMaterialForHistory?.minThreshold || 0) ? "#ff4d4f" : "#52c41a" }}>
+                                            {record.stockAfter} {record.unit}
+                                        </Text>
+                                    ),
+                                },
+                                {
+                                    title: "Đơn giá",
+                                    dataIndex: "price",
+                                    key: "price",
+                                    width: 150,
+                                    render: (price: number) =>
+                                        price
+                                            ? new Intl.NumberFormat("vi-VN", {
+                                                  style: "currency",
+                                                  currency: "VND",
+                                              }).format(price)
+                                            : "-",
+                                },
+                                {
+                                    title: "Thành tiền",
+                                    dataIndex: "totalAmount",
+                                    key: "totalAmount",
+                                    width: 150,
+                                    render: (totalAmount: number) =>
+                                        totalAmount
+                                            ? new Intl.NumberFormat("vi-VN", {
+                                                  style: "currency",
+                                                  currency: "VND",
+                                              }).format(totalAmount)
+                                            : "-",
+                                },
+                                {
+                                    title: "Lý do",
+                                    dataIndex: "reason",
+                                    key: "reason",
+                                    width: 200,
+                                },
+                                {
+                                    title: "Ghi chú",
+                                    dataIndex: "note",
+                                    key: "note",
+                                    width: 200,
+                                },
+                            ]}
+                            dataSource={transactionsWithStock}
+                            loading={historyLoading}
+                            rowKey="code"
+                            pagination={{
+                                pageSize: 10,
+                                showSizeChanger: true,
+                                showTotal: (total) => `Tổng: ${total} giao dịch`,
+                            }}
+                            scroll={{ x: 1200, y: 400 }}
+                        />
+                    );
+                })()}
+            </Modal>
         </>
     );
 }

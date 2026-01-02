@@ -47,6 +47,20 @@ export interface WorkflowData {
   members: string[];
   consultantId?: string;
   isDone: boolean;
+  checklist?: Array<{
+    id: string;
+    task_name: string;
+    task_order: number;
+    checked: boolean;
+    checked_by?: string;
+    checkedByName?: string;
+    checked_at?: number;
+    notes?: string;
+    deadline?: number;
+    cancelReason?: string; // Lý do hủy
+    cancelled_at?: number; // Thời gian hủy
+  }>;
+  deadline?: number;
 }
 
 export interface ProductData {
@@ -57,6 +71,7 @@ export interface ProductData {
   images: (UploadFile & { firebaseUrl?: string })[];
   imagesDone?: (UploadFile & { firebaseUrl?: string })[];
   workflows: WorkflowData[];
+  processTemplateIds?: string[]; // IDs of process templates to link with this product
 }
 export enum WorkflowStatus {
   Pending = "pending",
@@ -91,7 +106,14 @@ export interface FirebaseWorkflowData {
     checkedByName?: string;
     checked_at?: number;
     notes?: string;
+    assignedTo?: string; // Nhân sự phụ trách (member ID)
+    assignedToName?: string; // Tên nhân sự phụ trách
+    estimatedDuration?: number; // Thời gian ước tính (giờ hoặc ngày)
+    durationUnit?: "hours" | "days"; // Đơn vị: giờ hoặc ngày
+    deadline?: number; // Deadline (timestamp)
+    description?: string; // Ghi chú mô tả chi tiết
   }>;
+  deadline?: number;
 }
 
 export interface FirebaseProductData {
@@ -110,13 +132,6 @@ export interface FirebaseProductData {
   }>;
   // Legacy workflows (for backward compatibility)
   workflows?: Record<string, FirebaseWorkflowData>;
-  // New process instances (replaces workflows)
-  processInstances?: FirebaseProductProcessInstances;
-  // Track process flow
-  currentProcessId?: string;
-  completedProcessIds?: string[];
-  // Process template sequence (defines which processes this product should go through)
-  processTemplateSequence?: string[]; // Array of process template IDs
 }
 
 
@@ -152,11 +167,43 @@ export interface DeliveryInfo {
   storageInstructionsSent?: boolean; // Whether storage instructions were sent
 }
 
+export interface PaymentInfo {
+  id: string;
+  amount: number; // Số tiền đã thanh toán
+  content?: string; // Nội dung thanh toán
+  images?: Array<{
+    uid: string;
+    name: string;
+    status: "done" | "uploading" | "error";
+    url: string;
+    originFileObj?: File;
+  }>; // Ảnh chứng từ thanh toán
+  paidAt: number; // Thời gian thanh toán
+  paidBy?: string; // User ID người tạo thanh toán
+  paidByName?: string; // Tên người tạo thanh toán
+  createdAt?: number;
+}
+
+export interface ReturnInfo {
+  id: string;
+  returnedBy?: string; // User ID người trả
+  returnedByName?: string; // Tên người trả
+  returnedAt: number; // Thời gian trả (now)
+  images?: Array<{
+    uid: string;
+    name: string;
+    status: "done" | "uploading" | "error";
+    url: string;
+    originFileObj?: File;
+  }>; // Ảnh minh chứng
+  createdAt?: number;
+}
+
 export interface FirebaseOrderData {
   code: string;
   customerName: string;
   phone: string;
-  email: string;
+  email?: string;
   address: string;
   customerSource: CustomerSource;
   orderDate: number;
@@ -199,6 +246,10 @@ export interface FirebaseOrderData {
     caredByName: string; // User name
     caredAt: number; // Timestamp
   }>; // History of care notes
+  payments?: PaymentInfo[]; // Danh sách các lần thanh toán
+  totalPaidAmount?: number; // Tổng số tiền đã thanh toán
+  remainingDebt?: number; // Số tiền còn nợ (tự động tính = totalAmount - totalPaidAmount)
+  returns?: ReturnInfo[]; // Danh sách các lần trả đồ
 }
 
 // Form related interfaces
@@ -206,7 +257,7 @@ export interface FormValues {
   code: string;
   customerName: string;
   phone: string;
-  email: string;
+  email?: string;
   address: string;
   customerSource: CustomerSource;
   orderDate: Dayjs;
@@ -214,6 +265,7 @@ export interface FormValues {
   createdBy: string;
   createdByName: string;
   consultantId?: string;
+  consultantName?: string;
   commissionPercentage?: number; // Commission percentage for consultant (at order level)
   notes?: string;
   discount?: number;
@@ -246,4 +298,5 @@ export interface ProductCardProps {
   staff: FirebaseStaff;
   departments: FirebaseDepartments;
   memberOptions?: Record<string, Array<{ value: string; label: string }>>;
+  processTemplates?: Array<{ id: string; name: string }>; // Process templates for selection
 }

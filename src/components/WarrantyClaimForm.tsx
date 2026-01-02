@@ -732,12 +732,6 @@ const WarrantyClaimForm = forwardRef<ChildHandle, WarrantyClaimFormProps>(
                         );
                         return;
                     }
-                    if (!workflow.members || workflow.members.length === 0) {
-                        message.warning(
-                            `Vui lòng chọn nhân viên thực hiện cho tất cả công đoạn trong sản phẩm ${product.id}!`,
-                        );
-                        return;
-                    }
                 }
             }
 

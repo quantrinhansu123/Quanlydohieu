@@ -5,6 +5,7 @@ import {
     CustomerServiceOutlined,
     DashboardOutlined,
     DatabaseOutlined,
+    DeleteOutlined,
     DollarOutlined,
     ExperimentOutlined,
     HistoryOutlined,
@@ -121,18 +122,10 @@ export const allMenuItems: Array<{
                     title: "Đơn hàng",
                     href: "/sale/orders",
                 },
-
                 {
                     icon: SafetyCertificateOutlined,
                     title: "Bảo hành",
                     href: "/sale/warranty",
-                },
-                {
-                    icon: LayoutOutlined,
-                    nonPrefix: true,
-                    title: "Kanban",
-                    href: "/sale/kanban",
-                    color: "#fa8c16", // Orange
                 },
             ],
         },
@@ -149,15 +142,27 @@ export const allMenuItems: Array<{
                     color: "#fa8c16",
                 },
                 {
-                    icon: AppstoreOutlined,
-                    title: "Danh mục",
-                    href: "/inventory/categories",
-                    color: "#fa8c16",
-                },
-                {
                     icon: HistoryOutlined,
                     title: "Lịch sử",
                     href: "/inventory/history",
+                    color: "#fa8c16",
+                },
+                {
+                    icon: ShoppingCartOutlined,
+                    title: "Đề xuất kho",
+                    href: "/inventory/material-orders",
+                    color: "#fa8c16",
+                },
+                {
+                    icon: ShoppingCartOutlined,
+                    title: "Phiếu đề xuất mua",
+                    href: "/inventory/purchase-requests",
+                    color: "#fa8c16",
+                },
+                {
+                    icon: ShoppingCartOutlined,
+                    title: "Nhà cung cấp",
+                    href: "/inventory/suppliers",
                     color: "#fa8c16",
                 },
             ],
@@ -251,7 +256,7 @@ export const allMenuItems: Array<{
                 },
                 {
                     icon: ReconciliationOutlined,
-                    title: "Quy trình",
+                    title: "Quy trình vận hành",
                     href: "/technician/workflows",
                     color: "#2f54eb",
                 },
@@ -264,8 +269,28 @@ export const allMenuItems: Array<{
                 {
                     icon: LayoutOutlined,
                     title: "Kanban",
-                    href: "/technician/todo/kanban",
+                    href: "/technician/todo",
                     color: "#2f54eb",
+                    disable: true,
+                },
+            ],
+        },
+        {
+            title: "Admin",
+            Icon: SettingOutlined,
+            color: "#fa8c16", // Orange
+            children: [
+                {
+                    icon: DatabaseOutlined,
+                    title: "Database Manager",
+                    href: "/admin/database-manager",
+                    color: "#fa8c16",
+                },
+                {
+                    icon: DatabaseOutlined,
+                    title: "Migrate Database",
+                    href: "/admin/migrate-to-no-accent",
+                    color: "#fa8c16",
                 },
             ],
         },

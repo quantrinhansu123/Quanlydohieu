@@ -327,7 +327,7 @@ const RightControls: React.FC<RightControlsProps> = ({
             if (a.type !== "primary" && b.type === "primary") return -1;
             return 0;
         })
-        .filter((buttonEnd) => buttonEnd.can);
+        .filter((buttonEnd) => buttonEnd.can !== false); // Hiển thị nếu can không phải false
 
     if (isMobile) {
         return (
@@ -363,7 +363,7 @@ const RightControls: React.FC<RightControlsProps> = ({
                 )}
 
                 {sortedEnds.map((buttonEnd, index) => {
-                    if (!buttonEnd.can) return null;
+                    if (buttonEnd.can === false) return null;
                     return (
                         <Tooltip key={index} title={buttonEnd.name}>
                             <span>
@@ -371,7 +371,7 @@ const RightControls: React.FC<RightControlsProps> = ({
                                     disabled={
                                         isLoading ||
                                         isRefetching ||
-                                        !buttonEnd.can
+                                        buttonEnd.can === false
                                     }
                                     loading={buttonEnd.isLoading}
                                     danger={buttonEnd.danger}
@@ -698,59 +698,136 @@ function WrapperContent<T extends object>({
     return (
         <div className={`${className} flex flex-col justify-start relative`}>
             <div className="space-y-4">
-                {/* Horizontal Filter Row - Always visible at top if filters exist */}
-                {!isMobileView &&
-                    header.filters &&
-                    header.filters.fields &&
-                    header.filters.fields.length > 0 && (
-                        <FilterList
-                            isMobile={false}
-                            form={formFilter}
-                            fields={header.filters.fields}
-                            onApplyFilter={(arr) =>
-                                header.filters!.onApplyFilter(arr)
-                            }
-                            onReset={() =>
-                                header.filters?.onReset &&
-                                header.filters.onReset()
-                            }
-                            layout="horizontal"
-                        />
-                    )}
+                {/* Search, Filters and Action Buttons Row - All on one line */}
+                <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                        {/* Search Input */}
+                        {header.searchInput && (
+                            <Input
+                                style={{ width: 256, flexShrink: 0 }}
+                                value={searchTerm}
+                                placeholder={header.searchInput.placeholder}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                prefix={<SearchOutlined />}
+                            />
+                        )}
 
-                {/* Search and Action Buttons Row */}
-                <div className="flex items-center justify-between">
-                    <LeftControls
-                        formFilter={formFilter}
-                        onApplyFilter={header.filters?.onApplyFilter}
-                        isMobile={isMobileView}
-                        header={header}
-                        isLoading={isLoading}
-                        isRefetching={isRefetching}
-                        router={router}
-                        searchTerm={searchTerm}
-                        setSearchTerm={setSearchTerm}
-                        isOpenColumnSettings={isOpenColumnSettings}
-                        setIsOpenColumnSettings={setIsOpenColumnSettings}
-                        hasActiveColumnSettings={hasActiveColumnSettings}
-                        hasFilters={hasFilters}
-                        hasActiveFilters={hasActiveFilters}
-                        handleResetFilters={handleResetFilters}
-                        isFilterVisible={isFilterVisible}
-                        setIsFilterVisible={setIsFilterVisible}
-                        showFilterToggle={false}
-                    />
-                    <RightControls
-                        isMobile={isMobileView}
-                        header={header}
-                        isLoading={isLoading}
-                        isRefetching={isRefetching}
-                        hasFilters={hasFilters}
-                        handleResetFilters={handleResetFilters}
-                        hasActiveFilters={hasActiveFilters}
-                        hasActiveColumnSettings={hasActiveColumnSettings}
-                        setIsMobileOptionsOpen={setIsMobileOptionsOpen}
-                    />
+                        {/* Filters */}
+                        {!isMobileView &&
+                            header.filters &&
+                            header.filters.fields &&
+                            header.filters.fields.length > 0 && (
+                                <div className="flex-1 min-w-0">
+                                    <FilterList
+                                        isMobile={false}
+                                        form={formFilter}
+                                        fields={header.filters.fields}
+                                        onApplyFilter={(arr) =>
+                                            header.filters!.onApplyFilter(arr)
+                                        }
+                                        onReset={() =>
+                                            header.filters?.onReset &&
+                                            header.filters.onReset()
+                                        }
+                                        layout="horizontal"
+                                        instant={true}
+                                    />
+                                </div>
+                            )}
+                    </div>
+
+                    {/* Right Controls - Buttons */}
+                    <div className="flex items-center gap-3 flex-shrink-0">
+                        {/* Button Back */}
+                        {header.buttonBackTo && (
+                            <Button
+                                disabled={isLoading || isRefetching}
+                                type="default"
+                                icon={<ArrowLeftOutlined />}
+                                onClick={() => router.back()}
+                            >
+                                Quay lại
+                            </Button>
+                        )}
+
+                        {/* Column Settings */}
+                        {header.columnSettings && (
+                            <Popover
+                                trigger="click"
+                                placement="bottomLeft"
+                                content={
+                                    <div>
+                                        <Checkbox.Group
+                                            value={header.columnSettings.columns
+                                                .filter((c) => c.visible)
+                                                .map((c) => c.key)}
+                                            onChange={(values) => {
+                                                const updated = header.columnSettings!.columns.map(
+                                                    (col) => ({
+                                                        ...col,
+                                                        visible: values.includes(
+                                                            col.key,
+                                                        ),
+                                                    }),
+                                                );
+                                                header.columnSettings!.onChange(
+                                                    updated,
+                                                );
+                                            }}
+                                        >
+                                            <div className="flex flex-col gap-2">
+                                                {header.columnSettings.columns.map(
+                                                    (col) => (
+                                                        <Checkbox
+                                                            key={col.key}
+                                                            value={col.key}
+                                                        >
+                                                            {col.title}
+                                                        </Checkbox>
+                                                    ),
+                                                )}
+                                            </div>
+                                        </Checkbox.Group>
+                                        {header.columnSettings.onReset && (
+                                            <div className="mt-4">
+                                                <Button
+                                                    size="small"
+                                                    onClick={() => {
+                                                        header.columnSettings?.onReset?.();
+                                                    }}
+                                                >
+                                                    Đặt lại
+                                                </Button>
+                                            </div>
+                                        )}
+                                    </div>
+                                }
+                            >
+                                <Tooltip title="Cài đặt cột">
+                                    <Button
+                                        disabled={isLoading || isRefetching}
+                                        type={hasActiveColumnSettings ? "primary" : "default"}
+                                        icon={<SettingOutlined />}
+                                        onClick={() =>
+                                            setIsOpenColumnSettings(true)
+                                        }
+                                    />
+                                </Tooltip>
+                            </Popover>
+                        )}
+
+                        <RightControls
+                            isMobile={isMobileView}
+                            header={header}
+                            isLoading={isLoading}
+                            isRefetching={isRefetching}
+                            hasFilters={hasFilters}
+                            handleResetFilters={handleResetFilters}
+                            hasActiveFilters={hasActiveFilters}
+                            hasActiveColumnSettings={hasActiveColumnSettings}
+                            setIsMobileOptionsOpen={setIsMobileOptionsOpen}
+                        />
+                    </div>
                 </div>
 
                 {/* Main Content */}

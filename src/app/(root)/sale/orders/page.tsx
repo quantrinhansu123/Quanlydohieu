@@ -1,329 +1,247 @@
 "use client";
 
-import CommonTable from "@/components/CommonTable";
 import WrapperContent from "@/components/WrapperContent";
 import { useFirebaseApp } from "@/firebase";
+import { useUser } from "@/firebase/provider";
 import { useRealtimeList } from "@/firebase/hooks/useRealtime";
-import useColumn from "@/hooks/useColumn";
 import useFilter from "@/hooks/useFilter";
-import { deleteOrder } from "@/services/workflowService";
-import { IMembers } from "@/types/members";
+import { ROLES } from "@/types/enum";
 import { FirebaseOrderData, OrderStatus } from "@/types/order";
-import { genCode } from "@/utils/genCode";
-import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined } from "@ant-design/icons";
-import type { TableColumnsType } from "antd";
-import {
-    App,
-    Button,
-    Card,
-    Col,
-    Popconfirm,
-    Row,
-    Space,
-    Statistic,
-    Tag,
-    Typography,
-} from "antd";
-import dayjs from "dayjs";
+import { PlusOutlined, CheckOutlined, DeleteOutlined } from "@ant-design/icons";
+import { App, Card, Typography, Tag, Button, Table, Space, Popconfirm } from "antd";
 import { useRouter } from "next/navigation";
-import { useMemo } from "react";
-import SuperJSON from "superjson";
+import { useCallback, useState, useEffect } from "react";
+import { getDatabase, ref, update, remove, get } from "firebase/database";
+import dayjs from "dayjs";
 
-const { Text, Title } = Typography;
+const { Text } = Typography;
 
-// Format large numbers for better readability
-const formatNumber = (value: number): string => {
-    if (value >= 1000000000) {
-        const billions = value / 1000000000;
-        return billions >= 10
-            ? `${billions.toFixed(0)}B`
-            : `${billions.toFixed(1)}B`;
-    }
-    if (value >= 1000000) {
-        const millions = value / 1000000;
-        return millions >= 10
-            ? `${millions.toFixed(0)}M`
-            : `${millions.toFixed(1)}M`;
-    }
-    if (value >= 1000) {
-        const thousands = value / 1000;
-        return thousands >= 10
-            ? `${thousands.toFixed(0)}K`
-            : `${thousands.toFixed(1)}K`;
-    }
-    // For numbers < 1000, use comma separator
-    return value.toLocaleString("vi-VN");
-};
+// Status columns configuration
+const statusColumns = [
+    {
+        key: OrderStatus.CONFIRMED,
+        title: "Lên đơn",
+        color: "#fa8c16",
+        bgColor: "#432f0e",
+    },
+    {
+        key: OrderStatus.IN_PROGRESS,
+        title: "Sản xuất",
+        color: "#1890ff",
+        bgColor: "#0d3b66",
+    },
+    {
+        key: OrderStatus.ON_HOLD,
+        title: "Thanh toán",
+        color: "#722ed1",
+        bgColor: "#2d1a4d",
+    },
+    {
+        key: OrderStatus.COMPLETED,
+        title: "CSKH",
+        color: "#52c41a",
+        bgColor: "#1a3d1a",
+    },
+];
 
-const getStatusInfo = (status: OrderStatus) => {
-    const info = {
-        [OrderStatus.PENDING]: { color: "default", text: "Chờ xử lý" },
-        [OrderStatus.CONFIRMED]: { color: "warning", text: "Đã xác nhận" },
-        [OrderStatus.IN_PROGRESS]: {
-            color: "processing",
-            text: "Đang thực hiện",
-        },
-        [OrderStatus.ON_HOLD]: { color: "orange", text: "Tạm giữ" },
-        [OrderStatus.COMPLETED]: { color: "success", text: "Hoàn thành" },
-        [OrderStatus.REFUND]: { color: "magenta", text: "Hoàn tiền" },
-        [OrderStatus.CANCELLED]: { color: "error", text: "Đã hủy" },
-    };
-    return info[status] || info[OrderStatus.PENDING];
-};
 
 export default function OrderListPage() {
-    const { message, modal } = App.useApp();
+    const { message: antdMessage } = App.useApp();
     const router = useRouter();
+    const { user } = useUser();
     const firebaseApp = useFirebaseApp();
     const { data: ordersData, isLoading: ordersLoading } =
         useRealtimeList<FirebaseOrderData>("xoxo/orders");
-    const { data: staffData, isLoading: staffLoading } =
-        useRealtimeList<IMembers>("xoxo/members");
 
-    // Ensure data is always an array, never null
     const orders = ordersData || [];
-    console.log(orders);
-    const staff = staffData || [];
-
-    const staffMap = useMemo(() => {
-        if (!staff || !Array.isArray(staff)) {
-            return {} as Record<string, IMembers>;
-        }
-        return staff.reduce(
-            (acc, curr) => {
-                acc[curr.id] = curr;
-                return acc;
-            },
-            {} as Record<string, IMembers>,
-        );
-    }, [staff]);
-
-    const {
-        query,
-        pagination,
-        updateQueries,
-        reset,
-        applyFilter,
-        handlePageChange,
-    } = useFilter({ search: "" });
-
-    const staffOptions = useMemo(
-        () =>
-            (staff || []).map((s) => ({
-                label: s.name,
-                value: s.id,
-            })),
-        [staff],
-    );
-
+    const { query, applyFilter, setQuery } = useFilter({ search: "" });
     const filteredOrders = applyFilter(orders);
-    console.log(SuperJSON.stringify(query), 111);
 
-    const handleViewDetails = (orderCode: string) => {
-        router.push(`/sale/orders/${orderCode}`);
-    };
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
-    const handleDelete = async (orderId: string) => {
-        try {
-            await deleteOrder(firebaseApp, orderId);
-            message.success("Xóa đơn hàng thành công!");
-        } catch (error) {
-            console.error("Error deleting order:", error);
-            message.error("Có lỗi xảy ra khi xóa đơn hàng!");
-        }
-    };
+    useEffect(() => {
+        let cancelled = false;
+        const loadRole = async () => {
+            if (!user) return;
+            try {
+                const token = await user.getIdTokenResult();
+                if (!cancelled) {
+                    setIsAdmin(token.claims.role === ROLES.admin);
+                }
+            } catch (error) {
+                console.error("Failed to load user role", error);
+            }
+        };
 
-    const defaultColumns: TableColumnsType<FirebaseOrderData> = useMemo(
-        () => [
-            {
-                title: "Mã",
-                dataIndex: "code",
-                key: "code",
-                width: 160,
-                fixed: "left",
-                render: (code, record) => (
-                    <Text
-                        strong
-                        className="cursor-pointer text-primary hover:underline"
-                        onClick={() => handleViewDetails(record.code)}
-                    >
-                        {code}
-                    </Text>
-                ),
-            },
-            {
-                title: "Khách hàng",
-                dataIndex: "customerName",
-                key: "customerName",
-                width: 200,
-            },
-            {
-                title: "Nhân viên tạo",
-                dataIndex: "createdByName",
-                key: "createdByName",
-                width: 180,
-                render: (staff: string) => {
-                    return (
-                        <Space>
-                            <Text>{staff}</Text>
-                        </Space>
-                    );
-                },
-            },
-            {
-                title: "NV tư vấn",
-                dataIndex: "consultantId",
-                key: "consultantId",
-                width: 180,
-                render: (consultantId: string) => {
-                    const consultant = staffMap[consultantId];
-                    return consultant ? consultant.name : consultantId || "-";
-                },
-            },
-            {
-                title: "Số lượng",
-                key: "products",
-                width: 120,
-                align: "center",
-                render: (_, record) =>
-                    Object.values(record.products || {}).reduce(
-                        (acc, curr) => acc + curr.quantity,
-                        0,
-                    ),
-                sorter: (a: FirebaseOrderData, b: FirebaseOrderData) =>
-                    Object.values(a.products || {}).reduce(
-                        (acc, curr) => acc + curr.quantity,
-                        0,
-                    ) -
-                    Object.values(b.products || {}).reduce(
-                        (acc, curr) => acc + curr.quantity,
-                        0,
-                    ),
-            },
-            {
-                title: "Ngày tạo",
-                dataIndex: "createdAt",
-                key: "createdAt",
-                width: 150,
-                render: (date) => dayjs(date).format("DD/MM/YYYY"),
-            },
-            {
-                title: "Trạng thái",
-                dataIndex: "status",
-                key: "status",
-                width: 150,
-                render: (status: OrderStatus) => {
-                    const { color, text } = getStatusInfo(status);
-                    return <Tag color={color}>{text}</Tag>;
-                },
-            },
-            {
-                title: "Lưu ý",
-                dataIndex: "notes",
-                key: "notes",
-                width: 200,
-                fixed: "right",
-                ellipsis: false,
-                render: (notes: string | undefined) => {
-                    if (!notes || notes.trim() === "") {
-                        return "-";
-                    }
-                    return (
-                        <div 
-                            className="overflow-y-auto"
-                            style={{
-                                maxHeight: "100px",
-                                maxWidth: "200px",
-                                wordBreak: "break-word",
-                                whiteSpace: "pre-wrap",
-                            }}
-                        >
-                            <Text>{notes}</Text>
-                        </div>
-                    );
-                },
-            },
-            {
-                title: "Thao tác",
-                key: "action",
-                width: 150,
-                fixed: "right",
-                align: "center",
-                render: (_, record) => (
-                    <div className="flex gap-2 justify-center">
-                        <Button
-                            type="text"
-                            icon={<EyeOutlined />}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                handleViewDetails(record.code);
-                            }}
-                        />
-                        <Button
-                            type="text"
-                            icon={<EditOutlined />}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                router.push(`/sale/orders/${record.code}/update`);
-                            }}
-                        />
-                        <Popconfirm
-                            title="Xác nhận xóa"
-                            description="Bạn có chắc chắn muốn xóa đơn hàng này?"
-                            onConfirm={(e) => {
-                                e?.stopPropagation();
-                                handleDelete(record.id);
-                            }}
-                            okText="Xóa"
-                            cancelText="Hủy"
-                        >
-                            <Button
-                                type="text"
-                                danger
-                                icon={<DeleteOutlined />}
-                                onClick={(e) => e.stopPropagation()}
-                            />
-                        </Popconfirm>
-                    </div>
-                ),
-            },
-        ],
-        [staffMap],
+        loadRole();
+        return () => {
+            cancelled = true;
+        };
+    }, [user]);
+
+
+    const handleApprove = useCallback(
+        async (order: FirebaseOrderData, targetStatus: OrderStatus) => {
+            try {
+                // Định nghĩa thứ tự quy trình
+                const statusOrder = [
+                    OrderStatus.PENDING,
+                    OrderStatus.CONFIRMED,      // Lên đơn
+                    OrderStatus.IN_PROGRESS,     // Sản xuất
+                    OrderStatus.ON_HOLD,         // Thanh toán
+                    OrderStatus.COMPLETED,       // CSKH
+                ];
+
+                const currentIndex = statusOrder.indexOf(order.status || OrderStatus.PENDING);
+                const targetIndex = statusOrder.indexOf(targetStatus);
+
+                // Kiểm tra xem có thể chuyển sang trạng thái tiếp theo không
+                if (currentIndex === -1 || targetIndex === -1) {
+                    antdMessage.error("Trạng thái không hợp lệ!");
+                    return;
+                }
+
+                if (targetIndex !== currentIndex + 1) {
+                    antdMessage.error(`Đơn hàng phải qua bước ${statusColumns.find(c => c.key === statusOrder[currentIndex])?.title || ""} trước khi chuyển sang ${statusColumns.find(c => c.key === targetStatus)?.title || ""}!`);
+                    return;
+                }
+
+                const database = getDatabase(firebaseApp);
+                const orderRef = ref(database, `xoxo/orders/${order.code}`);
+                await update(orderRef, {
+                    status: targetStatus,
+                    updatedAt: Date.now(),
+                });
+                antdMessage.success(`Đã duyệt đơn hàng sang ${statusColumns.find(c => c.key === targetStatus)?.title || ""}!`);
+            } catch (error) {
+                console.error("Error approving order:", error);
+                antdMessage.error("Không duyệt được đơn, thử lại nhé.");
+            }
+        },
+        [antdMessage, firebaseApp]
     );
 
-    // Use column settings hook
-    const { columnsCheck, updateColumns, resetColumns, getVisibleColumns } =
-        useColumn({
-            defaultColumns,
-            storageKey: "orderListColumnSettings",
-        });
 
-    // Get visible columns for table
-    const visibleColumns = useMemo(() => {
-        return getVisibleColumns();
-    }, [columnsCheck, defaultColumns]);
+    // Handle delete multiple orders
+    const handleDeleteMultiple = useCallback(
+        async () => {
+            if (selectedRowKeys.length === 0) {
+                antdMessage.warning("Vui lòng chọn ít nhất một đơn hàng để xóa!");
+                return;
+            }
 
-    const stats = useMemo(() => {
-        const source = Array.isArray(filteredOrders) ? filteredOrders : [];
-        return {
-            total: source.length,
-            pending: source.filter((o) => o.status === OrderStatus.PENDING)
-                .length,
-            confirmed: source.filter((o) => o.status === OrderStatus.CONFIRMED)
-                .length,
-            in_progress: source.filter(
-                (o) => o.status === OrderStatus.IN_PROGRESS,
-            ).length,
-            on_hold: source.filter((o) => o.status === OrderStatus.ON_HOLD)
-                .length,
-            completed: source.filter((o) => o.status === OrderStatus.COMPLETED)
-                .length,
-            refund: source.filter((o) => o.status === OrderStatus.REFUND)
-                .length,
-            cancelled: source.filter((o) => o.status === OrderStatus.CANCELLED)
-                .length,
-        };
-    }, [SuperJSON.stringify(filteredOrders)]);
+            try {
+                const database = getDatabase(firebaseApp);
+                const ordersRef = ref(database, "xoxo/orders");
+                const snapshot = await get(ordersRef);
+                const ordersData = snapshot.val() || {};
+
+                // Find order IDs by code
+                const orderIds: string[] = [];
+                Object.entries(ordersData).forEach(([id, order]: [string, any]) => {
+                    if (selectedRowKeys.includes(order.code)) {
+                        orderIds.push(id);
+                    }
+                });
+
+                if (orderIds.length === 0) {
+                    antdMessage.error("Không tìm thấy đơn hàng để xóa!");
+                    return;
+                }
+
+                // Delete all orders
+                const deletePromises = orderIds.map((id) => {
+                    const orderRef = ref(database, `xoxo/orders/${id}`);
+                    return remove(orderRef);
+                });
+
+                await Promise.all(deletePromises);
+                antdMessage.success(`Đã xóa ${orderIds.length} đơn hàng thành công!`);
+                setSelectedRowKeys([]);
+            } catch (error) {
+                console.error("Error deleting orders:", error);
+                antdMessage.error("Có lỗi xảy ra khi xóa đơn hàng!");
+            }
+        },
+        [selectedRowKeys, orders, antdMessage, firebaseApp]
+    );
+
+    const tableColumns = [
+        {
+            title: 'Mã đơn',
+            dataIndex: 'code',
+            key: 'code',
+            render: (text: string) => <Tag color="blue">{text}</Tag>,
+        },
+        {
+            title: 'Khách hàng',
+            dataIndex: 'customerName',
+            key: 'customerName',
+            render: (text: string) => <Text strong>{text || "Khách lẻ"}</Text>,
+        },
+        {
+            title: 'Ngày tạo',
+            dataIndex: 'createdAt',
+            key: 'createdAt',
+            render: (date: string) => dayjs(date).format("DD/MM/YYYY HH:mm"),
+        },
+        {
+            title: 'Người tạo',
+            dataIndex: 'createdByName',
+            key: 'createdByName',
+        },
+        {
+            title: 'Trạng thái',
+            dataIndex: 'status',
+            key: 'status',
+            render: (status: OrderStatus) => {
+                const col = statusColumns.find(c => c.key === status);
+                return <Tag color={col?.color}>{col?.title || status}</Tag>;
+            }
+        },
+        {
+            title: 'Thao tác',
+            key: 'action',
+            render: (_: any, record: FirebaseOrderData) => (
+                <Space size="middle">
+                    <Button 
+                        type="link" 
+                        onClick={() => router.push(`/sale/orders/${record.code}/update`)}
+                    >
+                        Chi tiết
+                    </Button>
+                    {isAdmin && record.status === OrderStatus.PENDING && (
+                         <Button 
+                            type="link" 
+                            onClick={() => handleApprove(record, OrderStatus.CONFIRMED)}
+                        >
+                            Duyệt
+                        </Button>
+                    )}
+                    {isAdmin && record.status !== OrderStatus.PENDING && record.status !== OrderStatus.COMPLETED && record.status !== OrderStatus.CANCELLED && (
+                        <Button 
+                            type="link" 
+                            onClick={() => {
+                                const statusOrder = [
+                                    OrderStatus.CONFIRMED,
+                                    OrderStatus.IN_PROGRESS,
+                                    OrderStatus.ON_HOLD,
+                                    OrderStatus.COMPLETED,
+                                ];
+                                const currentIndex = statusOrder.indexOf(record.status);
+                                if (currentIndex !== -1 && currentIndex < statusOrder.length - 1) {
+                                    handleApprove(record, statusOrder[currentIndex + 1]);
+                                }
+                            }}
+                        >
+                            Duyệt tiếp
+                        </Button>
+                    )}
+                </Space>
+            ),
+        },
+    ];
 
     return (
         <WrapperContent
@@ -338,67 +256,42 @@ export default function OrderListPage() {
                             name: "status",
                             label: "Trạng thái",
                             type: "select",
-                            options: [
-                                {
-                                    value: OrderStatus.PENDING,
-                                    label: "Chờ xử lý",
-                                },
-                                {
-                                    value: OrderStatus.CONFIRMED,
-                                    label: "Đã xác nhận",
-                                },
-                                {
-                                    value: OrderStatus.IN_PROGRESS,
-                                    label: "Đang thực hiện",
-                                },
-                                {
-                                    value: OrderStatus.COMPLETED,
-                                    label: "Hoàn thành",
-                                },
-                                {
-                                    value: OrderStatus.REFUND,
-                                    label: "Hoàn tiền",
-                                },
-                                {
-                                    value: OrderStatus.CANCELLED,
-                                    label: "Đã hủy",
-                                },
-                            ],
+                            options: statusColumns.map((col) => ({
+                                value: col.key,
+                                label: col.title,
+                            })),
                         },
                         {
                             name: "createdAt",
                             label: "Ngày tạo",
                             type: "dateRange",
                         },
-                        {
-                            name: "customerName",
-                            label: "Khách hàng",
-                            type: "input",
-                            placeholder: "Tên khách hàng",
-                        },
-                        {
-                            name: "consultantId",
-                            label: "NV tư vấn",
-                            type: "select",
-                            options: staffOptions,
-                        },
-                        {
-                            name: "createdBy",
-                            label: "Người tạo",
-                            type: "select",
-                            options: staffOptions,
-                        },
                     ],
                     query,
-                    onApplyFilter: updateQueries,
-                    onReset: reset,
-                },
-                columnSettings: {
-                    columns: columnsCheck,
-                    onChange: updateColumns,
-                    onReset: resetColumns,
+                    onApplyFilter: (arr) => {
+                        const newQuery: any = { ...query };
+                        arr.forEach(({ key, value }) => {
+                            if (value === null || value === undefined || value === "") {
+                                delete newQuery[key];
+                            } else {
+                                newQuery[key] = value;
+                            }
+                        });
+                        setQuery(newQuery);
+                    },
+                    onReset: () => {
+                        setQuery({ search: "" });
+                    },
                 },
                 buttonEnds: [
+                    {
+                        can: selectedRowKeys.length > 0,
+                        name: `Xóa (${selectedRowKeys.length})`,
+                        icon: <DeleteOutlined />,
+                        type: "default",
+                        danger: true,
+                        onClick: handleDeleteMultiple,
+                    },
                     {
                         can: true,
                         name: "Tạo đơn hàng",
@@ -408,117 +301,26 @@ export default function OrderListPage() {
                     },
                 ],
             }}
+            isLoading={ordersLoading}
+            title="Đơn hàng"
         >
-            <div className="space-y-4">
-                <Row gutter={16}>
-                    <Col span={6}>
-                        <Card style={{ textAlign: "center" }}>
-                            <Statistic
-                                title="Tổng đơn"
-                                value={stats.total}
-                                formatter={(value) =>
-                                    formatNumber(Number(value))
-                                }
-                            />
-                        </Card>
-                    </Col>
-                    <Col span={6}>
-                        <Card style={{ textAlign: "center" }}>
-                            <Statistic
-                                title="Chờ"
-                                value={stats.pending}
-                                formatter={(value) =>
-                                    formatNumber(Number(value))
-                                }
-                                styles={{ content: { color: "#d9d9d9" } }}
-                            />
-                        </Card>
-                    </Col>
-                    <Col span={6}>
-                        <Card style={{ textAlign: "center" }}>
-                            <Statistic
-                                title="Lên đơn"
-                                value={stats.confirmed}
-                                formatter={(value) =>
-                                    formatNumber(Number(value))
-                                }
-                                styles={{ content: { color: "#fa8c16" } }}
-                            />
-                        </Card>
-                    </Col>
-                    <Col span={6}>
-                        <Card style={{ textAlign: "center" }}>
-                            <Statistic
-                                title="Sản xuất"
-                                value={stats.in_progress}
-                                formatter={(value) =>
-                                    formatNumber(Number(value))
-                                }
-                                styles={{ content: { color: "#1890ff" } }}
-                            />
-                        </Card>
-                    </Col>
-                </Row>
-                <Row gutter={16}>
-                    <Col span={6}>
-                        <Card style={{ textAlign: "center" }}>
-                            <Statistic
-                                title="Thanh toán"
-                                value={stats.on_hold}
-                                formatter={(value) =>
-                                    formatNumber(Number(value))
-                                }
-                                styles={{ content: { color: "#722ed1" } }}
-                            />
-                        </Card>
-                    </Col>
-                    <Col span={6}>
-                        <Card style={{ textAlign: "center" }}>
-                            <Statistic
-                                title="CSKH"
-                                value={stats.completed}
-                                formatter={(value) =>
-                                    formatNumber(Number(value))
-                                }
-                                styles={{ content: { color: "#52c41a" } }}
-                            />
-                        </Card>
-                    </Col>
-                    <Col span={6}>
-                        <Card style={{ textAlign: "center" }}>
-                            <Statistic
-                                title="Hoàn tiền"
-                                value={stats.refund}
-                                formatter={(value) =>
-                                    formatNumber(Number(value))
-                                }
-                                styles={{ content: { color: "#eb2f96" } }}
-                            />
-                        </Card>
-                    </Col>
-                    <Col span={6}>
-                        <Card style={{ textAlign: "center" }}>
-                            <Statistic
-                                title="Đã huỷ"
-                                value={stats.cancelled}
-                                formatter={(value) =>
-                                    formatNumber(Number(value))
-                                }
-                                styles={{ content: { color: "#ff4d4f" } }}
-                            />
-                        </Card>
-                    </Col>
-                </Row>
-                <CommonTable
-                    rowKey={"code"}
-                    columns={visibleColumns}
-                    dataSource={filteredOrders.reverse()}
-                    loading={ordersLoading || staffLoading}
-                    pagination={{ ...pagination, onChange: handlePageChange }}
-                    rank={true}
-                    paging={true}
+            <Card>
+                <Table 
+                    dataSource={filteredOrders} 
+                    columns={tableColumns} 
+                    rowKey="code"
+                    pagination={{ pageSize: 10 }}
+                    rowSelection={{
+                        selectedRowKeys,
+                        onChange: (selectedKeys) => {
+                            setSelectedRowKeys(selectedKeys);
+                        },
+                        getCheckboxProps: (record) => ({
+                            name: record.code,
+                        }),
+                    }}
                 />
-            </div>
+            </Card>
         </WrapperContent>
     );
 }

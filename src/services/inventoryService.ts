@@ -157,6 +157,9 @@ export class InventoryService {
     if (transaction.note) {
       transactionData.note = transaction.note;
     }
+    if (transaction.images && transaction.images.length > 0) {
+      transactionData.images = transaction.images;
+    }
     if (transaction.createdBy) {
       transactionData.createdBy = transaction.createdBy;
     }
@@ -193,6 +196,9 @@ export class InventoryService {
     }
     if (transaction.note) {
       returnData.note = transaction.note;
+    }
+    if (transaction.images && transaction.images.length > 0) {
+      returnData.images = transaction.images;
     }
     if (transaction.createdBy) {
       returnData.createdBy = transaction.createdBy;

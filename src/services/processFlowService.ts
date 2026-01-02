@@ -76,9 +76,6 @@ export class ProcessFlowService {
     // Update product with process instances
     await update(productRef, {
       processInstances,
-      currentProcessId: processTemplateIds[0] || undefined,
-      completedProcessIds: [],
-      processTemplateSequence: processTemplateIds,
       updatedAt: now,
     });
   }

@@ -18,7 +18,7 @@ import {
     getSourceColor,
     getSourceLabel,
 } from "@/utils/customerUtils";
-import { PlusOutlined, UserOutlined, MessageOutlined, CopyOutlined, FacebookOutlined, GlobalOutlined, PhoneOutlined, ShopOutlined, TeamOutlined, CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined, UpOutlined, DownOutlined } from "@ant-design/icons";
+import { PlusOutlined, UserOutlined, MessageOutlined, CopyOutlined, FacebookOutlined, GlobalOutlined, PhoneOutlined, ShopOutlined, TeamOutlined, CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined, UpOutlined, DownOutlined, DollarOutlined } from "@ant-design/icons";
 import { App, Card, Col, Row, Statistic, Tag, Typography, Button, Tooltip, Space } from "antd";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from "recharts";
 import { getDatabase, onValue, ref, remove } from "firebase/database";
@@ -29,6 +29,8 @@ import { IMembers } from "@/types/members";
 import dayjs from "dayjs";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { getDatePresets, getDateRangeByPreset } from "@/utils/datePresets";
+import { useRealtimeList } from "@/firebase/hooks/useRealtime";
+import { FirebaseOrderData, OrderStatus } from "@/types/order";
 
 const { Text } = Typography;
 
@@ -109,6 +111,9 @@ export default function CustomersPage() {
     
     // Show/hide reports state
     const [showReports, setShowReports] = useState(true);
+
+    // Load orders to check which customers have purchased
+    const { data: ordersData } = useRealtimeList<FirebaseOrderData>("xoxo/orders");
 
     // Load customers from Firebase
     useEffect(() => {
@@ -323,35 +328,95 @@ export default function CustomersPage() {
             return acc;
         }, {} as Record<string, number>);
 
-        // Count by customer type (Loại khách)
-        const byType = {
-            individual: source.filter((c) => c.customerType === "individual").length,
-            enterprise: source.filter((c) => c.customerType === "enterprise").length,
+        // Count by customer type (Loại khách) - OLD: Cá nhân/Doanh nghiệp
+        // NEW: Đã mua / Suy nghĩ / Khách cũ
+        const orders = ordersData || [];
+        
+        // Create a map of customer phones/codes that have orders
+        const customersWithOrders = new Set<string>();
+        orders.forEach((order) => {
+            if (order.phone) {
+                customersWithOrders.add(order.phone);
+            }
+            if (order.customerCode) {
+                customersWithOrders.add(order.customerCode);
+            }
+        });
+
+        const byGroup = {
+            purchased: 0, // Đã mua
+            considering: 0, // Suy nghĩ
+            oldCustomer: 0, // Khách cũ
         };
+
+        source.forEach((customer) => {
+            // Find all orders for this customer
+            const customerOrders = orders.filter(
+                (o) => o.phone === customer.phone || o.customerCode === customer.code
+            );
+            
+            if (customerOrders.length > 0) {
+                // Customer has orders
+                const hasCompletedOrder = customerOrders.some(
+                    (o) => o.status === OrderStatus.COMPLETED
+                );
+                
+                if (hasCompletedOrder) {
+                    // Khách cũ: Có đơn hàng đã hoàn thành
+                    byGroup.oldCustomer++;
+                } else {
+                    // Đã mua: Có đơn hàng nhưng chưa hoàn thành
+                    byGroup.purchased++;
+                }
+            } else {
+                // No order - Suy nghĩ
+                byGroup.considering++;
+            }
+        });
+
+        // Calculate total revenue and total debt from all orders
+        const totalRevenue = orders.reduce((sum, order) => {
+            return sum + (order.totalAmount || 0);
+        }, 0);
+        
+        const totalDebt = orders.reduce((sum, order) => {
+            return sum + (order.remainingDebt || 0);
+        }, 0);
 
         return {
             total: source.length,
             bySource,
             byStatus,
-            byType,
+            byType: {
+                individual: source.filter((c) => c.customerType === "individual").length,
+                enterprise: source.filter((c) => c.customerType === "enterprise").length,
+            },
+            byGroup,
+            totalRevenue,
+            totalDebt,
         };
-    }, [filteredData]);
+    }, [filteredData, ordersData]);
 
-    // Prepare pie chart data for customer type
+    // Prepare pie chart data for customer group (Đã mua / Suy nghĩ / Khách cũ)
     const customerTypeChartData = useMemo(() => {
         return [
             {
-                name: "Cá nhân",
-                value: stats.byType.individual,
+                name: "Đã mua",
+                value: stats.byGroup.purchased,
+                color: "#52c41a",
+            },
+            {
+                name: "Suy nghĩ",
+                value: stats.byGroup.considering,
                 color: "#1890ff",
             },
             {
-                name: "Doanh nghiệp",
-                value: stats.byType.enterprise,
-                color: "#52c41a",
+                name: "Khách cũ",
+                value: stats.byGroup.oldCustomer,
+                color: "#faad14",
             },
         ].filter((item) => item.value > 0);
-    }, [stats.byType]);
+    }, [stats.byGroup]);
 
     // Prepare pie chart data for status
     const statusChartData = useMemo(() => {
@@ -748,22 +813,65 @@ export default function CustomersPage() {
                         <Row gutter={[16, 16]}>
                             {/* Total Statistics - Full Width */}
                             <Col span={24}>
-                                <Card 
-                                    size="small" 
-                                    style={{ 
-                                        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                                        border: "none",
-                                        marginBottom: "16px"
-                                    }}
-                                >
-                                    <div className="flex items-center justify-center gap-4" style={{ padding: "16px" }}>
-                                        <UserOutlined style={{ fontSize: "32px", color: "#fff" }} />
-                                        <div className="flex flex-col items-center">
-                                            <Text strong style={{ fontSize: "36px", color: "#fff", lineHeight: 1 }}>{stats.total}</Text>
-                                            <Text style={{ fontSize: "16px", color: "#fff", opacity: 0.9 }}>Tổng số khách hàng</Text>
-                                        </div>
-                                    </div>
-                                </Card>
+                                <Row gutter={[16, 16]}>
+                                    <Col span={8}>
+                                        <Card 
+                                            size="small" 
+                                            style={{ 
+                                                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                                                border: "none"
+                                            }}
+                                        >
+                                            <div className="flex items-center justify-center gap-4" style={{ padding: "16px" }}>
+                                                <UserOutlined style={{ fontSize: "32px", color: "#fff" }} />
+                                                <div className="flex flex-col items-center">
+                                                    <Text strong style={{ fontSize: "36px", color: "#fff", lineHeight: 1 }}>{stats.total}</Text>
+                                                    <Text style={{ fontSize: "16px", color: "#fff", opacity: 0.9 }}>Tổng số khách hàng</Text>
+                                                </div>
+                                            </div>
+                                        </Card>
+                                    </Col>
+                                    <Col span={8}>
+                                        <Card 
+                                            size="small" 
+                                            style={{ 
+                                                background: "linear-gradient(135deg, #52c41a 0%, #389e0d 100%)",
+                                                border: "none"
+                                            }}
+                                        >
+                                            <div className="flex items-center justify-center gap-4" style={{ padding: "16px" }}>
+                                                <DollarOutlined style={{ fontSize: "32px", color: "#fff" }} />
+                                                <div className="flex flex-col items-center">
+                                                    <Text strong style={{ fontSize: "36px", color: "#fff", lineHeight: 1 }}>
+                                                        {Number(stats.totalRevenue || 0).toLocaleString('vi-VN')}
+                                                    </Text>
+                                                    <Text style={{ fontSize: "16px", color: "#fff", opacity: 0.9 }}>Tổng doanh thu (đ)</Text>
+                                                </div>
+                                            </div>
+                                        </Card>
+                                    </Col>
+                                    <Col span={8}>
+                                        <Card 
+                                            size="small" 
+                                            style={{ 
+                                                background: stats.totalDebt > 0 
+                                                    ? "linear-gradient(135deg, #ff4d4f 0%, #cf1322 100%)"
+                                                    : "linear-gradient(135deg, #52c41a 0%, #389e0d 100%)",
+                                                border: "none"
+                                            }}
+                                        >
+                                            <div className="flex items-center justify-center gap-4" style={{ padding: "16px" }}>
+                                                <DollarOutlined style={{ fontSize: "32px", color: "#fff" }} />
+                                                <div className="flex flex-col items-center">
+                                                    <Text strong style={{ fontSize: "36px", color: "#fff", lineHeight: 1 }}>
+                                                        {Number(stats.totalDebt || 0).toLocaleString('vi-VN')}
+                                                    </Text>
+                                                    <Text style={{ fontSize: "16px", color: "#fff", opacity: 0.9 }}>Tổng công nợ (đ)</Text>
+                                                </div>
+                                            </div>
+                                        </Card>
+                                    </Col>
+                                </Row>
                             </Col>
 
                             {/* Statistics By Source */}

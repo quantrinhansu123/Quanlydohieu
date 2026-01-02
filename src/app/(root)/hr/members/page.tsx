@@ -9,6 +9,7 @@ import { useRealtimeList } from "@/firebase/hooks/useRealtimeList";
 import useFilter from "@/hooks/useFilter";
 import { DepartmentService, IDepartment } from "@/services/departmentService";
 import { MemberService } from "@/services/memberService";
+import Link from "next/link";
 import { SalaryService } from "@/services/salaryService";
 import { RoleLabels, ROLES, RolesOptions } from "@/types/enum";
 import { IMembers } from "@/types/members";
@@ -41,6 +42,7 @@ import {
     DatePicker,
     Descriptions,
     Drawer,
+    Empty,
     Form,
     Input,
     InputNumber,
@@ -1135,6 +1137,10 @@ const MemberForm: React.FC<MemberFormProps> = ({
         [],
     );
     const { message, modal } = App.useApp();
+
+    useEffect(() => {
+        console.log("MemberForm visible changed:", visible);
+    }, [visible]);
 
     // Load departments
     useEffect(() => {
@@ -2371,7 +2377,9 @@ const MembersPage = () => {
 
     // Load data
     useEffect(() => {
+        console.log("Loading members from Firebase...");
         const unsubscribeMembers = MemberService.onSnapshot((data) => {
+            console.log("Members loaded:", data.length, data);
             setMembers(data);
             setLoading(false);
         });
@@ -2438,8 +2446,14 @@ const MembersPage = () => {
     }, []);
 
     const handleAddNewMember = useCallback(() => {
+        console.log("handleAddNewMember called");
         setEditingMember(undefined);
         setFormVisible(true);
+        console.log("formVisible should be true now");
+        // Force re-render to ensure form appears
+        setTimeout(() => {
+            console.log("Form should be visible now");
+        }, 100);
     }, []);
 
     const handleImportFile = useCallback(() => {
@@ -2606,7 +2620,7 @@ const MembersPage = () => {
         <WrapperContent<IMembers>
             title="Quản lý nhân viên"
             isLoading={loading}
-            isEmpty={filteredMembers.length === 0}
+            isEmpty={filteredMembers.length === 0 && !loading}
             header={{
                 searchInput: {
                     placeholder: "Tìm theo mã, tên nhân viên",
@@ -2659,7 +2673,7 @@ const MembersPage = () => {
                     {
                         can: true,
                         type: "primary",
-                        name: "Nhân viên",
+                        name: "ADD",
                         icon: <PlusOutlined />,
                         onClick: handleAddNewMember,
                     },
@@ -2684,19 +2698,31 @@ const MembersPage = () => {
                 ],
             }}
         >
-            <CommonTable
-                rowKey="id"
-                dataSource={reversedFilteredMembers}
-                columns={visibleColumns}
-                loading={loading}
-                DrawerDetails={MemberDetails}
-                pagination={paginationConfig}
-                paging={true}
-                rank={true}
-                rowSelection={rowSelection}
-            />
+            {!loading && filteredMembers.length === 0 && members.length === 0 && (
+                <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+                    <Empty description="Chưa có dữ liệu nhân viên" />
+                    <Link href="/hr/members/seed">
+                        <Button type="primary" size="large">
+                            Tạo dữ liệu mẫu nhân viên
+                        </Button>
+                    </Link>
+                </div>
+            )}
+            {((!loading && filteredMembers.length > 0) || (loading && members.length > 0)) && (
+                <>
+                    <CommonTable
+                        rowKey="id"
+                        dataSource={reversedFilteredMembers}
+                        columns={visibleColumns}
+                        loading={loading}
+                        DrawerDetails={MemberDetails}
+                        pagination={paginationConfig}
+                        paging={true}
+                        rank={true}
+                        rowSelection={rowSelection}
+                    />
 
-            <Drawer
+                    <Drawer
                 width={900}
                 title={
                     ordersDrawerMember
@@ -2712,16 +2738,18 @@ const MembersPage = () => {
                         orders={ordersData || []}
                     />
                 )}
-            </Drawer>
+                    </Drawer>
 
-            <MemberForm
-                member={editingMember}
-                visible={formVisible}
-                onCancel={handleCloseForm}
-                onSuccess={() => {
-                    // Data will be updated through realtime listener
-                }}
-            />
+                    <MemberForm
+                        member={editingMember}
+                        visible={formVisible}
+                        onCancel={handleCloseForm}
+                        onSuccess={() => {
+                            // Data will be updated through realtime listener
+                        }}
+                    />
+                </>
+            )}
         </WrapperContent>
     );
 };

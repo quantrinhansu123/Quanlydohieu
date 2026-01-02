@@ -107,6 +107,8 @@ export const FilterList: React.FC<FilterListProps> = ({
         onApplyFilter(payload);
     };
 
+    const isHorizontal = layout === "horizontal";
+    
     const renderField = (field: FilterField) => {
         switch (field.type) {
             case "input":
@@ -116,11 +118,13 @@ export const FilterList: React.FC<FilterListProps> = ({
                         name={field.name}
                         label={field.label}
                         className="mb-2"
+                        style={isHorizontal ? { marginBottom: 0, minWidth: "150px", flexShrink: 0 } : undefined}
                     >
                         <Input
                             placeholder={field.placeholder || field.label}
                             allowClear
                             size="small"
+                            style={isHorizontal ? { minWidth: "150px" } : undefined}
                         />
                     </Form.Item>
                 );
@@ -155,6 +159,7 @@ export const FilterList: React.FC<FilterListProps> = ({
                         name={field.name}
                         label={field.label}
                         className="mb-2"
+                        style={isHorizontal ? { marginBottom: 0, minWidth: "150px" } : undefined}
                     >
                         {field.onAddNew ? (
                             <Space.Compact style={{ width: "100%" }}>
@@ -189,6 +194,7 @@ export const FilterList: React.FC<FilterListProps> = ({
                                 }
                                 allowClear
                                 size="small"
+                                style={isHorizontal ? { minWidth: "150px", width: "100%" } : undefined}
                             />
                         )}
                     </Form.Item>
@@ -201,12 +207,14 @@ export const FilterList: React.FC<FilterListProps> = ({
                         name={field.name}
                         label={field.label}
                         className="mb-2"
+                        style={isHorizontal ? { marginBottom: 0, minWidth: "180px", flexShrink: 0 } : undefined}
                     >
                         <DatePicker
                             className="w-full"
                             placeholder={field.placeholder || field.label}
                             picker="month"
                             size="small"
+                            style={isHorizontal ? { minWidth: "180px" } : undefined}
                         />
                     </Form.Item>
                 );
@@ -218,11 +226,13 @@ export const FilterList: React.FC<FilterListProps> = ({
                         name={field.name}
                         label={field.label}
                         className="mb-2"
+                        style={isHorizontal ? { marginBottom: 0, minWidth: "180px", flexShrink: 0 } : undefined}
                     >
                         <DatePicker
                             className="w-full"
                             placeholder={field.placeholder || field.label}
                             size="small"
+                            style={isHorizontal ? { minWidth: "180px" } : undefined}
                         />
                     </Form.Item>
                 );
@@ -234,6 +244,7 @@ export const FilterList: React.FC<FilterListProps> = ({
                         name={field.name}
                         label={field.label}
                         className="mb-2"
+                        style={isHorizontal ? { marginBottom: 0, minWidth: "250px", flexShrink: 0 } : undefined}
                     >
                         <DatePicker.RangePicker
                             className="w-full"
@@ -286,8 +297,6 @@ export const FilterList: React.FC<FilterListProps> = ({
         return null;
     }
 
-    const isHorizontal = layout === "horizontal";
-
     return (
         <Card title={instant ? "Bộ lọc" : null} className="h-fit">
             {!instant && !isHorizontal && (
@@ -303,9 +312,14 @@ export const FilterList: React.FC<FilterListProps> = ({
                 form={form}
                 onFinish={handleFinish}
                 onValuesChange={handleValuesChange}
+                style={isHorizontal ? { display: "flex", flexWrap: "nowrap", gap: "12px", alignItems: "flex-end", width: "100%" } : undefined}
             >
-                <div className={isHorizontal ? "flex flex-wrap gap-3 items-end" : "space-y-4"}>
-                    {fields.map((field) => renderField(field))}
+                <div className={isHorizontal ? "flex flex-nowrap gap-3 items-end" : "space-y-4"} style={isHorizontal ? { flexWrap: "nowrap", overflowX: "auto", width: "100%", display: "flex" } : undefined}>
+                    {fields.map((field) => (
+                        <div key={field.name} className={isHorizontal ? "flex-shrink-0" : ""} style={isHorizontal ? { minWidth: "fit-content" } : undefined}>
+                            {renderField(field)}
+                        </div>
+                    ))}
 
                     {!instant && isHorizontal && (
                         <div className="flex gap-2">

@@ -13,6 +13,7 @@ import type {
 import { genCode } from '@/utils/genCode';
 import type { FirebaseApp } from 'firebase/app';
 import { getDatabase, ref, remove, set, update } from 'firebase/database';
+import { OperationalWorkflowService } from './operationalWorkflowService';
 
 // ==================== HELPER FUNCTIONS ====================
 
@@ -249,7 +250,7 @@ export async function updateWorkflowStaff(
 }
 
 /**
- * Delete an order
+ * Delete an order and related operational workflow items
  */
 export async function deleteOrder(
   firebaseApp: FirebaseApp,
@@ -257,7 +258,17 @@ export async function deleteOrder(
 ): Promise<void> {
   const db = getDB(firebaseApp);
   const orderRef = ref(db, `xoxo/orders/${orderCode}`);
+  
+  // Delete order
   await remove(orderRef);
+  
+  // Also delete related operational workflow items
+  try {
+    await OperationalWorkflowService.deleteItemsByOrderCode(orderCode);
+  } catch (error) {
+    console.warn('Error deleting workflow items (non-critical):', error);
+    // Don't throw - order deletion should succeed even if workflow items deletion fails
+  }
 }
 
 /**

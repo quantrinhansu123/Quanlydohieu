@@ -4,17 +4,47 @@ import WrapperContent from "@/components/WrapperContent";
 import { allMenuItems } from "@/configs/menu";
 import ROLES_CONFIG from "@/configs/role";
 import { useUser } from "@/firebase/provider";
-import { Card, Col, Row, Typography, theme } from "antd";
+import { useRealtimeList } from "@/firebase/hooks/useRealtime";
+import { MaterialOrder, PurchaseRequest } from "@/types/inventory";
+import { Badge, Card, Col, Row, Typography, theme, Tooltip } from "antd";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import dayjs from "dayjs";
 
 const { Title } = Typography;
+
+// Add blinking animation style
+const blinkStyle = `
+  @keyframes blink {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.5;
+      transform: scale(1.1);
+    }
+  }
+`;
 
 export default function CenterPage() {
   const { token } = theme.useToken();
   const { user, isUserLoading } = useUser();
   const [userRole, setUserRole] = useState<string | null>(null);
   const [allowedPaths, setAllowedPaths] = useState<string[]>([]);
+  
+  // Fetch pending requests for badges
+  const { data: materialOrdersData } = useRealtimeList<MaterialOrder>("xoxo/material_orders");
+  const { data: purchaseRequestsData } = useRealtimeList<PurchaseRequest>("xoxo/purchase_requests");
+  
+  // Count pending requests
+  const pendingMaterialOrdersCount = useMemo(() => {
+    return (materialOrdersData || []).filter(order => order.status === "pending").length;
+  }, [materialOrdersData]);
+  
+  const pendingPurchaseRequestsCount = useMemo(() => {
+    return (purchaseRequestsData || []).filter(request => request.status === "pending").length;
+  }, [purchaseRequestsData]);
 
   // Get user role from token
   useEffect(() => {
@@ -115,8 +145,10 @@ export default function CenterPage() {
   }
 
   return (
-    <WrapperContent header={{}}>
-      {filteredMenuItems.map((section, sectionIndex) => {
+    <>
+      <style>{blinkStyle}</style>
+      <WrapperContent header={{}}>
+        {filteredMenuItems.map((section, sectionIndex) => {
         // Skip if section has direct href (like dashboard)
         if (section.href) {
           return null;
@@ -157,6 +189,15 @@ export default function CenterPage() {
             <Row gutter={[16, 16]}>
               {section.children.map((child, childIndex) => {
                 const IconComponent = child.icon;
+                
+                // Get badge count based on href
+                let badgeCount = 0;
+                if (child.href === "/inventory/material-orders") {
+                  badgeCount = pendingMaterialOrdersCount;
+                } else if (child.href === "/inventory/purchase-requests" || child.title?.includes("Phiếu đề xuất mua")) {
+                  badgeCount = pendingPurchaseRequestsCount;
+                }
+                
                 return (
                   <Col
                     key={childIndex}
@@ -173,9 +214,10 @@ export default function CenterPage() {
                         style={{
                           height: "100%",
                           borderRadius: token.borderRadius,
-                          border: "none", // Removed border as requested
-                          boxShadow: "none", // Optional: cleaner look without shadow until hover
+                          border: "none",
+                          boxShadow: "none",
                           transition: "all 0.3s",
+                          position: "relative",
                         }}
                         styles={{
                           body: {
@@ -189,6 +231,23 @@ export default function CenterPage() {
                           },
                         }}
                       >
+                        {/* Badge for pending requests - on top right corner of card */}
+                        {badgeCount > 0 && (
+                          <Tooltip title={`${badgeCount} phiếu cần xử lý - ${dayjs().format("HH:mm DD/MM/YYYY")}`}>
+                            <Badge
+                              count={badgeCount}
+                              style={{
+                                position: "absolute",
+                                top: 0,
+                                right: 0,
+                                zIndex: 10,
+                                animation: "blink 1.5s ease-in-out infinite",
+                              }}
+                              size="default"
+                              offset={[-4, 4]}
+                            />
+                          </Tooltip>
+                        )}
                         <span
                           style={{
                             fontSize: 24,
@@ -224,6 +283,7 @@ export default function CenterPage() {
           </Card>
         );
       })}
-    </WrapperContent>
+      </WrapperContent>
+    </>
   );
 }

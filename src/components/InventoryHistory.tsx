@@ -160,7 +160,20 @@ export default function InventoryHistory() {
       }
       return true;
     })
-  );
+  ).sort((a, b) => {
+    // Sắp xếp theo ngày giảm dần (mới nhất trước)
+    const dateA = dayjs(a.date).unix();
+    const dateB = dayjs(b.date).unix();
+    if (dateA !== dateB) {
+      return dateB - dateA;
+    }
+    // Nếu cùng ngày, sắp xếp theo createdAt giảm dần
+    return (b.createdAt || 0) - (a.createdAt || 0);
+  });
+
+  // Tách thành 2 danh sách: nhập và xuất
+  const importTransactions = filteredTransactions.filter((t) => t.type === "import");
+  const exportTransactions = filteredTransactions.filter((t) => t.type === "export");
 
   // Calculate statistics
   const totalImport = filteredTransactions
@@ -223,7 +236,7 @@ export default function InventoryHistory() {
     {
       title: "Mã giao dịch",
       dataIndex: "code",
-      key: "id",
+      key: "code",
       width: 150,
       fixed: "left",
       render: (code: string) => (
@@ -237,20 +250,17 @@ export default function InventoryHistory() {
       dataIndex: "date",
       key: "date",
       width: 120,
-      sorter: (a: InventoryTransaction, b: InventoryTransaction) =>
-        dayjs(a.date).unix() - dayjs(b.date).unix(),
+      sorter: (a: InventoryTransaction, b: InventoryTransaction) => {
+        // Sắp xếp giảm dần (mới nhất trước)
+        const dateA = dayjs(a.date).unix();
+        const dateB = dayjs(b.date).unix();
+        if (dateA !== dateB) {
+          return dateB - dateA;
+        }
+        return (b.createdAt || 0) - (a.createdAt || 0);
+      },
+      defaultSortOrder: "descend" as const,
       render: (date: string) => dayjs(date).format("DD/MM/YYYY"),
-    },
-    {
-      title: "Loại",
-      dataIndex: "type",
-      key: "type",
-      width: 100,
-      render: (type: string) => (
-        <Tag color={type === "import" ? "green" : "red"}>
-          {type === "import" ? "Nhập" : "Xuất"}
-        </Tag>
-      ),
     },
     {
       title: "Vật liệu",
@@ -414,84 +424,122 @@ export default function InventoryHistory() {
       }}
       isEmpty={!filteredTransactions?.length}
     >
-      {/* Statistics */}
-      <Row gutter={[16, 16]} className="mb-6">
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
+      {/* Statistics - Compact on one line */}
+      <Card className="mb-4">
+        <Row gutter={[24, 0]} align="middle">
+          <Col flex="auto">
             <Statistic
               title="Tổng giao dịch"
               value={filteredTransactions.length}
               suffix="giao dịch"
+              valueStyle={{ fontSize: 16 }}
             />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
+          </Col>
+          <Col flex="auto">
             <Statistic
-              title="Số lần nhập"
+              title="Nhập"
               value={importCount}
               suffix="lần"
-              valueStyle={{ color: "#3f8600" }}
+              valueStyle={{ color: "#3f8600", fontSize: 16 }}
             />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
+          </Col>
+          <Col flex="auto">
             <Statistic
-              title="Số lần xuất"
+              title="Xuất"
               value={exportCount}
               suffix="lần"
-              valueStyle={{ color: "#cf1322" }}
+              valueStyle={{ color: "#cf1322", fontSize: 16 }}
             />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
+          </Col>
+          <Col flex="auto">
             <Statistic
-              title="Tổng giá trị nhập"
+              title="Tổng nhập"
               value={totalImport}
               prefix="+"
-              suffix="VND"
-              valueStyle={{ color: "#3f8600" }}
+              suffix="VNĐ"
+              valueStyle={{ color: "#3f8600", fontSize: 16 }}
             />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
+          </Col>
+          <Col flex="auto">
             <Statistic
-              title="Tổng giá trị xuất"
+              title="Tổng xuất"
               value={totalExport}
               prefix="-"
-              suffix="VND"
-              valueStyle={{ color: "#cf1322" }}
+              suffix="VNĐ"
+              valueStyle={{ color: "#cf1322", fontSize: 16 }}
             />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
+          </Col>
+          <Col flex="auto">
             <Statistic
               title="Chênh lệch"
               value={totalImport - totalExport}
-              suffix="VND"
+              suffix="VNĐ"
               valueStyle={{
                 color: totalImport - totalExport >= 0 ? "#3f8600" : "#cf1322",
+                fontSize: 16,
               }}
+            />
+          </Col>
+        </Row>
+      </Card>
+
+      {/* Two tables side by side: Import and Export */}
+      <Row gutter={[16, 16]}>
+        <Col xs={24} lg={12}>
+          <Card 
+            title={
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <Tag color="green">NHẬP KHO</Tag>
+                <Text type="secondary" style={{ fontSize: 12 }}>
+                  ({importTransactions.length} giao dịch)
+                </Text>
+              </div>
+            }
+          >
+            <CommonTable<InventoryTransaction>
+              columns={columns.filter(col => col.key !== "type")}
+              dataSource={importTransactions}
+              pagination={{
+                current: 1,
+                limit: 10,
+                onChange: (page: number, pageSize?: number) => {
+                  // Handle pagination if needed
+                },
+              }}
+              loading={loading}
+              rank
+              paging
+            />
+          </Card>
+        </Col>
+        <Col xs={24} lg={12}>
+          <Card 
+            title={
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <Tag color="red">XUẤT KHO</Tag>
+                <Text type="secondary" style={{ fontSize: 12 }}>
+                  ({exportTransactions.length} giao dịch)
+                </Text>
+              </div>
+            }
+          >
+            <CommonTable<InventoryTransaction>
+              columns={columns.filter(col => col.key !== "type")}
+              dataSource={exportTransactions}
+              pagination={{
+                current: 1,
+                limit: 10,
+                onChange: (page: number, pageSize?: number) => {
+                  // Handle pagination if needed
+                },
+              }}
+              loading={loading}
+              rank
+              paging
             />
           </Card>
         </Col>
       </Row>
-
-      <CommonTable<InventoryTransaction>
-        columns={columns}
-        dataSource={filteredTransactions}
-        pagination={{
-          ...pagination,
-          onChange: handlePageChange,
-        }}
-        loading={loading}
-        rank
-        paging
-      />
     </WrapperContent>
   );
 }

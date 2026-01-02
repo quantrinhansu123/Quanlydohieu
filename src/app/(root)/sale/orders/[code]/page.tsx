@@ -29,6 +29,8 @@ import {
     DeliveryMethod,
     FirebaseOrderData,
     FirebaseWorkflowData,
+    FirebaseWorkflows,
+    FirebaseDepartments,
     OrderStatus,
 } from "@/types/order";
 import { getFallback } from "@/utils/getFallBack";
@@ -38,10 +40,16 @@ import {
     DownloadOutlined,
     EditOutlined,
     PhoneOutlined,
+    PlusOutlined,
     SaveOutlined,
     TagOutlined,
     UploadOutlined,
     UserOutlined,
+    BankOutlined,
+    DeploymentUnitOutlined,
+    TeamOutlined,
+    ClockCircleOutlined,
+    DeleteOutlined,
 } from "@ant-design/icons";
 import {
     Alert,
@@ -50,16 +58,18 @@ import {
     Button,
     Card,
     Col,
+    DatePicker,
     Descriptions,
     Empty,
+    Form,
     Image,
+    Input,
     Modal,
     Progress,
     QRCode,
     Row,
     Select,
     Space,
-    Steps,
     Tag,
     Typography,
     Upload,
@@ -72,8 +82,13 @@ import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import superjson from "superjson";
+import { ROLES } from "@/types/enum";
+import { groupMembersByRole } from "@/utils/membersMapRole";
+import { useRealtimeList } from "@/firebase/hooks/useRealtime";
+import type { Workflow } from "@/types/workflow";
 
 const { Text, Title } = Typography;
+const { Option } = Select;
 
 const getStatusInfo = (status: OrderStatus) => {
     const info = {
@@ -117,6 +132,33 @@ export default function OrderDetailPage() {
     const { data: membersData, isLoading: membersLoading } = useRealtimeValue<{
         [key: string]: IMembers;
     }>("xoxo/members");
+    
+    // Load workflows and departments for adding workflows
+    const { data: workflowsData } = useRealtimeList<Workflow>("xoxo/workflows");
+    const { data: departmentsData } = useRealtimeList<any>("xoxo/departments");
+    
+    const workflows = useMemo(() => {
+        if (!workflowsData) return {};
+        const workflowsMap: FirebaseWorkflows = {};
+        workflowsData.forEach((item: any) => {
+            workflowsMap[item.id] = item.data || item;
+        });
+        return workflowsMap;
+    }, [workflowsData]);
+    
+    const departments = useMemo(() => {
+        if (!departmentsData) return {};
+        const departmentsMap: FirebaseDepartments = {};
+        departmentsData.forEach((item: any) => {
+            departmentsMap[item.id] = item.data || item;
+        });
+        return departmentsMap;
+    }, [departmentsData]);
+    
+    const memberOptions = useMemo(() => {
+        if (!membersData) return {};
+        return groupMembersByRole(membersData);
+    }, [membersData]);
 
     // Lấy thông tin nhân viên tư vấn
     const consultantInfo = useMemo(() => {
@@ -255,8 +297,7 @@ export default function OrderDetailPage() {
             );
             if (productsWithoutImages.length > 0) {
                 reasons.push(
-                    `Có ${
-                        productsWithoutImages.length
+                    `Có ${productsWithoutImages.length
                     } sản phẩm chưa có ảnh: ${productsWithoutImages
                         .map(([_, p]) => p.name)
                         .join(", ")}`,
@@ -310,8 +351,7 @@ export default function OrderDetailPage() {
 
             if (incompleteWorkflows.length > 0) {
                 reasons.push(
-                    `Có ${
-                        incompleteWorkflows.length
+                    `Có ${incompleteWorkflows.length
                     } công đoạn chưa hoàn thành: ${incompleteWorkflows
                         .map((w) => `${w.workflowName} (${w.productName})`)
                         .join(", ")}`,
@@ -387,8 +427,8 @@ export default function OrderDetailPage() {
                                     "Bảo hành theo tiêu chuẩn XOXO",
                                     user?.uid,
                                     user?.displayName ||
-                                        user?.email ||
-                                        "Người dùng hiện tại",
+                                    user?.email ||
+                                    "Người dùng hiện tại",
                                 );
                             } catch (warrantyError) {
                                 console.error(
@@ -439,8 +479,8 @@ export default function OrderDetailPage() {
                         orderCode,
                         user?.uid,
                         user?.displayName ||
-                            user?.email ||
-                            "Người dùng hiện tại",
+                        user?.email ||
+                        "Người dùng hiện tại",
                     );
                 } catch (financeError) {
                     console.error(
@@ -467,8 +507,8 @@ export default function OrderDetailPage() {
                         orderCode,
                         user?.uid,
                         user?.displayName ||
-                            user?.email ||
-                            "Người dùng hiện tại",
+                        user?.email ||
+                        "Người dùng hiện tại",
                     );
                 } catch (financeError) {
                     console.error(
@@ -500,9 +540,8 @@ export default function OrderDetailPage() {
             const uploadedImages = [];
 
             for (const file of fileList) {
-                const fileName = `orders/${orderCode}/${productId}/completion_${Date.now()}_${
-                    file.name
-                }`;
+                const fileName = `orders/${orderCode}/${productId}/completion_${Date.now()}_${file.name
+                    }`;
                 const storageRef = ref(storage, fileName);
 
                 const snapshot = await uploadBytes(storageRef, file);
@@ -626,38 +665,38 @@ export default function OrderDetailPage() {
                     },
                     ...(order?.phone
                         ? [
-                              {
-                                  name: "Gọi điện",
-                                  icon: <PhoneOutlined />,
-                                  type: "default" as const,
-                                  can: true,
-                                  onClick: () =>
-                                      (window.location.href = `tel:${order?.phone}`),
-                              },
-                          ]
+                            {
+                                name: "Gọi điện",
+                                icon: <PhoneOutlined />,
+                                type: "default" as const,
+                                can: true,
+                                onClick: () =>
+                                    (window.location.href = `tel:${order?.phone}`),
+                            },
+                        ]
                         : []),
                     ...(order?.status !== OrderStatus.COMPLETED &&
-                    order?.status !== OrderStatus.CANCELLED &&
-                    order?.status !== OrderStatus.REFUND
+                        order?.status !== OrderStatus.CANCELLED &&
+                        order?.status !== OrderStatus.REFUND
                         ? [
-                              {
-                                  name: "Cập nhật trạng thái",
-                                  icon: <SaveOutlined />,
-                                  type: "primary" as const,
-                                  can: order?.status !== OrderStatus.PENDING,
-                                  onClick: () => setStatusModalVisible(true),
-                              },
-                              {
-                                  name: "Chỉnh sửa",
-                                  icon: <EditOutlined />,
-                                  type: "default" as const,
-                                  can: true,
-                                  onClick: () =>
-                                      router.push(
-                                          `/sale/orders/${orderCode}/update`,
-                                      ),
-                              },
-                          ]
+                            {
+                                name: order?.status === OrderStatus.PENDING ? "Duyệt đơn hàng" : "Cập nhật trạng thái",
+                                icon: <SaveOutlined />,
+                                type: "primary" as const,
+                                can: true,
+                                onClick: () => setStatusModalVisible(true),
+                            },
+                            {
+                                name: "Chỉnh sửa",
+                                icon: <EditOutlined />,
+                                type: "default" as const,
+                                can: true,
+                                onClick: () =>
+                                    router.push(
+                                        `/sale/orders/${orderCode}/update`,
+                                    ),
+                            },
+                        ]
                         : []),
                 ],
             }}
@@ -677,7 +716,7 @@ export default function OrderDetailPage() {
                                     color={
                                         getStatusInfo(
                                             order?.status ||
-                                                OrderStatus.PENDING,
+                                            OrderStatus.PENDING,
                                         ).color
                                     }
                                     className="text-lg px-4 py-2"
@@ -685,7 +724,7 @@ export default function OrderDetailPage() {
                                     {
                                         getStatusInfo(
                                             order?.status ||
-                                                OrderStatus.PENDING,
+                                            OrderStatus.PENDING,
                                         ).text
                                     }
                                 </Tag>
@@ -778,6 +817,9 @@ export default function OrderDetailPage() {
                                             onImageUpload={handleImageUpload}
                                             uploading={uploading}
                                             orderCode={orderCode}
+                                            workflows={workflows}
+                                            departments={departments}
+                                            memberOptions={memberOptions}
                                         />
                                     ))}
                                 </div>
@@ -874,18 +916,18 @@ export default function OrderDetailPage() {
                                         <Text strong>Feedback khách hàng:</Text>
                                         {order?.status ===
                                             OrderStatus.COMPLETED && (
-                                            <Button
-                                                size="small"
-                                                type="primary"
-                                                onClick={() =>
-                                                    setFeedbackModalVisible(
-                                                        true,
-                                                    )
-                                                }
-                                            >
-                                                Thêm Feedback
-                                            </Button>
-                                        )}
+                                                <Button
+                                                    size="small"
+                                                    type="primary"
+                                                    onClick={() =>
+                                                        setFeedbackModalVisible(
+                                                            true,
+                                                        )
+                                                    }
+                                                >
+                                                    Thêm Feedback
+                                                </Button>
+                                            )}
                                     </div>
                                     {feedbacks.length > 0 ? (
                                         <div className="mt-2 space-y-2">
@@ -919,8 +961,8 @@ export default function OrderDetailPage() {
                                                             >
                                                                 {
                                                                     FeedbackTypeLabels[
-                                                                        feedback
-                                                                            .feedbackType
+                                                                    feedback
+                                                                        .feedbackType
                                                                     ]
                                                                 }
                                                             </Tag>
@@ -999,60 +1041,60 @@ export default function OrderDetailPage() {
                                                     <Tag>
                                                         {order.deliveryInfo
                                                             .method ===
-                                                        DeliveryMethod.SHIP
+                                                            DeliveryMethod.SHIP
                                                             ? "Gửi ship"
                                                             : order.deliveryInfo
-                                                                    .method ===
+                                                                .method ===
                                                                 DeliveryMethod.PICKUP
-                                                              ? "Khách qua lấy"
-                                                              : "Lưu kho"}
+                                                                ? "Khách qua lấy"
+                                                                : "Lưu kho"}
                                                     </Tag>
                                                 </div>
                                                 {order.deliveryInfo
                                                     .shippingAddress && (
-                                                    <div>
-                                                        <Text strong>
-                                                            Địa chỉ:{" "}
-                                                        </Text>
-                                                        <Text>
-                                                            {
-                                                                order
-                                                                    .deliveryInfo
-                                                                    .shippingAddress
-                                                            }
-                                                        </Text>
-                                                    </div>
-                                                )}
+                                                        <div>
+                                                            <Text strong>
+                                                                Địa chỉ:{" "}
+                                                            </Text>
+                                                            <Text>
+                                                                {
+                                                                    order
+                                                                        .deliveryInfo
+                                                                        .shippingAddress
+                                                                }
+                                                            </Text>
+                                                        </div>
+                                                    )}
                                                 {order.deliveryInfo
                                                     .trackingNumber && (
-                                                    <div>
-                                                        <Text strong>
-                                                            Mã vận đơn:{" "}
-                                                        </Text>
-                                                        <Text>
-                                                            {
-                                                                order
-                                                                    .deliveryInfo
-                                                                    .trackingNumber
-                                                            }
-                                                        </Text>
-                                                    </div>
-                                                )}
+                                                        <div>
+                                                            <Text strong>
+                                                                Mã vận đơn:{" "}
+                                                            </Text>
+                                                            <Text>
+                                                                {
+                                                                    order
+                                                                        .deliveryInfo
+                                                                        .trackingNumber
+                                                                }
+                                                            </Text>
+                                                        </div>
+                                                    )}
                                                 {order.deliveryInfo
                                                     .storageLocation && (
-                                                    <div>
-                                                        <Text strong>
-                                                            Vị trí lưu kho:{" "}
-                                                        </Text>
-                                                        <Text>
-                                                            {
-                                                                order
-                                                                    .deliveryInfo
-                                                                    .storageLocation
-                                                            }
-                                                        </Text>
-                                                    </div>
-                                                )}
+                                                        <div>
+                                                            <Text strong>
+                                                                Vị trí lưu kho:{" "}
+                                                            </Text>
+                                                            <Text>
+                                                                {
+                                                                    order
+                                                                        .deliveryInfo
+                                                                        .storageLocation
+                                                                }
+                                                            </Text>
+                                                        </div>
+                                                    )}
                                                 <div>
                                                     <Text strong>
                                                         Trạng thái:{" "}
@@ -1062,37 +1104,37 @@ export default function OrderDetailPage() {
                                                             order.deliveryInfo
                                                                 .status ===
                                                                 "delivered" ||
-                                                            order.deliveryInfo
-                                                                .status ===
+                                                                order.deliveryInfo
+                                                                    .status ===
                                                                 "picked_up"
                                                                 ? "green"
                                                                 : order
-                                                                        .deliveryInfo
-                                                                        .status ===
+                                                                    .deliveryInfo
+                                                                    .status ===
                                                                     "in_transit"
-                                                                  ? "blue"
-                                                                  : "default"
+                                                                    ? "blue"
+                                                                    : "default"
                                                         }
                                                     >
                                                         {order.deliveryInfo
                                                             .status ===
-                                                        "pending"
+                                                            "pending"
                                                             ? "Chờ xử lý"
                                                             : order.deliveryInfo
-                                                                    .status ===
+                                                                .status ===
                                                                 "in_transit"
-                                                              ? "Đang vận chuyển"
-                                                              : order
-                                                                      .deliveryInfo
-                                                                      .status ===
-                                                                  "delivered"
-                                                                ? "Đã giao"
+                                                                ? "Đang vận chuyển"
                                                                 : order
+                                                                    .deliveryInfo
+                                                                    .status ===
+                                                                    "delivered"
+                                                                    ? "Đã giao"
+                                                                    : order
                                                                         .deliveryInfo
                                                                         .status ===
-                                                                    "picked_up"
-                                                                  ? "Đã lấy"
-                                                                  : "Đã lưu kho"}
+                                                                        "picked_up"
+                                                                        ? "Đã lấy"
+                                                                        : "Đã lưu kho"}
                                                     </Tag>
                                                 </div>
                                             </div>
@@ -1166,8 +1208,8 @@ export default function OrderDetailPage() {
                                                             >
                                                                 {
                                                                     AppointmentStatusLabels[
-                                                                        appointment
-                                                                            .status
+                                                                    appointment
+                                                                        .status
                                                                     ]
                                                                 }
                                                             </Tag>
@@ -1250,30 +1292,30 @@ export default function OrderDetailPage() {
                                                         <Tag
                                                             color={
                                                                 refund.status ===
-                                                                "approved"
+                                                                    "approved"
                                                                     ? "green"
                                                                     : refund.status ===
                                                                         "rejected"
-                                                                      ? "red"
-                                                                      : refund.status ===
-                                                                          "processed"
-                                                                        ? "blue"
-                                                                        : "orange"
+                                                                        ? "red"
+                                                                        : refund.status ===
+                                                                            "processed"
+                                                                            ? "blue"
+                                                                            : "orange"
                                                             }
                                                         >
                                                             {refund.status ===
-                                                            "pending"
+                                                                "pending"
                                                                 ? "Chờ duyệt"
                                                                 : refund.status ===
                                                                     "approved"
-                                                                  ? "Đã duyệt"
-                                                                  : refund.status ===
-                                                                      "rejected"
-                                                                    ? "Từ chối"
+                                                                    ? "Đã duyệt"
                                                                     : refund.status ===
-                                                                        "processed"
-                                                                      ? "Đã xử lý"
-                                                                      : "Đã hủy"}
+                                                                        "rejected"
+                                                                        ? "Từ chối"
+                                                                        : refund.status ===
+                                                                            "processed"
+                                                                            ? "Đã xử lý"
+                                                                            : "Đã hủy"}
                                                         </Tag>
                                                         <Text
                                                             strong
@@ -1291,12 +1333,12 @@ export default function OrderDetailPage() {
                                                         </Text>
                                                         <Text>
                                                             {refund.type ===
-                                                            "full"
+                                                                "full"
                                                                 ? "Hoàn tiền toàn bộ"
                                                                 : refund.type ===
                                                                     "partial"
-                                                                  ? "Hoàn tiền một phần"
-                                                                  : "Bồi thường"}
+                                                                    ? "Hoàn tiền một phần"
+                                                                    : "Bồi thường"}
                                                         </Text>
                                                     </div>
                                                     <div className="mt-1">
@@ -1394,7 +1436,7 @@ export default function OrderDetailPage() {
                                                         order.deposit || 0
                                                     ).toLocaleString("vi-VN")}
                                                     {order.depositType ===
-                                                    "percentage"
+                                                        "percentage"
                                                         ? "%"
                                                         : " VNĐ"}
                                                     ) :
@@ -1415,12 +1457,12 @@ export default function OrderDetailPage() {
                                                     className="text-lg"
                                                 >
                                                     {order?.status ===
-                                                    OrderStatus.COMPLETED
+                                                        OrderStatus.COMPLETED
                                                         ? "Trạng thái thanh toán:"
                                                         : "Còn lại:"}
                                                 </Text>
                                                 {order?.status ===
-                                                OrderStatus.COMPLETED ? (
+                                                    OrderStatus.COMPLETED ? (
                                                     <Tag
                                                         color="success"
                                                         className="text-lg px-3 py-1"
@@ -1481,14 +1523,14 @@ export default function OrderDetailPage() {
                                     color={
                                         getStatusInfo(
                                             order?.status ||
-                                                OrderStatus.PENDING,
+                                            OrderStatus.PENDING,
                                         ).color
                                     }
                                 >
                                     {
                                         getStatusInfo(
                                             order?.status ||
-                                                OrderStatus.PENDING,
+                                            OrderStatus.PENDING,
                                         ).text
                                     }
                                 </Tag>
@@ -1649,6 +1691,7 @@ export default function OrderDetailPage() {
                         />
                     </Modal>
                 )}
+
             </div>
         </WrapperContent>
     );
@@ -1662,6 +1705,9 @@ const ProductDetailCard = ({
     onImageUpload,
     uploading,
     orderCode,
+    workflows,
+    departments,
+    memberOptions,
 }: {
     product: any;
     membersMap: Record<string, IMembers>;
@@ -1669,8 +1715,14 @@ const ProductDetailCard = ({
     onImageUpload?: (productId: string, fileList: RcFile[]) => Promise<void>;
     uploading?: boolean;
     orderCode?: string;
+    workflows: FirebaseWorkflows;
+    departments: FirebaseDepartments;
+    memberOptions: any;
 }) => {
     const qrRef = useRef<any>(null);
+    const [addWorkflowModalVisible, setAddWorkflowModalVisible] = useState(false);
+    const [addWorkflowForm] = Form.useForm();
+    const { message: antdMessage } = App.useApp();
 
     // Handle QR code download
     const downloadQRCode = () => {
@@ -1686,9 +1738,10 @@ const ProductDetailCard = ({
             }
         }
     };
-    const workflows = useMemo(() => {
+    const productWorkflows = useMemo(() => {
         if (!product.workflows) return [];
-        return Object.entries(product.workflows).map(([id, workflow]) => {
+        // Convert to array and sort by key (if numeric) or by updatedAt
+        const workflowsArray = Object.entries(product.workflows).map(([id, workflow]) => {
             const workflowData = workflow as FirebaseWorkflowData;
             return {
                 id,
@@ -1696,96 +1749,57 @@ const ProductDetailCard = ({
                 workflowName: workflowData.workflowName,
                 members: workflowData.members,
                 isDone: workflowData.isDone,
-                updatedAt: workflowData.updatedAt,
+                updatedAt: workflowData.updatedAt || 0,
+                checklist: workflowData.checklist,
+                deadline: workflowData.deadline,
+                originalIndex: id, // Keep as string id, not number
             };
+        });
+        
+        // Sort workflows: try numeric keys first, then by updatedAt
+        return workflowsArray.sort((a, b) => {
+            const aNum = Number(a.id);
+            const bNum = Number(b.id);
+            
+            // If both are valid numbers, sort numerically
+            if (!isNaN(aNum) && !isNaN(bNum)) {
+                return aNum - bNum;
+            }
+            
+            // Otherwise sort by updatedAt (newest first, then reverse for chronological order)
+            // Actually, for workflow order, we want oldest first typically
+            return a.updatedAt - b.updatedAt;
         });
     }, [product.workflows]);
 
-    const currentWorkflowIndex = workflows.findIndex((s) => !s.isDone);
+    const handleToggleWorkflowComplete = async (workflowIndex: string | number) => {
+        if (!orderCode) return;
 
-    const stepsItems = workflows.map((workflow, index) => {
-        const isCompleted = workflow.isDone;
+        try {
+            // workflowIndex is the workflow id (originalIndex)
+            const workflowId = String(workflowIndex);
+            const currentWorkflow = productWorkflows.find(
+                (w) => w.originalIndex === workflowId,
+            );
+            if (!currentWorkflow) return;
 
-        return {
-            title: (
-                <div className="flex items-center gap-2">
-                    <Text
-                        strong
-                        className={
-                            isCompleted ? "text-green-600" : "text-gray-600"
-                        }
-                    >
-                        {workflow.workflowName.join(", ") ||
-                            `Công đoạn ${index + 1}`}
-                    </Text>
-                    {isCompleted ? (
-                        <Tag color="success">Hoàn thành</Tag>
-                    ) : (
-                        <Tag color="default">Chưa làm</Tag>
-                    )}
-                </div>
-            ),
-            content: (
-                <div className="mt-2 space-y-2">
-                    {/* Nhân viên thực hiện */}
-                    <div className="flex items-center gap-2">
-                        <div className="flex flex-wrap gap-1">
-                            {workflow.members && workflow.members.length > 0 ? (
-                                workflow.members.map((empId: string) => {
-                                    return (
-                                        <Tag key={empId} className="text-xs">
-                                            <Space size={4}>
-                                                <Avatar
-                                                    size={14}
-                                                    className="text-xs"
-                                                >
-                                                    {membersMap?.[
-                                                        empId
-                                                    ]?.name?.charAt(0) || "?"}
-                                                </Avatar>
-                                                <span>
-                                                    {membersMap?.[empId]
-                                                        ?.name || empId}
-                                                </span>
-                                            </Space>
-                                        </Tag>
-                                    );
-                                })
-                            ) : (
-                                <Tag color="red" className="text-xs">
-                                    Chưa phân công
-                                </Tag>
-                            )}
-                        </div>
-                    </div>
+            const workflowPath = `xoxo/orders/${orderCode}/products/${product.id}/workflows/${workflowId}`;
+            const workflowRef = dbRef(getDatabase(), workflowPath);
 
-                    {/* Thời gian cập nhật */}
-                    <div className="flex items-center gap-1">
-                        <Text type="secondary" className="text-xs">
-                            Cập nhật:{" "}
-                            {dayjs(workflow.updatedAt).format(
-                                "HH:mm DD/MM/YYYY",
-                            )}
-                        </Text>
-                    </div>
+            await update(workflowRef, {
+                isDone: !currentWorkflow.isDone,
+                updatedAt: new Date().getTime(),
+            });
 
-                    {/* Thông báo hoàn thành */}
-                    {isCompleted && (
-                        <div className="flex items-center gap-1">
-                            <span className="text-green-500 text-xs">✓</span>
-                            <Text type="success" className="text-xs">
-                                Hoàn thành vào{" "}
-                                {dayjs(workflow.updatedAt).format(
-                                    "HH:mm DD/MM/YYYY",
-                                )}
-                            </Text>
-                        </div>
-                    )}
-                </div>
-            ),
-            status: (isCompleted ? "finish" : "wait") as "finish" | "wait",
-        };
-    });
+            message.success(
+                `Đã ${!currentWorkflow.isDone ? "hoàn thành" : "hủy hoàn thành"
+                } công đoạn`,
+            );
+        } catch (error) {
+            console.error("Failed to update workflow:", error);
+            message.error("Không thể cập nhật trạng thái");
+        }
+    };
 
     const subtotal = product.quantity * (product.price || 0);
 
@@ -1828,29 +1842,22 @@ const ProductDetailCard = ({
                             <Text strong className="text-lg">
                                 Tiến độ công đoạn
                             </Text>
+                            <Button
+                                type="primary"
+                                icon={<PlusOutlined />}
+                                onClick={() => setAddWorkflowModalVisible(true)}
+                                size="small"
+                            >
+                                Thêm công đoạn
+                            </Button>
                         </div>
 
                         <div className="bg-background rounded-lg border p-4 shadow-sm">
-                            {workflows.length > 0 ? (
-                                <div className="workflow-steps">
-                                    <Steps
-                                        orientation="vertical"
-                                        size="small"
-                                        current={
-                                            currentWorkflowIndex !== -1
-                                                ? currentWorkflowIndex
-                                                : workflows.length
-                                        }
-                                        items={stepsItems as any}
-                                    />
-                                </div>
-                            ) : (
-                                <Empty
-                                    description="Chưa có công đoạn nào"
-                                    image={Empty.PRESENTED_IMAGE_SIMPLE}
-                                    className="my-4"
-                                />
-                            )}
+                            <WorkflowStageKanban
+                                workflows={workflows}
+                                membersMap={membersMap}
+                                onToggleComplete={handleToggleWorkflowComplete}
+                            />
                         </div>
                     </div>
                 </Col>
@@ -1901,22 +1908,22 @@ const ProductDetailCard = ({
                                     Tổng quan tiến độ
                                 </Text>
                                 <Tag color="blue" className="font-medium">
-                                    {workflows.filter((s) => s.isDone).length}/
-                                    {workflows.length} hoàn thành
+                                    {productWorkflows.filter((s) => s.isDone).length}/
+                                    {productWorkflows.length} hoàn thành
                                 </Tag>
                             </div>
                             <Progress
                                 percent={
-                                    workflows.length > 0
+                                    productWorkflows.length > 0
                                         ? Number(
-                                              (
-                                                  (workflows.filter(
-                                                      (s) => s.isDone,
-                                                  ).length /
-                                                      workflows.length) *
-                                                  100
-                                              ).toFixed(2),
-                                          )
+                                            (
+                                                (productWorkflows.filter(
+                                                    (s) => s.isDone,
+                                                ).length /
+                                                    productWorkflows.length) *
+                                                100
+                                            ).toFixed(2),
+                                        )
                                         : 0
                                 }
                                 size="small"
@@ -1928,14 +1935,14 @@ const ProductDetailCard = ({
                             />
                             <Text type="secondary" className="text-xs">
                                 Cập nhật gần nhất:{" "}
-                                {workflows.length > 0
+                                {productWorkflows.length > 0
                                     ? dayjs(
-                                          Math.max(
-                                              ...workflows.map(
-                                                  (s) => s.updatedAt,
-                                              ),
-                                          ),
-                                      ).format("HH:mm DD/MM/YYYY")
+                                        Math.max(
+                                            ...productWorkflows.map(
+                                                (s) => s.updatedAt,
+                                            ),
+                                        ),
+                                    ).format("HH:mm DD/MM/YYYY")
                                     : "Chưa có"}
                             </Text>
                         </div>
@@ -2048,6 +2055,287 @@ const ProductDetailCard = ({
                     </div>
                 </Col>
             </Row>
+            
+            {/* Add Workflow Modal */}
+            <Modal
+                title="Thêm công đoạn mới"
+                open={addWorkflowModalVisible}
+                onCancel={() => {
+                    setAddWorkflowModalVisible(false);
+                    addWorkflowForm.resetFields();
+                }}
+                onOk={async () => {
+                    try {
+                        const values = await addWorkflowForm.validateFields();
+                        if (!orderCode) return;
+                        
+                        const newWorkflowId = `STAGE_${Date.now()}`;
+                        const selectedWorkflowCodes = values.workflowCode || [];
+                        const selectedWorkflowNames = selectedWorkflowCodes
+                            .map((code: string) => workflows[code]?.name)
+                            .filter(Boolean) as string[];
+                        
+                        const checklist = (values.checklist || []).map((task: any, index: number) => ({
+                            id: task.id || `TASK_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                            task_name: task.task_name || "",
+                            task_order: index + 1,
+                            checked: false,
+                        })).filter((task: any) => task.task_name && task.task_name.trim() !== "");
+                        
+                        const newWorkflow: FirebaseWorkflowData = {
+                            departmentCode: values.departmentCode,
+                            workflowCode: selectedWorkflowCodes,
+                            workflowName: selectedWorkflowNames,
+                            members: values.members || [],
+                            consultantId: values.consultantId,
+                            isDone: false,
+                            checklist: checklist,
+                            updatedAt: Date.now(),
+                            deadline: values.deadline ? dayjs(values.deadline).valueOf() : undefined,
+                        };
+                        
+                        const workflowPath = `xoxo/orders/${orderCode}/products/${product.id}/workflows/${newWorkflowId}`;
+                        const workflowRef = dbRef(getDatabase(), workflowPath);
+                        
+                        await update(workflowRef, newWorkflow);
+                        
+                        antdMessage.success("Đã thêm công đoạn mới");
+                        setAddWorkflowModalVisible(false);
+                        addWorkflowForm.resetFields();
+                    } catch (error) {
+                        console.error("Failed to add workflow:", error);
+                        if (error && typeof error === 'object' && 'errorFields' in error) {
+                            // Validation error, don't show message
+                        } else {
+                            antdMessage.error("Không thể thêm công đoạn");
+                        }
+                    }
+                }}
+                okText="Thêm"
+                cancelText="Hủy"
+                width={600}
+            >
+                <AddWorkflowForm
+                    form={addWorkflowForm}
+                    departments={departments}
+                    workflows={workflows}
+                    memberOptions={memberOptions}
+                    product={product}
+                />
+            </Modal>
         </Card>
+    );
+};
+
+// Add Workflow Form Component (simplified version)
+const AddWorkflowForm: React.FC<{
+    form: any;
+    departments: FirebaseDepartments;
+    workflows: FirebaseWorkflows;
+    memberOptions: any;
+    product: any;
+}> = ({ form, departments, workflows, memberOptions, product }) => {
+    const departmentCode = Form.useWatch("departmentCode", form);
+    
+    // Get all staff options
+    const allStaffOptions = useMemo(() => {
+        const options: { value: string; label: string }[] = [];
+        if (memberOptions) {
+            Object.values(memberOptions).forEach((roleOptions: any) => {
+                if (Array.isArray(roleOptions)) {
+                    options.push(...roleOptions);
+                }
+            });
+        }
+        const uniqueOptions: { value: string; label: string }[] = [];
+        const seen = new Set();
+        for (const opt of options) {
+            if (!seen.has(opt.value)) {
+                seen.add(opt.value);
+                uniqueOptions.push(opt);
+            }
+        }
+        return uniqueOptions;
+    }, [memberOptions]);
+    
+    return (
+        <Form
+            form={form}
+            layout="vertical"
+            className="mt-4"
+        >
+            <Form.Item
+                name="departmentCode"
+                label="Phòng ban"
+                rules={[
+                    {
+                        required: true,
+                        message: "Vui lòng chọn phòng ban!",
+                    },
+                ]}
+            >
+                <Select
+                    placeholder="Chọn phòng ban"
+                    showSearch
+                    optionFilterProp="children"
+                    suffixIcon={<BankOutlined className="text-gray-400" />}
+                    onChange={() => {
+                        form.setFieldsValue({ workflowCode: undefined, members: undefined });
+                    }}
+                >
+                    {Object.keys(departments)
+                        .filter(code => {
+                            const used = product.workflows && Object.values(product.workflows).some((w: any) => w.departmentCode === code && !w.isDone);
+                            return !used;
+                        })
+                        .map(code => (
+                            <Option key={code} value={code}>
+                                {departments[code].name}
+                            </Option>
+                        ))}
+                </Select>
+            </Form.Item>
+
+            <Form.Item
+                name="workflowCode"
+                label="Công đoạn"
+                rules={[
+                    {
+                        required: true,
+                        message: "Vui lòng chọn công đoạn!",
+                    },
+                ]}
+            >
+                <Select
+                    mode="multiple"
+                    placeholder={departmentCode ? "Chọn công đoạn" : "Chọn phòng ban trước"}
+                    showSearch
+                    suffixIcon={<DeploymentUnitOutlined className="text-gray-400" />}
+                    disabled={!departmentCode}
+                >
+                    {departmentCode &&
+                        Object.entries(workflows)
+                            .filter(([, wf]: [string, any]) => wf.department === departmentCode)
+                            .map(([code, wf]: [string, any]) => (
+                                <Option key={code} value={code}>
+                                    {wf.name}
+                                </Option>
+                            ))}
+                </Select>
+            </Form.Item>
+
+            <Form.Item
+                name="consultantId"
+                label="Tư vấn"
+            >
+                <Select
+                    placeholder="Chọn tư vấn"
+                    allowClear
+                    showSearch
+                    optionFilterProp="children"
+                    suffixIcon={<UserOutlined className="text-gray-400" />}
+                >
+                    {memberOptions?.[ROLES.sales]?.map((opt: any) => (
+                        <Option key={opt.value} value={opt.value}>
+                            {opt.label}
+                        </Option>
+                    ))}
+                </Select>
+            </Form.Item>
+
+            <Form.Item
+                name="members"
+                label="Thực hiện"
+            >
+                <Select
+                    mode="multiple"
+                    placeholder={departmentCode ? "Chọn người thực hiện" : "Chọn phòng ban trước"}
+                    showSearch
+                    optionFilterProp="children"
+                    suffixIcon={<TeamOutlined className="text-gray-400" />}
+                    disabled={!departmentCode}
+                >
+                    {allStaffOptions.map((opt: any) => (
+                        <Option key={opt.value} value={opt.value}>
+                            {opt.label}
+                        </Option>
+                    ))}
+                </Select>
+            </Form.Item>
+
+            <Form.Item
+                name="deadline"
+                label="Hạn chót"
+            >
+                <DatePicker
+                    showTime
+                    format="DD/MM/YYYY HH:mm"
+                    placeholder="Chọn hạn chót"
+                    className="w-full"
+                    suffixIcon={<ClockCircleOutlined className="text-gray-400" />}
+                />
+            </Form.Item>
+
+            {/* Checklist/Tasks Section */}
+            <div className="mt-4 pt-4 border-t border-gray-200">
+                <div className="flex justify-between items-center mb-3">
+                    <Text strong>Thao tác</Text>
+                </div>
+                <Form.List name="checklist">
+                    {(fields, { add, remove }) => (
+                        <div className="space-y-2">
+                            {fields.map((field, index) => (
+                                <div
+                                    key={field.key}
+                                    className="flex items-center gap-2 p-2 bg-gray-50 rounded border border-gray-200"
+                                >
+                                    <div className="flex-1">
+                                        <Form.Item
+                                            {...field}
+                                            name={[field.name, "task_name"]}
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: "Vui lòng nhập tên thao tác!",
+                                                },
+                                            ]}
+                                            noStyle
+                                        >
+                                            <Input
+                                                placeholder="Nhập tên thao tác..."
+                                                className="w-full"
+                                            />
+                                        </Form.Item>
+                                    </div>
+                                    <Button
+                                        type="text"
+                                        danger
+                                        icon={<DeleteOutlined />}
+                                        onClick={() => remove(field.name)}
+                                        size="small"
+                                    />
+                                </div>
+                            ))}
+                            <Button
+                                type="dashed"
+                                icon={<PlusOutlined />}
+                                onClick={() => {
+                                    add({
+                                        id: `TASK_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                                        task_name: "",
+                                        task_order: fields.length + 1,
+                                        checked: false,
+                                    });
+                                }}
+                                block
+                                className="mt-2"
+                            >
+                                Thêm thao tác
+                            </Button>
+                        </div>
+                    )}
+                </Form.List>
+            </div>
+        </Form>
     );
 };

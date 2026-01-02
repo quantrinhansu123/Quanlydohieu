@@ -28,6 +28,7 @@ import {
     Menu,
     Modal,
     Space,
+    Table,
     Tag,
     Typography,
 } from "antd";
@@ -65,13 +66,18 @@ const ServiceCard: React.FC<{
         }
     };
 
+    const categoryPath = getCategoryPath(service.categoryCode);
+    const displayPrice = service.sellingPrice 
+        ? service.sellingPrice 
+        : (service.priceFrom && service.priceTo ? { from: service.priceFrom, to: service.priceTo } : null);
+
     return (
         <Card
             hoverable
             className="h-full"
             size="small"
             cover={
-                <div className="relative h-56 bg-gray-100 overflow-hidden">
+                <div className="relative h-32 bg-gray-100 overflow-hidden">
                     {hasImages ? (
                         <>
                             <Image
@@ -109,80 +115,80 @@ const ServiceCard: React.FC<{
                     )}
                 </div>
             }
-            actions={[
-                <EyeOutlined
-                    key="view"
-                    onClick={() => onView(service.code)}
-                    className="text-base text-blue-500 hover:text-blue-700"
-                />,
-                <EditOutlined
-                    key="edit"
-                    onClick={() => onEdit(service.code)}
-                    className="text-base text-green-500 hover:text-green-700"
-                />,
-                <DeleteOutlined
-                    key="delete"
-                    onClick={() => onDelete(service.code)}
-                    className="text-base text-red-500 hover:text-red-700"
-                />,
-            ]}
+            styles={{
+                body: {
+                    padding: "12px",
+                },
+            }}
         >
-            <div className="space-y-1.5">
-                <Text
-                    strong
-                    className="text-sm line-clamp-2 mb-1 block"
-                    title={service.name}
-                >
-                    {service.name}
-                </Text>
-                <div className="space-y-1">
-                    <div className="flex items-center justify-between">
-                        <Text type="secondary" className="text-[10px]">
-                            Mã:
+            <div className="space-y-2">
+                {/* Tên dịch vụ và category */}
+                <div>
+                    <Text
+                        strong
+                        className="text-sm line-clamp-2 block mb-1"
+                        title={service.name}
+                    >
+                        {service.name}
+                    </Text>
+                    {categoryPath && (
+                        <Text type="secondary" className="text-xs">
+                            {categoryPath}
                         </Text>
-                        <Text strong className="text-[10px]">
-                            {service.code}
-                        </Text>
-                    </div>
-                    {service.brandCode && (
-                        <div className="flex items-center gap-1">
-                            <Text type="secondary" className="text-[10px]">
-                                Thương hiệu:
-                            </Text>
-                            <Tag className="text-[10px] m-0 px-1 py-0">
-                                {service.brandCode}
-                            </Tag>
-                        </div>
                     )}
-                    <div className="pt-1 border-t border-gray-100">
-                        {service.sellingPrice && (
-                            <div className="flex items-center justify-between">
-                                <Text type="secondary" className="text-[10px]">
-                                    Giá bán:
-                                </Text>
-                                <Text strong className="text-primary text-xs">
-                                    {new Intl.NumberFormat("vi-VN").format(
-                                        service.sellingPrice,
-                                    )}{" "}
-                                    đ
-                                </Text>
-                            </div>
-                        )}
-                        {service.priceFrom && service.priceTo && (
-                            <div className="flex items-center justify-between mt-0.5">
-                                <Text type="secondary" className="text-[10px]">
-                                    Khoảng giá:
-                                </Text>
-                                <Text className="text-[10px]">
-                                    {new Intl.NumberFormat("vi-VN").format(
-                                        service.priceFrom,
-                                    )} - {new Intl.NumberFormat("vi-VN").format(
-                                        service.priceTo,
-                                    )} đ
-                                </Text>
-                            </div>
-                        )}
+                </div>
+
+                {/* Giá */}
+                {displayPrice && (
+                    <div>
+                        <Text strong className="text-base text-primary">
+                            {typeof displayPrice === 'number' 
+                                ? `${new Intl.NumberFormat("vi-VN").format(displayPrice)} đ`
+                                : `${new Intl.NumberFormat("vi-VN").format(displayPrice.from)} - ${new Intl.NumberFormat("vi-VN").format(displayPrice.to)} đ`
+                            }
+                        </Text>
                     </div>
+                )}
+
+                {/* Nút hành động */}
+                <div className="flex gap-2 pt-2 border-t border-gray-100">
+                    <Button
+                        type="text"
+                        size="small"
+                        icon={<EyeOutlined />}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onView(service.code);
+                        }}
+                        className="flex-1"
+                    >
+                        Xem
+                    </Button>
+                    <Button
+                        type="text"
+                        size="small"
+                        icon={<EditOutlined />}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onEdit(service.code);
+                        }}
+                        className="flex-1"
+                    >
+                        Sửa
+                    </Button>
+                    <Button
+                        type="text"
+                        size="small"
+                        danger
+                        icon={<DeleteOutlined />}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onDelete(service.code);
+                        }}
+                        className="flex-1"
+                    >
+                        Xóa
+                    </Button>
                 </div>
             </div>
         </Card>
@@ -204,6 +210,7 @@ export default function ServicesPage() {
     const [brands, setBrands] = useState<FirebaseBrands>({});
     const { message, modal } = App.useApp();
     const { query, applyFilter, updateQuery, reset } = useFilter();
+    const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
     // Load services from Firebase
     useEffect(() => {
@@ -283,6 +290,62 @@ export default function ServicesPage() {
     const handleCloseDrawer = () => {
         setDrawerVisible(false);
         setViewingService(null);
+    };
+
+    const handleBatchDelete = () => {
+        if (selectedRowKeys.length === 0) {
+            message.warning("Vui lòng chọn ít nhất một dịch vụ để xóa!");
+            return;
+        }
+
+        const selectedServices = selectedRowKeys.map((key) => {
+            const service = services[key as string];
+            return service ? service.name : key;
+        }).filter(Boolean);
+
+        modal.confirm({
+            title: "Xác nhận xóa hàng loạt",
+            content: (
+                <div>
+                    <p>Bạn có chắc chắn muốn xóa {selectedRowKeys.length} dịch vụ:</p>
+                    <ul className="list-disc list-inside mt-2 max-h-40 overflow-y-auto">
+                        {selectedServices.slice(0, 10).map((name, index) => (
+                            <li key={index} className="text-sm">{name}</li>
+                        ))}
+                        {selectedServices.length > 10 && (
+                            <li className="text-sm text-gray-500">
+                                ...và {selectedServices.length - 10} dịch vụ khác
+                            </li>
+                        )}
+                    </ul>
+                    <p className="text-red-500 text-sm mt-2">
+                        Thao tác này không thể hoàn tác!
+                    </p>
+                </div>
+            ),
+            okText: "Xóa",
+            cancelText: "Hủy",
+            okButtonProps: { danger: true },
+            onOk: async () => {
+                try {
+                    const database = getDatabase();
+                    const deletePromises = selectedRowKeys.map((key) => {
+                        const serviceRef = ref(
+                            database,
+                            `xoxo/services/${key}`,
+                        );
+                        return remove(serviceRef);
+                    });
+
+                    await Promise.all(deletePromises);
+                    message.success(`Đã xóa thành công ${selectedRowKeys.length} dịch vụ!`);
+                    setSelectedRowKeys([]);
+                } catch (error) {
+                    console.error("Error deleting services:", error);
+                    message.error("Có lỗi xảy ra khi xóa dịch vụ!");
+                }
+            },
+        });
     };
 
     const handleDelete = (serviceCode: string, onCloseDrawer?: () => void) => {
@@ -436,25 +499,34 @@ export default function ServicesPage() {
             const children = allServiceCategories.filter(
                 (c) => c.parentCode === category.code,
             );
-            const levelName = getLevelName(level);
             const serviceCount = getServicesForCategory(category.code).length;
 
             const menuItem: any = {
                 key: category.code,
                 label: (
-                    <div
-                        className="flex items-center justify-between w-full pr-4"
-                        style={{ paddingLeft: `${level * 16}px` }}
-                    >
-                        <div className="flex items-center gap-2">
-                            <Tag color={category.displayColor || "default"}>
-                                {levelName}
-                            </Tag>
-                            <Text strong>{category.name}</Text>
-                        </div>
-                        <Text type="secondary" className="text-xs">
-                            ({serviceCount})
-                                </Text>
+                    <div className="flex items-center justify-between w-full">
+                        <Text 
+                            ellipsis 
+                            style={{ 
+                                marginLeft: `${level * 12}px`,
+                                fontWeight: level === 0 ? 600 : 400,
+                                fontSize: "12px",
+                            }}
+                        >
+                            {category.name}
+                        </Text>
+                        <Tag 
+                            color={category.displayColor || "default"} 
+                            style={{ 
+                                margin: 0,
+                                fontSize: "10px",
+                                lineHeight: "16px",
+                                height: "16px",
+                                padding: "0 4px",
+                            }}
+                        >
+                            {serviceCount}
+                        </Tag>
                     </div>
                 ),
             };
@@ -480,6 +552,14 @@ export default function ServicesPage() {
                 buttonEnds: [
                     {
                         can: true,
+                        name: selectedRowKeys.length > 0 ? `Xóa (${selectedRowKeys.length})` : "Xóa",
+                        icon: <DeleteOutlined />,
+                        type: "default",
+                        danger: selectedRowKeys.length > 0,
+                        onClick: handleBatchDelete,
+                    },
+                    {
+                        can: true,
                         name: "Thêm dịch vụ",
                         icon: <PlusOutlined />,
                         type: "primary",
@@ -491,75 +571,124 @@ export default function ServicesPage() {
             {loading ? (
                 <div className="text-center py-8">Đang tải...</div>
             ) : (
-                <div className="flex gap-4 h-full">
-                    {/* Left Menu */}
-                    <div className="w-64 flex-shrink-0">
-                        <Menu
-                            mode="inline"
-                            style={{ width: 256, height: "100%" }}
-                            selectedKeys={
-                                selectedCategoryCode
-                                    ? [selectedCategoryCode]
-                                    : ["all"]
-                            }
-                            onClick={({ key }) => {
-                                // When clicking on a category, show all products of that category and its children
-                                setSelectedCategoryCode(
-                                    key === "all" ? null : key,
-                                );
-                            }}
-                            items={[
+                <div style={{ display: "flex", flexDirection: "row", gap: "16px", alignItems: "flex-start" }}>
+                    {/* Left Category Table (20%) */}
+                    <div style={{ width: "20%", flexShrink: 0 }}>
+                        {(() => {
+                            // Build category tree data for expandable table
+                            const buildCategoryTreeData = (
+                                categories: ServiceCategory[],
+                                level: number = 0,
+                            ): any[] => {
+                                return categories.map((category) => {
+                                    const children = allServiceCategories.filter(
+                                        (c) => c.parentCode === category.code,
+                                    );
+                                    const hasChildren = children.length > 0;
+
+                                    return {
+                                        key: category.code,
+                                        name: category.name,
+                                        count: getServicesForCategory(category.code).length,
+                                        level,
+                                        children: hasChildren ? buildCategoryTreeData(children, level + 1) : undefined,
+                                    };
+                                });
+                            };
+
+                            const rootCategories = buildCategoryTree(allServiceCategories);
+                            const categoryTreeData = buildCategoryTreeData(rootCategories, 0);
+
+                            const categoryData = [
                                 {
                                     key: "all",
-                                    label: (
-                                        <div className="flex items-center justify-between">
-                                            <Text strong>Tất cả dịch vụ</Text>
-                                            <Text type="secondary" className="text-xs">
-                                                ({filteredData.length})
-                                            </Text>
-                                        </div>
-                                    ),
+                                    name: "Tất cả",
+                                    count: filteredData.length,
+                                    level: 0,
                                 },
-                                ...(allServiceCategories.length > 0
-                                    ? buildMenuItems(
-                                          buildCategoryTree(allServiceCategories),
-                                          0,
-                                      )
-                                    : []),
-                                ...(filteredData.filter((s) => !s.categoryCode)
-                                    .length > 0
+                                ...categoryTreeData,
+                                ...(filteredData.filter((s) => !s.categoryCode).length > 0
                                     ? [
                                           {
                                               key: "no-category",
-                                              label: (
-                                                  <div className="flex items-center justify-between">
-                                                      <Tag color="default">
-                                                          Không phân loại
-                                                      </Tag>
-                                                      <Text
-                                                          type="secondary"
-                                                          className="text-xs"
-                                                      >
-                                                          (
-                                                          {
-                                                              filteredData.filter(
-                                                                  (s) =>
-                                                                      !s.categoryCode,
-                                                              ).length
-                                                          }
-                                                          )
-                                                      </Text>
-                                                  </div>
-                                              ),
+                                              name: "Chưa phân loại",
+                                              count: filteredData.filter(
+                                                  (s) => !s.categoryCode,
+                                              ).length,
+                                              level: 0,
                                           },
                                       ]
                                     : []),
-                            ]}
-                        />
+                            ];
+
+                            const categoryColumns = [
+                                {
+                                    title: "Danh mục",
+                                    key: "name",
+                                    render: (_: any, record: any) => (
+                                        <Text
+                                            style={{
+                                                fontSize: "12px",
+                                                fontWeight: record.level === 0 ? 600 : 400,
+                                            }}
+                                        >
+                                            {record.name}
+                                        </Text>
+                                    ),
+                                },
+                                {
+                                    title: "SL",
+                                    key: "count",
+                                    width: 50,
+                                    render: (_: any, record: any) => (
+                                        <Tag
+                                            color={record.key === "all" ? "blue" : "default"}
+                                            style={{
+                                                margin: 0,
+                                                fontSize: "10px",
+                                                lineHeight: "16px",
+                                                height: "16px",
+                                                padding: "0 4px",
+                                            }}
+                                        >
+                                            {record.count}
+                                        </Tag>
+                                    ),
+                                },
+                            ];
+
+                            return (
+                                <Table
+                                    dataSource={categoryData}
+                                    columns={categoryColumns}
+                                    rowKey="key"
+                                    pagination={false}
+                                    size="small"
+                                    expandable={{
+                                        childrenColumnName: "children",
+                                        defaultExpandAllRows: false,
+                                    }}
+                                    rowClassName={(record) =>
+                                        selectedCategoryCode === record.key ||
+                                        (record.key === "all" && selectedCategoryCode === null)
+                                            ? "ant-table-row-selected"
+                                            : ""
+                                    }
+                                    onRow={(record) => ({
+                                        onClick: () => {
+                                            setSelectedCategoryCode(
+                                                record.key === "all" ? null : record.key,
+                                            );
+                                        },
+                                        style: { cursor: "pointer" },
+                                    })}
+                                />
+                            );
+                        })()}
                     </div>
 
-                    {/* Right Content - Services Grid */}
-                    <div className="flex-1">
+                    {/* Right Services Table (80%) */}
+                    <div style={{ width: "80%", flexShrink: 0 }}>
                         {(() => {
                             try {
                                 const displayedServices =
@@ -571,19 +700,134 @@ export default function ServicesPage() {
                                     );
                                 }
 
+                                const columns = [
+                                    {
+                                        title: "Ảnh",
+                                        key: "image",
+                                        width: 80,
+                                        render: (_: any, record: Service & { key: string }) => {
+                                            const images = record.images || [];
+                                            return images.length > 0 ? (
+                                                <Image
+                                                    src={images[0]}
+                                                    alt={record.name}
+                                                    width={50}
+                                                    height={50}
+                                                    style={{ objectFit: "cover", borderRadius: "4px" }}
+                                                    preview={{
+                                                        mask: "Xem",
+                                                    }}
+                                                />
+                                            ) : (
+                                                <Empty
+                                                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                                    description={false}
+                                                    style={{ width: 50, height: 50 }}
+                                                />
+                                            );
+                                        },
+                                    },
+                                    {
+                                        title: "Tên dịch vụ",
+                                        key: "name",
+                                        render: (_: any, record: Service & { key: string }) => {
+                                            const workflowCount = record.operationalWorkflowIds?.length || 0;
+                                            return (
+                                                <div>
+                                                    <Text strong style={{ fontSize: "13px" }}>
+                                                        {record.name}
+                                                    </Text>
+                                                    {workflowCount > 0 && (
+                                                        <div>
+                                                            <Text type="secondary" style={{ fontSize: "11px" }}>
+                                                                {workflowCount} công đoạn
+                                                            </Text>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        },
+                                    },
+                                    {
+                                        title: "Giá",
+                                        key: "price",
+                                        width: 150,
+                                        render: (_: any, record: Service & { key: string }) => {
+                                            const displayPrice = record.sellingPrice 
+                                                ? record.sellingPrice 
+                                                : (record.priceFrom && record.priceTo ? { from: record.priceFrom, to: record.priceTo } : null);
+                                            
+                                            if (!displayPrice) return "-";
+                                            
+                                            return (
+                                                <Text strong className="text-primary" style={{ fontSize: "13px" }}>
+                                                    {typeof displayPrice === 'number' 
+                                                        ? `${new Intl.NumberFormat("vi-VN").format(displayPrice)} đ`
+                                                        : `${new Intl.NumberFormat("vi-VN").format(displayPrice.from)} - ${new Intl.NumberFormat("vi-VN").format(displayPrice.to)} đ`
+                                                    }
+                                                </Text>
+                                            );
+                                        },
+                                    },
+                                    {
+                                        title: "Thao tác",
+                                        key: "actions",
+                                        width: 180,
+                                        fixed: "right" as const,
+                                        render: (_: any, record: Service & { key: string }) => (
+                                            <Space size="small">
+                                                <Button
+                                                    type="text"
+                                                    size="small"
+                                                    icon={<EyeOutlined />}
+                                                    onClick={() => handleViewService(record.code)}
+                                                >
+                                                    Xem
+                                                </Button>
+                                                <Button
+                                                    type="text"
+                                                    size="small"
+                                                    icon={<EditOutlined />}
+                                                    onClick={() => handleOpenModal(record.code)}
+                                                >
+                                                    Sửa
+                                                </Button>
+                                                <Button
+                                                    type="text"
+                                                    size="small"
+                                                    danger
+                                                    icon={<DeleteOutlined />}
+                                                    onClick={() => handleDelete(record.code)}
+                                                >
+                                                    Xóa
+                                                </Button>
+                                            </Space>
+                                        ),
+                                    },
+                                ];
+
+                                const rowSelectionConfig = {
+                                    type: "checkbox" as const,
+                                    selectedRowKeys,
+                                    onChange: (selectedKeys: React.Key[]) => {
+                                        setSelectedRowKeys(selectedKeys);
+                                    },
+                                };
+
                                 return (
-                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
-                                        {displayedServices.map((service) => (
-                                            <ServiceCard
-                                                key={service.code}
-                                                service={service}
-                                                onView={handleViewService}
-                                                onEdit={handleOpenModal}
-                                                onDelete={handleDelete}
-                                                getCategoryPath={getCategoryPath}
-                                            />
-                                        ))}
-                                    </div>
+                                    <Table
+                                        dataSource={displayedServices}
+                                        columns={columns}
+                                        rowKey="code"
+                                        rowSelection={rowSelectionConfig}
+                                        pagination={{
+                                            pageSize: 20,
+                                            showSizeChanger: true,
+                                            showTotal: (total) => `Tổng ${total} dịch vụ`,
+                                        }}
+                                        size="small"
+                                        scroll={{ x: "max-content" }}
+                                    />
                                 );
                             } catch (error) {
                                 console.error(
